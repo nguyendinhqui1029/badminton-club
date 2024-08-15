@@ -1,0 +1,11 @@
+# Ignore node_modules/ directory
+node_modules/
+dist/
+# Ignore package-lock.json file
+package-lock.json
+
+# Ignore nodemon.json file (if necessary)
+nodemon.json
+package-lock.json 
+
+public/images
