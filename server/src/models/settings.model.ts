@@ -51,6 +51,6 @@ const settingsSchema = new mongoose.Schema({
 });
 
 // Tạo model AttendanceSettings
-const Settings = mongoose.model('Settings', settingsSchema);
+const SettingsModel = mongoose.model<Settings>('Settings', settingsSchema);
 
-module.exports = Settings;
+export default  SettingsModel;

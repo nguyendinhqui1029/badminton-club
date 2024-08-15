@@ -49,6 +49,6 @@ commentSchema.pre('save', function(next) {
 });
 
 // Tạo model Comment
-const Comment = mongoose.model('Comment', commentSchema);
+const CommentModel = mongoose.model<Comment>('Comment', commentSchema);
 
-module.exports = Comment;
+export default CommentModel;

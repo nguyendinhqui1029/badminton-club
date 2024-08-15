@@ -29,12 +29,12 @@ const postSchema = new mongoose.Schema({
     trim: true
   },
   idUserLike: {
-    type: [mongoose.Schema.Types.ObjectId],
+    type: Array<mongoose.Schema.Types.ObjectId>,
     ref: 'User', // Tham chiếu đến model User
     default: []
   },
   idComment: {
-    type: [mongoose.Schema.Types.ObjectId],
+    type: Array<mongoose.Schema.Types.ObjectId>,
     ref: 'Comment', // Tham chiếu đến model Comment
     default: []
   },
@@ -63,6 +63,6 @@ postSchema.pre('save', function(next) {
 });
 
 // Tạo model Post
-const Post = mongoose.model('Post', postSchema);
+const PostModel = mongoose.model<Post>('Post', postSchema);
 
-module.exports = Post;
+export default PostModel;

@@ -73,6 +73,6 @@ const transactionSchema = new mongoose.Schema({
 });
 
 // Tạo model Transaction
-const Transaction = mongoose.model('Transaction', transactionSchema);
+const TransactionModel = mongoose.model<Transaction>('Transaction', transactionSchema);
 
-module.exports = Transaction;
+export default TransactionModel;

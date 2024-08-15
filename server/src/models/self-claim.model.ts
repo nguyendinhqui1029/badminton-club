@@ -4,7 +4,7 @@ import { getUTCDate } from '../utils/date.util';
 // Define interface for TypeScript type-checking
 export interface SelfClaim extends Document {
   reason: string;
-  isUser: string;
+  idAttendance: string;
   type: 'LATE' | 'OFF';
   idUserAccept: string[];
   idUserReject: string[];
@@ -19,9 +19,11 @@ const selfClaimSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  isUser: {
+  idAttendance: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', 
+    ref: 'Attendance', // Tham chiếu đến model Attendance nếu có
+    required: true,
+    unique: true
   },
   type: {
     type: String,
@@ -29,12 +31,12 @@ const selfClaimSchema = new mongoose.Schema({
     required: true
   },
   idUserAccept: {
-    type: [mongoose.Schema.Types.ObjectId],
+    type: Array<mongoose.Schema.Types.ObjectId>,
     ref: 'User', // Tham chiếu đến model User nếu có
     default: []
   },
   idUserReject: {
-    type: [mongoose.Schema.Types.ObjectId],
+    type: Array<mongoose.Schema.Types.ObjectId>,
     ref: 'User', // Tham chiếu đến model User nếu có
     default: []
   },
@@ -58,6 +60,6 @@ selfClaimSchema.pre('save', function(next) {
 });
 
 // Tạo model SelfClaim
-const SelfClaim = mongoose.model('SelfClaim', selfClaimSchema);
+const SelfClaimModel = mongoose.model<SelfClaim>('SelfClaim', selfClaimSchema);
 
-module.exports = SelfClaim;
+export default SelfClaimModel;

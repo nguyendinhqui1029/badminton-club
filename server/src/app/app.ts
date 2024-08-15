@@ -4,7 +4,8 @@ import cors from 'cors';
 import env from '../config/env';
 import { ROUTER_PATH } from '../constants/common.constants';
 import userRoutes from '../routes/userRoutes';
-
+import attendanceRoutes from '../routes/attendanceRoutes';
+import selfClaimRoutes from '../routes/selfClaimRoutes';
  class App {
   public app: Application;
   public port: number;
@@ -27,6 +28,8 @@ import userRoutes from '../routes/userRoutes';
   private routes(): void {
     const root = `${ROUTER_PATH.ROOT}/${ROUTER_PATH.VERSION}`;
     this.app.use(`${root}/${ROUTER_PATH.USER}`, userRoutes);
+    this.app.use(`${root}/${ROUTER_PATH.ATTENDANCE}`, attendanceRoutes);
+    this.app.use(`${root}/${ROUTER_PATH.SELF_CLAIM}`, selfClaimRoutes);
     // Add more routes as needed
   }
 

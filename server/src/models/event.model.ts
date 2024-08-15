@@ -58,6 +58,6 @@ const eventSchema = new Schema({
 });
 
 // Tạo mô hình Event
-const Event = mongoose.model('Event', eventSchema);
+const EventModel = mongoose.model<Event>('Event', eventSchema);
 
-module.exports = Event;
+export default EventModel;

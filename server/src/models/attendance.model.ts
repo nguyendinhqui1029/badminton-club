@@ -8,7 +8,6 @@ export interface Attendance extends Document {
   checkIn: string;
   checkout: string;
   status: 'LATE' | 'ON_TIME' | 'OFF';
-  idSelfClaim: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -36,11 +35,6 @@ const attendanceSchema = new mongoose.Schema({
     required: true,
     default: 'ON_TIME'
   },
-  idSelfClaim: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'SelfClaim', // Tham chiếu đến model SelfClaim nếu có
-    default: null
-  },
   createdAt: {
     type: String,
     default: getUTCDate(new Date())
@@ -57,6 +51,6 @@ attendanceSchema.pre('save', function(next) {
 });
 
 // Tạo model Attendance
-const Attendance = mongoose.model('Attendance', attendanceSchema);
+const AttendanceModel = mongoose.model<Attendance>('Attendance', attendanceSchema);
 
-module.exports = Attendance;
+export default AttendanceModel;
