@@ -4,5 +4,9 @@ export const ROUTER_PATH = {
     USER: 'user',
     FILE_UPLOAD: 'files-upload',
     ATTENDANCE: 'attendance',
-    SELF_CLAIM: 'self-claim'
+    SELF_CLAIM: 'self-claim',
+    COMMENT: 'comment',
+    POST: 'post',
+    EVENT: 'event',
+    TRANSACTION: 'transaction'
 }

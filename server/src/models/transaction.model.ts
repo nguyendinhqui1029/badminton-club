@@ -1,5 +1,4 @@
 import mongoose, { Schema, Document } from 'mongoose';
-import { getUTCDate } from '../utils/date.util';
 
 // Định nghĩa enum cho trạng thái
 enum Status {
@@ -18,7 +17,7 @@ enum TransactionType {
 // Định nghĩa interface cho dữ liệu
 export interface Transaction extends Document {
   qrLink: string;       // Liên kết QR dưới dạng chuỗi
-  isUser: string;       // Thông tin người dùng dưới dạng chuỗi
+  idUser: string;       // Thông tin người dùng dưới dạng chuỗi
   secretKey: string;    // Khóa bí mật dưới dạng chuỗi
   totalAmount: number;  // Tổng số tiền dưới dạng số
   amount: number;       // Số tiền liên quan dưới dạng số
@@ -34,9 +33,10 @@ const transactionSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  isUser: {
-    type: String,
-    required: true
+  idUser: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User', // Tham chiếu đến model User nếu đây là một User trả lời
+    required: true,
   },
   secretKey: {
     type: String,

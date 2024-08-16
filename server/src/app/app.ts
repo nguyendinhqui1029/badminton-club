@@ -6,6 +6,10 @@ import { ROUTER_PATH } from '../constants/common.constants';
 import userRoutes from '../routes/userRoutes';
 import attendanceRoutes from '../routes/attendanceRoutes';
 import selfClaimRoutes from '../routes/selfClaimRoutes';
+import commentRoutes from '../routes/commentRoutes';
+import postRoutes from '../routes/postRoutes';
+import eventRoutes from '../routes/eventRoutes';
+import transactionRoutes from '../routes/transactionRoutes';
  class App {
   public app: Application;
   public port: number;
@@ -30,6 +34,11 @@ import selfClaimRoutes from '../routes/selfClaimRoutes';
     this.app.use(`${root}/${ROUTER_PATH.USER}`, userRoutes);
     this.app.use(`${root}/${ROUTER_PATH.ATTENDANCE}`, attendanceRoutes);
     this.app.use(`${root}/${ROUTER_PATH.SELF_CLAIM}`, selfClaimRoutes);
+    this.app.use(`${root}/${ROUTER_PATH.COMMENT}`, commentRoutes);
+    this.app.use(`${root}/${ROUTER_PATH.POST}`, postRoutes);
+    this.app.use(`${root}/${ROUTER_PATH.EVENT}`, eventRoutes);
+    this.app.use(`${root}/${ROUTER_PATH.TRANSACTION}`, transactionRoutes);
+
     // Add more routes as needed
   }
 
