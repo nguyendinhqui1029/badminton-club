@@ -1,65 +1,92 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
-export interface Settings extends Document {
-  checkInLocationLongitude: string;  // Kinh độ của điểm kiểm tra vào
-  checkInLocationLatitude: string;   // Vĩ độ của điểm kiểm tra vào
-  checkInRadian: string;             // Góc kiểm tra vào dưới dạng chuỗi (có thể là một giá trị góc hoặc định dạng khác)
-  checkInDate: string;
-  checkOutDate: string;
-  earlyAttendanceReward: number;     // Phần thưởng cho việc đến sớm
-  tenMinuteLateFee: number;          // Phí trễ 10 phút
-  twentyMinuteLateFee: number;       // Phí trễ 20 phút
-  absenceFee: number;                // Phí vắng mặt
-  latePaymentFee: number;            // Phí thanh toán trễ
+
+interface CheckInTime {
+  dayOfWeek: string;
+  time: string;
 }
 
-// Định nghĩa schema cho AttendanceSettings
-const settingsSchema = new mongoose.Schema({
+export interface RequiredCheckInTime {
+  startTime: CheckInTime;
+  endTime: CheckInTime;
+}
+
+export interface Settings extends Document {
+  checkInLocationLongitude: string;
+  checkInLocationLatitude: string;
+  checkInRadian: string;
+  requiredCheckInTime: RequiredCheckInTime; // Thiết lập thời gian bắt đầu check in
+  earlyAttendanceReward: number; // Được thưởng khi đi sớm
+  tenMinuteLateFee: number; // Đóng phạt khi đi trễ 10 phút
+  twentyMinuteLateFee: number; // Đóng phạt khi đi trễ 20 phút
+  absenceFee: number; // Đóng phạt nghỉ không lí do
+  latePaymentFee: number; // Hết hạn thanh toán mà chưa thanh toán sẽ bị tính thêm phí
+}
+
+const CheckInTimeSchema = new Schema({
+  dayOfWeek: {
+    type: String,
+    required: true,
+  },
+  time: {
+    type: String,
+    required: true,
+  },
+});
+
+const RequiredCheckInTimeSchema = new Schema({
+  startTime: {
+    type: CheckInTimeSchema,
+    required: true,
+  },
+  endTime: {
+    type: CheckInTimeSchema,
+    required: true,
+  },
+});
+
+const settingsSchema = new Schema({
   checkInLocationLongitude: {
     type: String,
-    required: true
+    required: true, // Yêu cầu trường này là bắt buộc
   },
   checkInLocationLatitude: {
     type: String,
-    required: true
+    required: true, // Yêu cầu trường này là bắt buộc
   },
   checkInRadian: {
     type: String,
-    required: true
+    required: true, // Yêu cầu trường này là bắt buộc
   },
-  checkInDate: {
-    type: String,
-    required: true
-  },
-  checkOutDate: {
-    type: String,
-    required: true
+  requiredCheckInTime: {
+   type: RequiredCheckInTimeSchema,
+   required: true
   },
   earlyAttendanceReward: {
     type: Number,
-    required: true
+    required: true, // Yêu cầu trường này là bắt buộc
   },
   tenMinuteLateFee: {
     type: Number,
-    required: true
+    required: true, // Yêu cầu trường này là bắt buộc
   },
   twentyMinuteLateFee: {
     type: Number,
-    required: true
+    required: true, // Yêu cầu trường này là bắt buộc
   },
   absenceFee: {
     type: Number,
-    required: true
+    required: true, // Yêu cầu trường này là bắt buộc
   },
   latePaymentFee: {
     type: Number,
-    required: true
-  }
+    required: true, // Yêu cầu trường này là bắt buộc
+  },
 }, {
-  timestamps: true // Tự động thêm createdAt và updatedAt
+  timestamps: true, // Tự động thêm createdAt và updatedAt
 });
 
-// Tạo model AttendanceSettings
-const SettingsModel = mongoose.model<Settings>('Settings', settingsSchema);
+// Tạo model từ schema
+const SettingsModel = mongoose.model('Settings', settingsSchema);
 
 export default  SettingsModel;

@@ -8,5 +8,6 @@ export const ROUTER_PATH = {
     COMMENT: 'comment',
     POST: 'post',
     EVENT: 'event',
-    TRANSACTION: 'transaction'
+    TRANSACTION: 'transaction',
+    SETTINGS: 'settings'
 }

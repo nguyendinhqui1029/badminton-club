@@ -10,6 +10,8 @@ import commentRoutes from '../routes/commentRoutes';
 import postRoutes from '../routes/postRoutes';
 import eventRoutes from '../routes/eventRoutes';
 import transactionRoutes from '../routes/transactionRoutes';
+import settingsRoutes from '../routes/settingsRoutes';
+
  class App {
   public app: Application;
   public port: number;
@@ -38,6 +40,7 @@ import transactionRoutes from '../routes/transactionRoutes';
     this.app.use(`${root}/${ROUTER_PATH.POST}`, postRoutes);
     this.app.use(`${root}/${ROUTER_PATH.EVENT}`, eventRoutes);
     this.app.use(`${root}/${ROUTER_PATH.TRANSACTION}`, transactionRoutes);
+    this.app.use(`${root}/${ROUTER_PATH.SETTINGS}`, settingsRoutes);
 
     // Add more routes as needed
   }
