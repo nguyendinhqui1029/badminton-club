@@ -4,7 +4,7 @@ import express, { Request, Response } from 'express';
 import { body, param } from 'express-validator';
 import multer from 'multer';
 import path from 'path';
-import { FileUpload } from '../models/file.model';
+import env from '../config/env';
 
 const router = express.Router();
 
@@ -13,7 +13,7 @@ const storage = multer.diskStorage({
     cb(null, path.join(__dirname, "../../public/images"));
   },
   filename: function (req, file, cb) {
-    cb(null, `${Date.now()}_${file.originalname}`);
+    cb(null, `${Date.now()}_${file.originalname.trim()}`);
   }
 });
 
@@ -24,29 +24,19 @@ router.post('/', upload.array('files', 10), [
       throw new Error(JSON.stringify({ message: 'File is not empty.', translateKey: 'file_required' }));
     }
     return true;
-  }),
-  body('fileType').custom((value, { req }) => {
-    if (!value) {
-      throw new Error(JSON.stringify({ message: 'File type is not empty.', translateKey: 'file_type_required' }));
-    }
-    const hasErrorFileType = req.files.find((item: Express.Multer.File) => {
-      return value !==  'image/*' && !value.replace(/\s/g, '').split(',').includes(item.originalname.substring(item.originalname.lastIndexOf('.')));
-    });
-    if (hasErrorFileType) {
-      throw new Error(JSON.stringify({ message: 'File type is not allow.', translateKey: 'file_type_not_allow' }));
-    }
-    return true;
-  }),
+  })
 ], ValidationService.handleValidationErrors, async (request: Request, response: Response) => {
   const currentDate = new Date();
-  const currentDateUTC = new Date(Date.UTC(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), currentDate.getHours(), currentDate.getMinutes(), currentDate.getSeconds(), 0))
+  const currentDateUTC = new Date(Date.UTC(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), currentDate.getHours(), currentDate.getMinutes(), currentDate.getSeconds(), 0));
+  
   const files = (request?.files as Express.Multer.File[]).map((item: Express.Multer.File)=>({
-    fileName: item.filename,
-    fileSize: item.size,
+    name: item.filename,
+    type: item.mimetype,
     isUse: false,
+    linkCDN: `${env.NODE_ENV === 'DEV' ? 'http://' : 'https://'}${env.DOMAIN}:${env.PORT}/images/${item.filename}`,
     createdAt: currentDateUTC,
     updatedAt: currentDateUTC
-  } as FileUpload));
+  }));
   const fileUploadResult = await FileUploadController.createFileUpload(files);
   response.status(200).send(fileUploadResult);
 });
@@ -63,14 +53,8 @@ router.delete('/', [param('ids').custom((value, { req }) => {
 });
 
 router.put('/', [body('ids').custom((value, { req }) => {
-  if (!req?.ids?.length) {
+  if (!req.body?.ids?.length) {
     throw new Error(JSON.stringify({ message: 'Field ids is required.', translateKey: 'ids_required' }));
-  }
-  return true;
-}),
-body('isUse').custom((value, { req }) => {
-  if (req?.isUse !== null || req?.isUse !== undefined) {
-    throw new Error(JSON.stringify({ message: 'Field isUse is required.', translateKey: 'is_use_required' }));
   }
   return true;
 })], ValidationService.handleValidationErrors, async (request: Request, response: Response) => {
@@ -80,14 +64,9 @@ body('isUse').custom((value, { req }) => {
   response.status(200).send(fileUploadResult);
 })
 
-router.get('/', [param('names').custom((value, { req }) => {
-  if (!req.query?.names?.length) {
-    throw new Error(JSON.stringify({ message: 'Field names is required.', translateKey: 'names_required' }));
-  }
-  return true;
-})], ValidationService.handleValidationErrors, async (request: Request, response: Response) => {
-  const names = eval(request.query['names'] as string);
-  const fileUploadResult = await FileUploadController.getFilesByFileName(names);
+router.get('/', async (request: Request, response: Response) => {
+  const ids = eval(request.query['ids'] as string);
+  const fileUploadResult = await FileUploadController.getFilesByIds(ids);
   response.status(200).send(fileUploadResult);
 })
 export default router;

@@ -1,1 +1,18 @@
-<p>upload-file works!</p>
+<div class="flex gap-4">
+  @for(item of imageList(); track item.id) {
+  <div style.backgroundImage="url('{{item.linkCDN}}')"
+    class="flex justify-end bg-cover bg-no-repeat bg-center items-start border-2 border-gray-color rounded-xl w-32 h-32 bg-gray-100">
+    <span (click)="handleRemoveFile(item.id)" class="pi pi-times-circle text-2xl cursor-pointer mt-1 mr-1"></span>
+  </div>
+  }
+  @if(isShowButtonAdd()) {
+    <div class="flex justify-center items-center border-2 border-gray-color rounded-xl w-32 h-32 bg-gray-100 cursor-pointer" (click)="openDialogSelectFile()">
+        <div class="flex flex-col gap-2 items-center ">
+          <span class="pi pi-plus-circle text-3xl"></span>
+          <p class="text-black bg-gray-100 font-bold text-md">Thêm ảnh</p>
+        </div>      
+    </div>
+    <input class="hidden" #fileUploadElement  type="file" name="files[]" accept="image/*" (change)="onFileChange($event)" multiple/>
+  }
+
+</div>

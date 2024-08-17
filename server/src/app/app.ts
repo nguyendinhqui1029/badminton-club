@@ -11,7 +11,7 @@ import postRoutes from '../routes/postRoutes';
 import eventRoutes from '../routes/eventRoutes';
 import transactionRoutes from '../routes/transactionRoutes';
 import settingsRoutes from '../routes/settingsRoutes';
-
+import filesRoutes from '../routes/filesRoutes';
  class App {
   public app: Application;
   public port: number;
@@ -41,7 +41,7 @@ import settingsRoutes from '../routes/settingsRoutes';
     this.app.use(`${root}/${ROUTER_PATH.EVENT}`, eventRoutes);
     this.app.use(`${root}/${ROUTER_PATH.TRANSACTION}`, transactionRoutes);
     this.app.use(`${root}/${ROUTER_PATH.SETTINGS}`, settingsRoutes);
-
+    this.app.use(`${root}/${ROUTER_PATH.FILES}`, filesRoutes);
     // Add more routes as needed
   }
 

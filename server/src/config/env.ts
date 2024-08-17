@@ -13,6 +13,8 @@ interface EnvConfig {
   JWT_SECRET: string;
   JWT_REFRESH_SECRET: string;
   SALT_ROUNDS: number;
+  NODE_ENV: 'DEV'| "PRO";
+  DOMAIN: string;
 }
 const env: EnvConfig = {
   PORT: parseInt(process.env.PORT as string, 10) || 3000,
@@ -22,7 +24,9 @@ const env: EnvConfig = {
   DB_NAME: process.env.DB_NAME as string,
   JWT_SECRET: process.env.JWT_SECRET as string,
   JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET as string,
-  SALT_ROUNDS: parseInt(process.env.SALT_ROUNDS as string, 10)
+  SALT_ROUNDS: parseInt(process.env.SALT_ROUNDS as string, 10),
+  NODE_ENV: process.env.NODE_ENV as ('DEV'| "PRO") || 'DEV',
+  DOMAIN: process.env.DOMAIN as string || 'localhost'
 };
 
 export default env;

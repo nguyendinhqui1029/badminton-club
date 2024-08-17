@@ -2,6 +2,7 @@ import { ApiResponseValue, ErrorResponse } from '../models/response-value.model'
 import FileUploadModel, { FileUpload } from '../models/file.model';
 import { promises as fs } from 'fs';
 import path from 'path';
+import mongoose from 'mongoose';
 
 export default class FileUploadController {
 
@@ -30,11 +31,12 @@ export default class FileUploadController {
 
   public static deleteFileUploadByIds = async (ids: string[]): Promise<ApiResponseValue<FileUpload[] | ErrorResponse[]>> => {
     try {
-      const deletedDocuments = await FileUploadModel.find({ _id: { $in: ids } });
+      const objectIds = ids.map((id: string) => new mongoose.Types.ObjectId(id));
+      const deletedDocuments = await FileUploadModel.find({ _id: { $in: objectIds } });
       const files: FileUpload[] = [];
       for (let index = 0; index < deletedDocuments.length; index++) {
         try {
-          await fs.unlink(`${path.join(__dirname, "../../public/images")}/${deletedDocuments[index].fileName}`);
+          await fs.unlink(`${path.join(__dirname, "../../public/images")}/${deletedDocuments[index].name}`);
           const documentDelete = await FileUploadModel.deleteOne({ _id: deletedDocuments[index]._id });
           if (!!documentDelete?.deletedCount) {
             files.push(deletedDocuments[index]);
@@ -63,19 +65,19 @@ export default class FileUploadController {
     }
   };
 
-  public static updateUseFileStatus = async (ids: string[], isUse: boolean): Promise<ApiResponseValue<ErrorResponse[]>> => {
+  public static updateUseFileStatus = async (ids: string[], isUse: boolean): Promise<ApiResponseValue<number | ErrorResponse[]>> => {
     try {
       const currentDate = new Date();
       const currentDateUTC = new Date(Date.UTC(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), currentDate.getHours(), currentDate.getMinutes(), currentDate.getSeconds(), 0))
-      await FileUploadModel.updateMany({ _id: { $in: ids } }, {
+      const result = await FileUploadModel.updateMany({ _id: { $in: ids } }, {
         $set: { isUse: isUse, updatedAt: currentDateUTC }
-      });
+      }, {new: true});
       return ({
         statusCode: 200,
         statusText: 'File update is successful.',
         totalCount: 0,
         page: 0,
-        data: null
+        data: result.modifiedCount
       });
     } catch (error) {
       return new Promise((resolve) => {
@@ -90,9 +92,10 @@ export default class FileUploadController {
     }
   };
 
-  public static getFilesByFileName = async (names: string[]): Promise<ApiResponseValue<FileUpload[] | ErrorResponse[]>> => {
+  public static getFilesByIds = async (ids: string[]): Promise<ApiResponseValue<FileUpload[] | ErrorResponse[]>> => {
     try {
-      const files = await FileUploadModel.find({ fileName: { $in: names } });
+      const objectIds = ids.map((id: string) => new mongoose.Types.ObjectId(id));
+      const files = await FileUploadModel.find({ _id: { $in: objectIds } });
       return ({
         statusCode: 200,
         statusText: 'Get file is successful.',
@@ -107,7 +110,7 @@ export default class FileUploadController {
           statusText: 'Something is wrong.',
           totalCount: 0,
           page: 0,
-          data: [{ message: 'Server error', translateKey: 'server_error' }]
+          data: [{ message: JSON.stringify(error), translateKey: 'server_error' }]
         });
       });
     }

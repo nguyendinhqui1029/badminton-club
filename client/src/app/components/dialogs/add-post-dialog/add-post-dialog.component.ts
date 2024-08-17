@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { AvatarModule } from 'primeng/avatar';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { InputTextareaModule } from 'primeng/inputtextarea';
@@ -6,11 +6,13 @@ import { DropdownModule } from 'primeng/dropdown';
 import { CommonOption } from '@app/models/common-option.model';
 import { scopePost } from '@app/constants/common.constant';
 import { ButtonModule } from 'primeng/button';
+import { UploadFileComponent } from '@app/components/upload-file/upload-file.component';
+import { FileModel } from '@app/models/file-upload.model';
 
 @Component({
   selector: 'app-add-post-dialog',
   standalone: true,
-  imports: [ButtonModule, AvatarModule, InputTextareaModule, DropdownModule],
+  imports: [ButtonModule, AvatarModule, InputTextareaModule, DropdownModule, UploadFileComponent],
   templateUrl: './add-post-dialog.component.html',
   styleUrl: './add-post-dialog.component.scss',
   providers: [DialogService]
@@ -41,6 +43,8 @@ export class AddPostDialogComponent implements OnInit {
   ];
   selectedBackground: CommonOption = this.backgroundConfigOptions[0];
 
+  images = signal<FileModel[]>([]);
+  
   ngOnInit(): void {
     this.dialogService
   }
