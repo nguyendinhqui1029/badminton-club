@@ -1,23 +1,26 @@
-<div class="flex justify-between px-4 py-2" >
-    <app-logo></app-logo>
-    <div class="flex gap-4 items-center">
-        <span class="pi pi-search text-3xl cursor-pointer"></span>
-        <p-avatar 
-        image="https://primefaces.org/cdn/primeng/images/demo/avatar/asiyajavayant.png" 
-        shape="circle" />
+
+<div class="bg-white">
+    <div class="flex justify-between px-4 py-2" >
+        <app-logo></app-logo>
+        <div class="flex gap-4 items-center">
+            <span class="pi pi-search text-3xl cursor-pointer"></span>
+            <p-avatar 
+            image="https://primefaces.org/cdn/primeng/images/demo/avatar/asiyajavayant.png" 
+            shape="circle" />
+        </div>
     </div>
+    <nav class="flex justify-between px-4 py-2 items-center">
+        <span 
+            [routerLink]="link.HOME.ROOT" routerLinkActive="border-b-2 border-secondary-color" 
+            class="pi pi-home text-3xl cursor-pointer"></span>
+        <!-- <span class="pi pi-shop text-2xl"></span> -->
+        <!-- <span class="pi pi-users text-2xl"></span> -->
+         <!-- <span class="pi pi-cog text-2xl"></span> -->
+         
+        <span [routerLink]="link.PAYMENT.ROOT" routerLinkActive="border-b-2 border-secondary-color"  class="pi pi-money-bill text-3xl cursor-pointer"></span>
+        <span [routerLink]="link.ATTENDANCE.ROOT" routerLinkActive="border-b-2 border-secondary-color" class="pi pi-calendar-clock text-3xl cursor-pointer"></span>
+        <span [routerLink]="link.EVENTS.ROOT" routerLinkActive="border-b-2 border-secondary-color" class="pi pi-gift text-3xl cursor-pointer"></span>
+        <span [routerLink]="link.NOTIFY.ROOT" routerLinkActive="border-b-2 border-secondary-color" class="pi pi-bell text-3xl cursor-pointer"></span>
+        <span [routerLink]="link.LOGIN.ROOT" routerLinkActive="border-b-2 border-secondary-color" class="pi pi-sign-in text-3xl cursor-pointer"></span>
+    </nav>
 </div>
-<nav class="flex justify-between px-4 py-2 items-center">
-    <span 
-        [routerLink]="link.HOME.ROOT" routerLinkActive="border-b-2 border-secondary-color" 
-        class="pi pi-home text-3xl cursor-pointer"></span>
-    <!-- <span class="pi pi-shop text-2xl"></span> -->
-    <!-- <span class="pi pi-users text-2xl"></span> -->
-     <!-- <span class="pi pi-cog text-2xl"></span> -->
-     
-    <span [routerLink]="link.PAYMENT.ROOT" routerLinkActive="border-b-2 border-secondary-color"  class="pi pi-money-bill text-3xl cursor-pointer"></span>
-    <span [routerLink]="link.ATTENDANCE.ROOT" routerLinkActive="border-b-2 border-secondary-color" class="pi pi-calendar-clock text-3xl cursor-pointer"></span>
-    <span [routerLink]="link.EVENTS.ROOT" routerLinkActive="border-b-2 border-secondary-color" class="pi pi-gift text-3xl cursor-pointer"></span>
-    <span [routerLink]="link.NOTIFY.ROOT" routerLinkActive="border-b-2 border-secondary-color" class="pi pi-bell text-3xl cursor-pointer"></span>
-    <span [routerLink]="link.LOGIN.ROOT" routerLinkActive="border-b-2 border-secondary-color" class="pi pi-sign-in text-3xl cursor-pointer"></span>
-</nav>

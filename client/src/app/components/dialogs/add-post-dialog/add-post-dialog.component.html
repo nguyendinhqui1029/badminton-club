@@ -1,0 +1,32 @@
+<header class="flex p-4 gap-4 items-center justify-between border-b-2 border-gray-color">
+  <div class="flex gap-4">
+    <span class="pi pi-arrow-left font-bold text-2xl cursor-pointer" (click)="onClickCloseDialog()"></span>
+    <h4 class="font-bold text-xl">Tạo bài viết</h4>
+  </div>
+  <p-button label="Đăng bài" rounded (click)="onClickSubmit()"/>
+</header>
+<section class="flex flex-col gap-4">
+  <div class="flex gap-2 px-4 w-full mt-2 items-start">
+    <p-avatar styleClass="w-14 h-14" size="large"  image="https://primefaces.org/cdn/primeng/images/demo/avatar/asiyajavayant.png" shape="circle" />
+    <div class="flex flex-col gap-2">
+      <h4 class="font-bold text-xl">Name</h4>
+      <p-dropdown 
+      [options]="postScopeOptions" 
+      optionLabel="label" 
+      optionValue="value" 
+      placeholder="Ai có thể xem?" />
+    </div>
+  </div>
+
+
+  <div class="flex gap-2 px-4 w-full">
+    <textarea [placeholder]="placeholder" class="font-medium bg-cover bg-no-repeat bg-center text-xl w-full h-250 {{selectedBackground.label}} {{selectedBackground.value}}" rows="5" pInputTextarea></textarea>
+  </div>
+  
+  <div class="flex gap-2 px-4 py-1 w-full overflow-auto">
+    @for(item of backgroundConfigOptions; track item.label) {
+      <span (click)="onClickSelectBackground(item)" [class]="item.label" class="border-2 border-gray-color rounded-md min-w-10 min-h-10 bg-cover bg-no-repeat bg-center"></span>
+    }
+
+  </div>
+</section>
