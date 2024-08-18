@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, PLATFORM_ID, signal } from '@angular/core';
 import { AvatarModule } from 'primeng/avatar';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { InputTextareaModule } from 'primeng/inputtextarea';
@@ -8,6 +8,8 @@ import { scopePost } from '@app/constants/common.constant';
 import { ButtonModule } from 'primeng/button';
 import { UploadFileComponent } from '@app/components/upload-file/upload-file.component';
 import { FileModel } from '@app/models/file-upload.model';
+import { TagFriendsDialogComponent } from '@app/components/dialogs/tag-friends-dialog/tag-friends-dialog.component';
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-add-post-dialog',
@@ -17,10 +19,12 @@ import { FileModel } from '@app/models/file-upload.model';
   styleUrl: './add-post-dialog.component.scss',
   providers: [DialogService]
 })
-export class AddPostDialogComponent implements OnInit {
+export class AddPostDialogComponent implements OnInit, OnDestroy {
   private dynamicDialogRef: DynamicDialogRef = inject(DynamicDialogRef);
-  private dialogService: DialogService = inject(DialogService);
+  private dynamicDialogTagFriendRef: DynamicDialogRef = inject(DynamicDialogRef);
 
+  private dialogService: DialogService = inject(DialogService);
+  private platformId: Object = inject(PLATFORM_ID);
 
   title: string = 'Tạo bài viết';
   placeholder: string = 'Hôm nay bạn muốn chia sẻ gì?';
@@ -59,5 +63,29 @@ export class AddPostDialogComponent implements OnInit {
 
   onClickSubmit() {
     console.log('onClickSubmit')
+  }
+
+  openTagFriendDialog() {
+    this.dynamicDialogTagFriendRef = this.dialogService.open(TagFriendsDialogComponent, {
+      showHeader: false,
+      width: '450px',
+      height: '100vh',
+      modal: true,
+      transitionOptions: '450ms',
+      appendTo: 'body'
+    });
+
+    if(isPlatformBrowser(this.platformId) && window.matchMedia('(max-width: 500px)').matches) {
+      this.dialogService.getInstance(this.dynamicDialogTagFriendRef).maximize();
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.dynamicDialogRef) {
+        this.dynamicDialogRef.close();
+    }
+    if (this.dynamicDialogTagFriendRef) {
+      this.dynamicDialogTagFriendRef.close();
+    } 
   }
 }

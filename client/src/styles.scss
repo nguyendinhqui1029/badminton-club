@@ -7,10 +7,14 @@
 p-avatar {
     @apply flex items-center;
 }
+
 .p-avatar {
     @apply h-10 w-10;
 }
-.p-dropdown  {
+.p-checkbox {
+    @apply w-6 h-6;
+}
+.p-dropdown,.p-checkbox {
     @apply border-2 rounded-md;
 }
 .p-inputtext:not(.p-dropdown-label) {

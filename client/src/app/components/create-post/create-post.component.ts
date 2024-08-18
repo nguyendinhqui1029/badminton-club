@@ -24,7 +24,8 @@ export class CreatePostComponent implements OnDestroy {
       showHeader: false,
       width: '450px',
       modal: true,
-      transitionOptions: '450ms'
+      transitionOptions: '450ms',
+      appendTo: 'body'
     });
 
     if(isPlatformBrowser(this.platformId) && window.matchMedia('(max-width: 500px)').matches) {
@@ -37,5 +38,5 @@ export class CreatePostComponent implements OnDestroy {
     if (this.dynamicDialogRef) {
         this.dynamicDialogRef.close();
     }
-}
+  }
 }

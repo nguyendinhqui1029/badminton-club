@@ -1,0 +1,10 @@
+<app-search-container-dialog [initializeValue]="selectedItems()" [items]="items()"
+  (onCloseDialog)="onCloseDialog($event)">
+    <ng-template #contentRowTemplate let-data>
+        <div class="flex gap-3 items-center">
+            <p-avatar styleClass="w-10 h-10" size="large"
+              [image]="data.item?.avatar" shape="circle" />
+            <p class="text-xl">{{data.item?.name}}</p>
+        </div>
+    </ng-template>
+</app-search-container-dialog>

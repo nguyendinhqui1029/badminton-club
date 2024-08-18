@@ -1,1 +1,35 @@
-<p>search-container-dialog works!</p>
+<header class="flex p-4 gap-4 items-center justify-between border-b-2 border-gray-color">
+  <div class="flex gap-4">
+    <span class="pi pi-arrow-left font-bold text-2xl cursor-pointer" (click)="onClickCloseDialog()"></span>
+    <h4 class="font-bold text-xl">{{searchTitle()}}</h4>
+  </div>
+  @if(isMultipleSelect()){
+    <p-button [label]="submitButtonLabel()" rounded (click)="onClickSubmit()" />
+  }
+</header>
+
+<section class="p-4">
+      <input class="w-full" type="text" 
+      pInputText rounded [placeholder]="searchPlaceholder()"
+      (input)="onInputChange($event)" />
+</section>
+
+<section class="flex flex-col gap-4 p-4">
+  <h3 class="font-bold text-md">{{resultLabel()}}</h3>
+  <div class="flex flex-col gap-2">
+    @for(item of items(); track item; let index = $index;) {
+      <label class="flex gap-2 items-center justify-between cursor-pointer" [for]="item.id" (click)="onOnlyItemSelect(item.id || '')">
+        <ng-template [ngTemplateOutlet]="contentRowTemplate" 
+        [ngTemplateOutletContext]="{ $implicit: { item: item, index: index} }">
+        </ng-template>
+        @if(isMultipleSelect()) {
+          <p-checkbox 
+          [(ngModel)]="selectedItems"
+          [value]="item?.id" 
+          [inputId]="item?.id" 
+          [ngModelOptions]="{standalone: true}"/>
+        }
+      </label>
+    }
+  </div>
+</section>
