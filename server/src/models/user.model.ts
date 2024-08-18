@@ -1,6 +1,10 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import { getUTCDate } from '../utils/date.util';
 
+export interface SearchUserResponse {
+  name: string;
+  avatar: string;
+}
 // Define interface for TypeScript type-checking
 export interface User extends Document {
   point: number;
@@ -11,6 +15,7 @@ export interface User extends Document {
   role: string[];
   avatar: string;
   birthday: Date;
+  idFriends: string[];
   status: 'BLOCK' | 'WAITING' | 'ON' | 'OFF';
   createdAt: Date;
   updatedAt: Date;
@@ -57,6 +62,10 @@ const userSchema: Schema = new Schema({
     type: Date,
     required: true
   },
+  idFriends: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'user',
+  }],
   status: {
     type: String,
     enum: ['BLOCK', 'WAITING', 'ON', 'OFF'],

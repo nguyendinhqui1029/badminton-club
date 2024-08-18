@@ -7,47 +7,123 @@ class UserController {
   constructor() {
     this.userService = new UserService();
   }
+  public searchFriendUserByKeyword = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const id = req.params['id'];
+      const keyword = req.query['keyword']?.toString() || '';
+      const users = await this.userService.searchAllUsers(id,keyword);
+      res.status(200).json({
+        statusCode: 200,
+        statusText: 'Get user is successful.',
+        totalCount: 0,
+        page: 0,
+        data: users 
+      });
+    } catch (error: any) {
+      res.status(200).json({
+        statusCode: 500,
+        statusText: 'Get user is fail.',
+        totalCount: 0,
+        page: 0,
+        data: error.message
+      });
+    }
+  };
 
   public getAllUsers = async (req: Request, res: Response): Promise<void> => {
     try {
       const users = await this.userService.getAllUsers();
-      res.status(200).json(users);
+      res.status(200).json({
+        statusCode: 200,
+        statusText: 'Get user is successful.',
+        totalCount: 0,
+        page: 0,
+        data: users || []
+      });
     } catch (error: any) {
-      res.status(500).json({ message: error.message });
+      res.status(200).json({
+        statusCode: 500,
+        statusText: 'Get user is fail.',
+        totalCount: 0,
+        page: 0,
+        data: error.message
+      });
     }
   };
 
   public getUserById = async (req: Request, res: Response): Promise<void> => {
     try {
       const user = await this.userService.getUserById(req.params.id);
-      res.status(200).json(user);
+      res.status(200).json({
+        statusCode: 200,
+        statusText: 'Get user is successful.',
+        totalCount: 0,
+        page: 0,
+        data: user || []
+      });
     } catch (error: any) {
-      res.status(500).json({ message: error.message });
+      res.status(200).json({
+        statusCode: 500,
+        statusText: 'Get user is fail.',
+        totalCount: 0,
+        page: 0,
+        data: error.message
+      });
     }
   };
 
   public createUser = async (req: Request, res: Response): Promise<void> => {
     try {
       const newUser = await this.userService.createUser(req.body);
-      res.status(201).json(newUser);
+      res.status(201).json({
+        statusCode: 201,
+        statusText: 'Get user is successful.',
+        totalCount: 0,
+        page: 0,
+        data: newUser
+      });
     } catch (error: any) {
-      res.status(500).json({ message: error.message });
+      res.status(200).json({
+        statusCode: 500,
+        statusText: 'Get user is fail.',
+        totalCount: 0,
+        page: 0,
+        data: error.message
+      });
     }
   };
 
   public updateUser = async (req: Request, res: Response): Promise<void> => {
     try {
       const updatedUser = await this.userService.updateUser(req.params.id, req.body);
-      res.status(200).json(updatedUser);
+      res.status(201).json({
+        statusCode: 201,
+        statusText: 'Get user is successful.',
+        totalCount: 0,
+        page: 0,
+        data: updatedUser
+      });
     } catch (error: any) {
-      res.status(500).json({ message: error.message });
+      res.status(200).json({
+        statusCode: 500,
+        statusText: 'Get user is fail.',
+        totalCount: 0,
+        page: 0,
+        data: error.message
+      });
     }
   };
 
   public deleteUser = async (req: Request, res: Response): Promise<void> => {
     try {
-      await this.userService.deleteUser(req.params.id);
-      res.status(204).end();
+      const deletedUser = await this.userService.deleteUser(req.params.id,);
+      res.status(204).json({
+        statusCode: 204,
+        statusText: 'Get user is successful.',
+        totalCount: 0,
+        page: 0,
+        data: deletedUser
+      });
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
