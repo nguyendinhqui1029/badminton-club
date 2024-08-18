@@ -6,7 +6,7 @@ class PostService {
   }
 
   public async getById(id: string): Promise<Post | null> {
-    return await PostModel.findById(id).populate('idUserLike').populate('idComment');
+    return await PostModel.findById(id).populate('createdBy','id name avatar').populate('idUserLike').populate('idComment').populate('tagFriends', 'name id');
   }
 
   public async create(Post: Post): Promise<Post> {

@@ -11,6 +11,9 @@ p-avatar {
 .p-avatar {
     @apply h-10 w-10;
 }
+.p-avatar>img {
+    @apply w-full aspect-square;
+}
 .p-checkbox {
     @apply w-6 h-6;
 }

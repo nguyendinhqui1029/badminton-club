@@ -11,8 +11,6 @@ export const responseHandlerInterceptor: HttpInterceptorFn = (req, next) => {
           const data = JSON.stringify(event.body.data).replace(/\"_id\":/gm,'\"id\":');
           event.body.data = JSON.parse(data);
         }
-        // Ví dụ: log phản hồi
-        console.log('Response:', event);
       }
       return event;
     }),

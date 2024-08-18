@@ -1,10 +1,10 @@
 <app-search-container-dialog [initializeValue]="selectedItems()" [items]="items()"
-  (onCloseDialog)="onCloseDialog($event)">
+  (onCloseDialog)="onCloseDialog($event)" [isMultipleSelect]="true" (searchInputChange)="searchInputChange($event)">
     <ng-template #contentRowTemplate let-data>
         <div class="flex gap-3 items-center">
-            <p-avatar styleClass="w-10 h-10" size="large"
+            <p-avatar styleClass="w-12 h-12" size="large"
               [image]="data.item?.avatar" shape="circle" />
-            <p class="text-xl">{{data.item?.name}}</p>
+            <span class="text-base">{{data.item?.name}}</span>
         </div>
     </ng-template>
 </app-search-container-dialog>

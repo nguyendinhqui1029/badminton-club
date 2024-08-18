@@ -12,6 +12,11 @@ export interface Post extends Document {
   hashTag: string[];
   createdAt: string;
   updatedAt: string;
+  createdBy: string;
+  tagFriends: string[];
+  tagLocation: string;
+  feelingIcon: string;
+  scope: 'Everyone' | 'Only_Me' | 'Friends';
 }
 
 const postSchema = new mongoose.Schema({
@@ -28,15 +33,28 @@ const postSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
-  idUserLike: {
-    type: Array<mongoose.Schema.Types.ObjectId>,
+  idUserLike: [{
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'User', // Tham chiếu đến model User
     default: []
-  },
-  idComment: {
-    type: Array<mongoose.Schema.Types.ObjectId>,
-    ref: 'Comment', // Tham chiếu đến model Comment
+  }],
+  idComment: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User', // Tham chiếu đến model User
     default: []
+  }],
+  tagFriends: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User', // Tham chiếu đến model User
+    default: []
+  }],
+  tagLocation: {
+    type: String,
+    trim: true
+  },
+  feelingIcon: {
+    type: String,
+    trim: true
   },
   shareLink: {
     type: String,
@@ -45,6 +63,16 @@ const postSchema = new mongoose.Schema({
   hashTag: {
     type: [String],
     default: []
+  },
+  scope: {
+    type: String,
+    enum: ['Everyone', 'Only_Me', 'Friends'],
+    default: 'Everyone'
+  },
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User', 
+    required: true
   },
   createdAt: {
     type: String,

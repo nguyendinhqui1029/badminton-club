@@ -1,5 +1,5 @@
 import { hashPassword } from "../utils/common.util";
-import UserModel, { SearchUserResponse, User } from "../models/user.model";
+import UserModel, { User } from "../models/user.model";
 import bcrypt from 'bcrypt';
 import env from '../config/env';
 import jwt, { JwtPayload } from 'jsonwebtoken';
@@ -7,10 +7,6 @@ import mongoose from "mongoose";
 
 class UserService {
   public async searchAllUsers(idUser: string, keyword: string): Promise<any[]> {
-    // Convert keyword to ObjectId if it's a valid ObjectId
-    const isObjectId = mongoose.Types.ObjectId.isValid(keyword);
-    const objectId = isObjectId ? new mongoose.Types.ObjectId(keyword) : null;
-
     const pipeline = [
       {
         $match: {
@@ -27,20 +23,27 @@ class UserService {
       },
       {
         $unwind: {
-          path: '$friends',        // Chuyển đổi mảng friends thành các document riêng biệt
-          preserveNullAndEmptyArrays: true // Giữ lại document nếu không có bạn bè
+          path: '$friends',
+          preserveNullAndEmptyArrays: true
         }
       },
       {
         $match: {
+          'friends._id': { $ne: new mongoose.Types.ObjectId(idUser) },
           $or: [
-            { 'friends.name': { $regex: keyword, $options: 'i' } }, // Tìm kiếm theo tên
-            { 'friends._id': { $exists: false } } // Giữ lại document không có bạn bè
+            {
+              'friends.name': { $regex: keyword, $options: 'i' }
+            },
+            {
+              $expr: { $eq: [keyword, ''] }
+            }
           ]
         }
       },
       {
         $project: {
+          'name': 1,
+          'avatar': 1,
           'friends._id': 1,
           'friends.name': 1,
           'friends.avatar': 1

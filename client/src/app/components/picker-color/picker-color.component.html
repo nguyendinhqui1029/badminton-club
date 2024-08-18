@@ -1,0 +1,11 @@
+<div class="flex gap-2 py-2 overflow-x-auto">
+  @for(item of backgroundConfigOptions(); track item.value) {
+  <span (click)="onClickSelectBackground(item)" [class]="item.value" [class.cursor-pointer]="!isDisabled"
+    [class.cursor-not-allowed]="isDisabled"
+    class="flex items-start justify-end border-2 border-gray-color rounded-md min-w-10 min-h-10 bg-cover bg-no-repeat bg-center">
+    @if(isSelected.value === item.value) {
+    <span [class]="item.label" class="font-bold pi pi-check text-xl"></span>
+    }
+  </span>
+  }
+</div>

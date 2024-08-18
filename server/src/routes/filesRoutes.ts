@@ -41,26 +41,26 @@ router.post('/', upload.array('files', 10), [
   response.status(200).send(fileUploadResult);
 });
 
-router.delete('/', [param('ids').custom((value, { req }) => {
-  if (!req.query?.ids?.length) {
-    throw new Error(JSON.stringify({ message: 'Field ids is required.', translateKey: 'ids_required' }));
+router.delete('/', [param('fileNames').custom((value, { req }) => {
+  if (!req.query?.fileNames?.length) {
+    throw new Error(JSON.stringify({ message: 'Field fileNames is required.', translateKey: 'fileNames_required' }));
   }
   return true;
 })], ValidationService.handleValidationErrors, async (request: Request, response: Response) => {
-  const ids = eval(request.query['ids'] as string);
-  const fileUploadResult = await FileUploadController.deleteFileUploadByIds(ids);
+  const fileNames = eval(request.query['fileNames'] as string);
+  const fileUploadResult = await FileUploadController.deleteFileUploadByIds(fileNames);
   response.status(200).send(fileUploadResult);
 });
 
-router.put('/', [body('ids').custom((value, { req }) => {
-  if (!req.body?.ids?.length) {
-    throw new Error(JSON.stringify({ message: 'Field ids is required.', translateKey: 'ids_required' }));
+router.put('/', [body('fileNames').custom((value, { req }) => {
+  if (!req.body?.fileNames?.length) {
+    throw new Error(JSON.stringify({ message: 'Field fileNames is required.', translateKey: 'fileNames_required' }));
   }
   return true;
 })], ValidationService.handleValidationErrors, async (request: Request, response: Response) => {
-  const ids = eval(request.body['ids'] as string);
+  const fileNames = eval(request.body['fileNames'] as string);
   const isUse = eval(request.body['isUse'] as string);
-  const fileUploadResult = await FileUploadController.updateUseFileStatus(ids, isUse);
+  const fileUploadResult = await FileUploadController.updateUseFileStatus(fileNames, isUse);
   response.status(200).send(fileUploadResult);
 })
 

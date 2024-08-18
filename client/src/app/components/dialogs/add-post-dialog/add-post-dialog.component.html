@@ -3,49 +3,53 @@
     <span class="pi pi-arrow-left font-bold text-2xl cursor-pointer" (click)="onClickCloseDialog()"></span>
     <h4 class="font-bold text-xl">{{title}}</h4>
   </div>
-  <p-button label="Đăng bài" rounded (click)="onClickSubmit()" />
+  <p-button class="min-w-fit" [disabled]="postFormGroup?.invalid" [label]="buttonSubmitTitle" rounded
+    (click)="onClickSubmit()" />
 </header>
-<section class="flex flex-col gap-4">
-  <div class="flex gap-2 px-4 w-full mt-2 items-start">
-    <p-avatar styleClass="w-14 h-14" size="large"
-      image="https://primefaces.org/cdn/primeng/images/demo/avatar/asiyajavayant.png" shape="circle" />
-    <div class="flex flex-col gap-2">
-      <h4 class="font-bold text-xl">Name</h4>
-      <p-dropdown [options]="postScopeOptions" optionLabel="label" optionValue="value" placeholder="Ai có thể xem?" />
+<form [formGroup]="postFormGroup">
+  <section class="flex flex-col gap-4">
+    <div class="flex gap-2 px-4 w-full mt-2 items-start">
+      <p-avatar styleClass="w-14 h-14" size="large"
+        [image]="titleGroup()?.avatar" shape="circle" />
+      <div class="flex flex-col gap-2">
+        <div class="flex flex-wrap items-center" [innerHTML]="userStatusDisplay()">
+
+        </div>
+        <p-dropdown styleClass="h-8 items-center" formControlName="scope" [options]="postScopeOptions"
+          optionLabel="label" optionValue="value" />
+      </div>
     </div>
-  </div>
 
+    <div class="flex gap-2 px-4 w-full">
+      <textarea formControlName="content" [placeholder]="placeholder"
+        class="font-medium bg-cover bg-no-repeat bg-center text-xl w-full h-250 {{selectedBackgroundClass}}" rows="5"
+        pInputTextarea></textarea>
+    </div>
 
-  <div class="flex gap-2 px-4 w-full">
-    <textarea [placeholder]="placeholder"
-      class="font-medium bg-cover bg-no-repeat bg-center text-xl w-full h-250 {{selectedBackground.label}} {{selectedBackground.value}}"
-      rows="5" pInputTextarea></textarea>
-  </div>
+    <div
+      class="flex gap-2 px-4 w-full scroll-smooth accent-transparent appearance-none cursor-all-scroll caret-transparent pointer-events-auto overflow-x-auto">
+      <app-picker-color formControlName="background"></app-picker-color>
+    </div>
 
-  <div class="flex gap-2 px-4 py-1 w-full overflow-auto">
-    @for(item of backgroundConfigOptions; track item.label) {
-    <span (click)="onClickSelectBackground(item)" [class]="item.label"
-      class="border-2 border-gray-color rounded-md min-w-10 min-h-10 bg-cover bg-no-repeat bg-center"></span>
-    }
-  </div>
+    <div class="flex gap-2 px-4 py-1 w-full overflow-auto">
+      <app-upload-file #fileUploadRef formControlName="images"></app-upload-file>
+    </div>
 
-  <div class="flex gap-2 px-4 py-1 w-full overflow-auto">
-    <app-upload-file [imageListInput]="images()"></app-upload-file>
-  </div>
-  <div class="flex gap-2 px-4 py-1 w-full overflow-auto">
-    <ul class="flex flex-col gap-3">
-      <li class="flex gap-2 items-center cursor-pointer" (click)="openTagFriendDialog()">
-        <span class="pi pi-user-plus text-2xl"> </span>
-        <label class="leading-6 text-xl">Tag name</label>
-      </li>
-      <li class="flex gap-2 items-center cursor-pointer">
-        <span class="pi pi-map-marker text-2xl"> </span>
-        <label class="leading-6 text-xl">Add location</label>
-      </li>
-      <li class="flex gap-2 items-center cursor-pointer">
-        <span class="pi pi-face-smile text-2xl"> </span>
-        <label class="leading-6 text-xl">Feeling</label>
-      </li>
-    </ul>
-  </div>
-</section>
+    <div class="flex gap-2 px-4 py-1 w-full overflow-auto">
+      <ul class="flex flex-col gap-3">
+        <li class="flex gap-2 items-center cursor-pointer" (click)="openTagFriendDialog()">
+          <span class="pi pi-user-plus text-2xl"> </span>
+          <label class="leading-6 text-xl">Tag name</label>
+        </li>
+        <li class="flex gap-2 items-center cursor-pointer">
+          <span class="pi pi-map-marker text-2xl"> </span>
+          <label class="leading-6 text-xl">Add location</label>
+        </li>
+        <li class="flex gap-2 items-center cursor-pointer">
+          <span class="pi pi-face-smile text-2xl"> </span>
+          <label class="leading-6 text-xl">Feeling</label>
+        </li>
+      </ul>
+    </div>
+  </section>
+</form>

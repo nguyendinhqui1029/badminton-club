@@ -25,7 +25,10 @@ export class CreatePostComponent implements OnDestroy {
       width: '450px',
       modal: true,
       transitionOptions: '450ms',
-      appendTo: 'body'
+      appendTo: 'body',
+      data: {
+        id: null
+      }
     });
 
     if(isPlatformBrowser(this.platformId) && window.matchMedia('(max-width: 500px)').matches) {

@@ -1,8 +1,8 @@
 <div class="flex gap-4">
-  @for(item of imageList(); track item.id) {
-  <div style.backgroundImage="url('{{item.linkCDN}}')"
+  @for(item of imageList(); track item) {
+  <div style.backgroundImage="url('{{item}}')"
     class="flex justify-end bg-cover bg-no-repeat bg-center items-start border-2 border-gray-color rounded-xl w-32 h-32 bg-gray-100">
-    <span (click)="handleRemoveFile(item.id)" class="pi pi-times-circle text-2xl cursor-pointer mt-1 mr-1"></span>
+    <span (click)="handleRemoveFile(item)" class="pi pi-times-circle text-2xl cursor-pointer mt-1 mr-1"></span>
   </div>
   }
   @if(isShowButtonAdd()) {

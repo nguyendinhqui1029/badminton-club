@@ -1,29 +1,63 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, EventEmitter, inject, input, OnChanges, Output, signal, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, forwardRef, inject, input, OnChanges, Output, signal, SimpleChanges, ViewChild } from '@angular/core';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { FileModel } from '@app/models/file-upload.model';
 import { FileService } from '@app/services/files.service';
 import { FileUploadModule } from 'primeng/fileupload';
+import { concatMap, forkJoin } from 'rxjs';
 @Component({
   selector: 'app-upload-file',
   standalone: true,
   imports: [FileUploadModule, CommonModule],
   templateUrl: './upload-file.component.html',
-  styleUrl: './upload-file.component.scss'
+  styleUrl: './upload-file.component.scss',
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => UploadFileComponent),
+      multi: true
+    }
+  ]
 })
-export class UploadFileComponent implements OnChanges {
-
-  imageListInput = input<FileModel[]>([]);
+export class UploadFileComponent implements ControlValueAccessor {
+ 
   isShowButtonAdd = input<boolean>(true);
-  @Output() onFileChangeEvent = new EventEmitter<FileModel[]>();
   @ViewChild('fileUploadElement') fileUploadElement!: ElementRef;
+  @Output() changeStatusFileDone = new EventEmitter();
+
   private fileService: FileService = inject(FileService);
 
-  imageList = signal<FileModel[]>([]);
+  public onChange!: Function;
+  public onTouched!: Function;
+  public isDisabled: boolean = false;
+  public imageList = signal<string[]>([]);
+  public fileDeleted: string[] = [];
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['imageListInput'].currentValue.length) {
-      this.imageList.set(changes['imageListInput'].currentValue);
+  public requestChangeStatusFile(callback: Function) {
+    this.fileService.updateIsUsedFile({
+      fileNames: this.imageList(),
+      isUse: true
+    }).pipe(concatMap(()=>this.fileService.removeFile(this.fileDeleted))).subscribe(()=> callback());
+  }
+
+  writeValue(value: string[]): void {
+    if(value && value.length) {
+      this.imageList.set(value);
+      return;
     }
+    this.imageList.set([])
+  }
+
+  registerOnChange(fn: any): void {
+    this.onChange = fn;
+  }
+
+  registerOnTouched(fn: any): void {
+    this.onTouched = fn;
+  }
+
+  setDisabledState?(isDisabled: boolean): void {
+    this.isDisabled = isDisabled;
   }
 
   openDialogSelectFile() {
@@ -39,36 +73,23 @@ export class UploadFileComponent implements OnChanges {
 
     this.fileService.uploadFile(formData).subscribe((response) => {
       if (response.statusCode === 200) {
-        this.imageList.update((value: FileModel[]) => {
-          value.push(...response.data.map((item: FileModel) => ({
-            id: item.id,
-            name: item.name,
-            type: item.type,
-            linkCDN: item.linkCDN
-          })));
+        this.imageList.update((value: string[]) => {
+          value.push(...response.data.map((item: FileModel)=>item.linkCDN));
           return value;
         });
-        this.onFileChangeEvent.next(this.imageList());
+        this.onChange(this.imageList());
+        this.onTouched();
       }
     });
   }
 
-  handleRemoveFile(id: string) {
-    this.fileService.removeFile([id]).subscribe((response)=>{
-      if(response.statusCode === 200) {
-        this.imageList.update((value: FileModel[]) => {
-          const index = value.findIndex((item: FileModel) => item.id === id);
-          if (index !== -1) {
-            value.splice(index, 1);
-          }
-          return value;
-        });
-        this.onFileChangeEvent.next(this.imageList());
-      }
+  handleRemoveFile(link: string) {
+    const fileName = link.substring(link.lastIndexOf('/') + 1);
+    this.imageList.update((value: string[]) => {
+      return value.filter((item: string)=>!item.includes(fileName));
     });
-    
+    this.fileDeleted.push(fileName)
+    this.onChange(this.imageList());
+    this.onTouched();
   }
-
-
-
 }

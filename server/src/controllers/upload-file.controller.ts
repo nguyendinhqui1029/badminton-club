@@ -29,10 +29,10 @@ export default class FileUploadController {
   };
 
 
-  public static deleteFileUploadByIds = async (ids: string[]): Promise<ApiResponseValue<FileUpload[] | ErrorResponse[]>> => {
+  public static deleteFileUploadByIds = async (fileNames: string[]): Promise<ApiResponseValue<FileUpload[] | ErrorResponse[]>> => {
     try {
-      const objectIds = ids.map((id: string) => new mongoose.Types.ObjectId(id));
-      const deletedDocuments = await FileUploadModel.find({ _id: { $in: objectIds } });
+     
+      const deletedDocuments = await FileUploadModel.find({ name: { $in: fileNames } });
       const files: FileUpload[] = [];
       for (let index = 0; index < deletedDocuments.length; index++) {
         try {
@@ -65,11 +65,11 @@ export default class FileUploadController {
     }
   };
 
-  public static updateUseFileStatus = async (ids: string[], isUse: boolean): Promise<ApiResponseValue<number | ErrorResponse[]>> => {
+  public static updateUseFileStatus = async (fileNames: string[], isUse: boolean): Promise<ApiResponseValue<number | ErrorResponse[]>> => {
     try {
       const currentDate = new Date();
       const currentDateUTC = new Date(Date.UTC(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), currentDate.getHours(), currentDate.getMinutes(), currentDate.getSeconds(), 0))
-      const result = await FileUploadModel.updateMany({ _id: { $in: ids } }, {
+      const result = await FileUploadModel.updateMany({ name: { $in: fileNames } }, {
         $set: { isUse: isUse, updatedAt: currentDateUTC }
       }, {new: true});
       return ({

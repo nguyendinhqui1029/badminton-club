@@ -32,7 +32,7 @@ export class SearchContainerDialogComponent<T extends { id?: string }> implement
 
   
   ngOnChanges(changes: SimpleChanges): void {
-    if(changes['initializeValue'].currentValue?.length) {
+    if(changes['initializeValue']?.currentValue?.length) {
       this.selectedItems.set(this.initializeValue());
     }
   }
@@ -44,7 +44,7 @@ export class SearchContainerDialogComponent<T extends { id?: string }> implement
   }
 
   mappingFinalSelectedItems(selectedItem: string[]) {
-    return this.items().filter((item: T)=> item.id && selectedItem.includes(item.id));
+    return (this.items() || []).filter((item: T)=> item.id && selectedItem.includes(item.id));
   }
 
   onClickSubmit() {
