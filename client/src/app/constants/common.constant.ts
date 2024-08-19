@@ -3,3 +3,9 @@ export const scopePost = {
     ONLY_ME: 'Only_Me',
     FRIENDS: 'Friends'
 }
+
+export const imageOrientation  = {
+    LANDSCAPE: 'landscape',
+    PORTRAIT: 'portrait',
+    SQUARE: 'square'
+}

@@ -1,0 +1,62 @@
+<div class="flex flex-col gap-4 bg-white w-full rounded-xl p-4">
+  <div class="flex gap-2 w-full items-start">
+    <p-avatar styleClass="w-10 h-10" size="large" [image]="titleGroup().avatar" shape="circle" />
+    <div class="flex gap-2 justify-between items-start w-full">
+      <div class="flex flex-col gap-1">
+        <div class="flex flex-wrap items-center" [innerHTML]="userStatusDisplay()">
+
+        </div>
+        <div class="flex gap-3">
+          <small>{{createdTime()}}</small>
+          <span [class]="scopeIcon()" class="text-sm"></span>
+        </div>
+      </div>
+      @if(hasPermission()){
+        <span (click)="onClickOpenEditPost()" class="pi pi-pen-to-square text-xl cursor-pointer"></span>
+      }
+    </div>
+  </div>
+  
+  <div class="rounded-md bg-cover bg-no-repeat bg-center  w-full h-44 p-2 {{backgroundClass()}}">
+    <p class="line-clamp-5 text-xl font-medium">{{item().content}}
+    </p>
+  </div>
+  @if(item().images.length) {
+   <app-images-grid [images]="item().images"></app-images-grid>
+  }
+  <div class="flex flex-col gap-2">
+      <p-avatarGroup>
+        @for(item of userLikeAvatar(); track item; let last=$last;) {
+          @if(last) {
+            <p-avatar 
+            styleClass="w-8 h-8 text-sm"
+            [label]="item.avatar" 
+            shape="circle"
+            size="large" 
+            [style]="{ 'background-color': '#fe5101', color: '#EBEDF0' }" />
+          } @else {
+            <p-avatar 
+          styleClass="w-8 h-8"
+          [image]="item.avatar" 
+          size="large" 
+          shape="circle" />
+          }
+        }
+    </p-avatarGroup>
+    <div class="flex items-center gap-2 justify-between">
+      
+      <div class="flex gap-2 items-center px-4 py-2 w-2/4 max-w-36 border-2 rounded-3xl bg-gray-color hover:bg-gray-300">
+        <span class="pi pi-thumbs-up text-2xl cursor-pointer"></span>
+        <small>100</small>
+      </div>
+      <div class="flex gap-2 items-center px-4 py-2 w-2/4 max-w-36 border-2 rounded-3xl bg-gray-color hover:bg-gray-300">
+        <span class="pi pi-comments text-2xl cursor-pointer"></span>
+        <small>100</small>
+      </div>
+      <div class="flex gap-2 items-center px-4 py-2 w-2/4 max-w-36 border-2 rounded-3xl bg-gray-color hover:bg-gray-300">
+        <span class="pi pi-share-alt text-2xl cursor-pointer"></span>
+        <small>10</small>
+      </div>
+    </div>
+  </div>
+</div>

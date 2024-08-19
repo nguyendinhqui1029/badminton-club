@@ -27,7 +27,7 @@ export class PickerColorComponent implements ControlValueAccessor, OnChanges {
     { value: 'bg-gradient-to-b from-royal_blue to-neon_pink', label: 'text-white placeholder:text-gray-200'},
     { value: 'bg-yellow-to-red', label: 'text-white placeholder:text-gray-200'},
     { value: 'bg-gradient-to-b from-slate_gray to-gunmetal_gray', label: 'text-white placeholder:text-gray-200'},
-    { value: 'bg-badminton', label: 'text-vivid_purple placeholder:text-gray-200'},
+    { value: 'bg-badminton', label: 'text-white placeholder:text-gray-200'},
     { value: 'bg-white_to_pink', label: 'text-black placeholder:text-gray-200'},
   ]);
   public onChange!: Function;

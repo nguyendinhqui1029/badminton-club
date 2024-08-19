@@ -3,14 +3,14 @@
     <span class="pi pi-arrow-left font-bold text-2xl cursor-pointer" (click)="onClickCloseDialog()"></span>
     <h4 class="font-bold text-xl">{{title}}</h4>
   </div>
-  <p-button class="min-w-fit" [disabled]="postFormGroup?.invalid" [label]="buttonSubmitTitle" rounded
+  <p-button class="min-w-fit" [disabled]="postFormGroup.invalid" [label]="buttonSubmitTitle" rounded
     (click)="onClickSubmit()" />
 </header>
 <form [formGroup]="postFormGroup">
   <section class="flex flex-col gap-4">
     <div class="flex gap-2 px-4 w-full mt-2 items-start">
       <p-avatar styleClass="w-14 h-14" size="large"
-        [image]="titleGroup()?.avatar" shape="circle" />
+        [image]="titleGroup().avatar" shape="circle" />
       <div class="flex flex-col gap-2">
         <div class="flex flex-wrap items-center" [innerHTML]="userStatusDisplay()">
 

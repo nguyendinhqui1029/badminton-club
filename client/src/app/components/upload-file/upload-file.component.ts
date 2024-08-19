@@ -4,7 +4,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { FileModel } from '@app/models/file-upload.model';
 import { FileService } from '@app/services/files.service';
 import { FileUploadModule } from 'primeng/fileupload';
-import { concatMap, forkJoin } from 'rxjs';
+import { concatMap, EMPTY, Observable } from 'rxjs';
 @Component({
   selector: 'app-upload-file',
   standalone: true,
@@ -34,6 +34,21 @@ export class UploadFileComponent implements ControlValueAccessor {
   public fileDeleted: string[] = [];
 
   public requestChangeStatusFile(callback: Function) {
+    if(!this.imageList().length && !this.fileDeleted.length) {
+      callback();
+      return;
+    }
+    if(!this.imageList().length && this.fileDeleted.length) {
+      this.fileService.removeFile(this.fileDeleted).subscribe(()=>callback());
+      return;
+    }
+    if(this.imageList().length && !this.fileDeleted.length) {
+      this.fileService.updateIsUsedFile({
+        fileNames: this.imageList(),
+        isUse: true
+      }).subscribe(()=>callback());
+      return;
+    }
     this.fileService.updateIsUsedFile({
       fileNames: this.imageList(),
       isUse: true

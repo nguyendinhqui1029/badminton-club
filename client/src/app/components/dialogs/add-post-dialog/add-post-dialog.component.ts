@@ -16,6 +16,7 @@ import { ValidatorService } from '@app/services/validators.service';
 import { PostService } from '@app/services/post.service';
 import { PostRequestBody, PostResponseValue } from '@app/models/post.model';
 import { PickerColorComponent } from '@app/components/picker-color/picker-color.component';
+import { take } from 'rxjs';
 
 interface UserStatus { avatar: string; userName: string; feeling?: {icon: string; value: string}; friends: string[];location: string;};
 @Component({
@@ -209,7 +210,7 @@ export class AddPostDialogComponent implements OnInit, OnDestroy {
     if(isPlatformBrowser(this.platformId) && window.matchMedia('(max-width: 500px)').matches) {
       this.dialogService.getInstance(this.dynamicDialogTagFriendRef).maximize();
     }
-    this.dynamicDialogTagFriendRef.onClose.subscribe((value: UserInfoSearch[])=>{
+    this.dynamicDialogTagFriendRef.onClose.pipe(take(1)).subscribe((value: UserInfoSearch[])=>{
       this.postFormGroup.get('tagFriends')?.setValue(value.map((item:UserInfoSearch)=>item.id));
       this.titleGroup.update((userStatus: UserStatus)=>({...userStatus, friends: value.map((item:UserInfoSearch)=>item.name)}));
     })

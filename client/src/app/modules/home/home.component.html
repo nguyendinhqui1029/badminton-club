@@ -1,2 +1,5 @@
-<app-create-post></app-create-post>
+<app-create-post (refreshDataListEvent)="handleReFreshDataList()"></app-create-post>
+@for(item of posts(); track item) {
+    <app-card [item]="item" (refreshDataListEvent)="handleReFreshDataList()"></app-card>
+}
 

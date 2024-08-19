@@ -1,9 +1,10 @@
-import { Component, inject, OnDestroy, PLATFORM_ID } from '@angular/core';
+import { Component, EventEmitter, inject, OnDestroy, Output, PLATFORM_ID } from '@angular/core';
 import { AvatarModule } from 'primeng/avatar';
 import { InputTextModule } from 'primeng/inputtext';
 import { DialogService, DynamicDialogModule, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { AddPostDialogComponent } from '@app/components/dialogs/add-post-dialog/add-post-dialog.component';
 import { isPlatformBrowser } from '@angular/common';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-create-post',
@@ -14,6 +15,7 @@ import { isPlatformBrowser } from '@angular/common';
   providers: [DialogService]
 })
 export class CreatePostComponent implements OnDestroy {
+  @Output() refreshDataListEvent = new EventEmitter();
 
   private dialogService: DialogService = inject(DialogService);
   private platformId: Object = inject(PLATFORM_ID);
@@ -34,7 +36,7 @@ export class CreatePostComponent implements OnDestroy {
     if(isPlatformBrowser(this.platformId) && window.matchMedia('(max-width: 500px)').matches) {
       this.dialogService.getInstance(this.dynamicDialogRef).maximize();
     }
-  
+    this.dynamicDialogRef.onClose.pipe(take(1)).subscribe(()=>this.refreshDataListEvent.emit())
   }
 
   ngOnDestroy() {

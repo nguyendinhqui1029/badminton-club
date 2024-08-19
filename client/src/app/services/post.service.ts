@@ -22,7 +22,7 @@ export class PostService {
         return this.http.get<ApiResponseValue<PostResponseValue>>(`${environment.apiUrl}/post/${id}`);
     }
 
-    getAllPost(): Observable<ApiResponseValue<PostResponseValue>> {
-        return this.http.get<ApiResponseValue<PostResponseValue>>(`${environment.apiUrl}/post`);
+    getAllPost(): Observable<ApiResponseValue<PostResponseValue[]>> {
+        return this.http.get<ApiResponseValue<PostResponseValue[]>>(`${environment.apiUrl}/post`);
     }
 }
