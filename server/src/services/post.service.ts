@@ -3,7 +3,10 @@ import PostModel, { Post } from "../models/post.model";
 
 class PostService {
   public async getAll(): Promise<Post[]> {
-    return await PostModel.find().populate('createdBy','id name avatar').populate('idUserLike').populate('idComment').populate('tagFriends', 'name id');
+     const result = await PostModel.find().populate('createdBy','id name avatar').populate('idUserLike').populate('idComment').populate('tagFriends', 'name id');
+     return result.sort((firstPost: Post, secondPost: Post) => {
+      return new Date(secondPost.updatedAt).getTime() - new Date(firstPost.updatedAt).getTime(); // Sắp xếp giảm dần
+    });
   }
 
   public async getById(id: string): Promise<Post | null> {
