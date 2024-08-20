@@ -29,7 +29,7 @@ module.exports = {
         'neon_pink': '#fc36fd',
         'slate_gray': '#5d6374',
         'gunmetal_gray': '#16181d'
-      },
+      }
     }
   },
   plugins: []

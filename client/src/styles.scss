@@ -116,3 +116,15 @@ p-avatar {
     font-weight: 900;
     font-style: italic;
 }
+
+@for $i from 1 through 1000 {
+    .col-span-#{$i} {
+      grid-column: span #{$i} / span #{$i};
+    }
+}
+
+@for $i from 1 through 1000 {
+    .grid-cols-#{$i} {
+        grid-template-columns: repeat(#{$i}, minmax(0, 1fr));
+    }
+}

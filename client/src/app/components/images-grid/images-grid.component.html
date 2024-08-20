@@ -1,0 +1,14 @@
+<div class="grid-cols-{{imageGridConfig.totalColumn}}" class="grid gap-1 border-2 rounded-md p-1">
+  @for(image of displayImagesByOrientation(); track image; let last=$last;) {
+  <div class="border-2 rounded-md relative w-full h-32 overflow-hidden"
+  class="col-span-{{image.orientation === imageOrientation.LANDSCAPE ? imageGridConfig.landscapeSpan : imageGridConfig.portraitSpan}}">
+    <img [src]="image.url" class="w-full h-full object-fill" />
+    @if(hasMoreImages && last) {
+      <div class="absolute z-10 right-0 top-0 w-full h-32 flex items-center justify-center bg-black bg-opacity-50 text-white text-2xl">
+        + {{imagesByOrientation().length - maxImages}}
+      </div>
+    }
+  </div>
+}
+
+</div>
