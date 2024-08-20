@@ -1,0 +1,10 @@
+[build]
+  functions = "functions"
+
+[dev]
+  publish = ".output/public"
+
+[[redirects]]
+  from = "/*"
+  to = "/"
+  status = 200
