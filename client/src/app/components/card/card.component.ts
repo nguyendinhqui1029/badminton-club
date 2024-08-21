@@ -10,22 +10,29 @@ import { take } from 'rxjs';
 import { scopePost } from '@app/constants/common.constant';
 import { getTimeDifference } from '@app/utils/date.util';
 import { ImagesGridComponent } from '@app/components/images-grid/images-grid.component';
+import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
+import { MenuModule } from 'primeng/menu';
+import { PostService } from '@app/services/post.service';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ToastModule } from 'primeng/toast';
 
 interface UserStatus { avatar: string; userName: string; feeling?: {icon: string; value: string}; friends: string[];location: string;};
 
 @Component({
   selector: 'app-card',
   standalone: true,
-  imports: [AvatarModule, AvatarGroupModule, ImagesGridComponent],
+  imports: [ConfirmDialogModule,ToastModule, AvatarModule, AvatarGroupModule, MenuModule, ImagesGridComponent],
   templateUrl: './card.component.html',
   styleUrl: './card.component.scss',
-  providers: [DialogService]
+  providers: [DialogService, PostService, ConfirmationService, MessageService]
 })
 export class CardComponent implements OnDestroy, OnInit, OnChanges {
   item = input.required<PostResponseValue>();
   @Output() refreshDataListEvent = new EventEmitter();
 
-  
+  private postService: PostService = inject(PostService);
+  private confirmationService: ConfirmationService = inject(ConfirmationService);
+  private messageService: MessageService = inject(MessageService);
   private dialogService: DialogService = inject(DialogService);
   private platformId: Object = inject(PLATFORM_ID);
   dynamicDialogRef: DynamicDialogRef | undefined;
@@ -64,7 +71,8 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
   });
   hasPermission = computed(()=> this.currentUserId === this.item().createdBy.id);
   currentUserId: string = '66c17a38d69f28009ab7ab88';
-
+  items: MenuItem[] | undefined;
+  
   ngOnChanges(changes: SimpleChanges): void {
     if(changes['item']?.currentValue) {
       const post = changes['item']?.currentValue;
@@ -117,9 +125,53 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
   }
 
   ngOnInit(): void {
+    this.items = [
+      {
+          label: 'Tính năng',
+          items: [
+              {
+                  label: 'Cập nhật',
+                  icon: 'pi pi-pen-to-square',
+                  command: () => {
+                    this.onClickOpenEditPost();
+                  }
+              },
+              {
+                  label: 'Xoá',
+                  icon: 'pi pi-upload',
+                  command: () => {
+                    this.onDeletePost();
+                  }
+              }
+          ]
+      }
+  ];
     this.backgroundClass.set(this.item().background.replace('==/==', ' '));
   }
 
+  onDeletePost() {
+    this.confirmationService.confirm({
+      message: 'Bạn có chắc chắn muốn xoá bài này không?',
+      header: 'Xác nhận',
+      icon: 'pi pi-exclamation-triangle',
+      acceptIcon:"none",
+      rejectIcon:"none",
+      rejectButtonStyleClass:"p-button-text",
+      accept: () => {
+       this.postService.deletePost(this.item().id || '').subscribe((response)=>{
+        if(response.statusCode !== 200) {
+          this.messageService.add({ severity: 'danger', summary: 'Thông báo xoá', detail: 'Bài viết chưa được xoá. Vui lòng thử lại.' })
+          return;
+        }
+        this.messageService.add({ severity: 'success', summary: 'Xác nhận', detail: 'Xoá thành công.' });
+        this.refreshDataListEvent.emit();
+       });
+      },
+      reject: () => {
+        return
+      }
+  });
+  }
   onClickOpenEditPost() {
     if(this.currentUserId !== this.item().createdBy.id){
       return;

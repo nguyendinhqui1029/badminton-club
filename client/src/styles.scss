@@ -32,7 +32,12 @@ p-avatar {
 .p-inputtext:enabled:focus {
     @apply shadow-none border-2;
 }
-
+.p-confirm-dialog>.p-dialog-content {
+    @apply px-4;
+}
+.p-dialog-content>.p-dialog-footer {
+    @apply flex justify-end gap-4;
+}
 .p-dialog .p-dialog-content {
     @apply p-0;
 }

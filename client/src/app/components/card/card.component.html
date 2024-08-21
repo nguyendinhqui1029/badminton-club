@@ -12,7 +12,10 @@
         </div>
       </div>
       @if(hasPermission()){
-        <span (click)="onClickOpenEditPost()" class="pi pi-pen-to-square text-xl cursor-pointer"></span>
+        <p-toast />
+        <p-confirmDialog />
+        <p-menu #menu [model]="items" [popup]="true" />
+        <span (click)="menu.toggle($event)" class="pi pi-ellipsis-v text-xl cursor-pointer"></span>
       }
     </div>
   </div>
