@@ -32,21 +32,41 @@ p-avatar {
 .p-inputtext:enabled:focus {
     @apply shadow-none border-2;
 }
-.p-confirm-dialog>.p-dialog-content {
-    @apply px-4;
-}
-.p-dialog-content>.p-dialog-footer {
-    @apply flex justify-end gap-4;
-}
+
 .p-dialog .p-dialog-content {
     @apply p-0;
 }
 
-.p-button {
+.p-confirm-dialog .p-dialog-content {
+    @apply px-8 py-10;
+}
+
+.p-confirm-dialog .p-dialog-footer {
+    @apply flex justify-end gap-4;
+}
+.p-confirm-dialog-accept, .p-confirm-dialog-reject {
+    @apply px-4 py-2 min-w-14 w-fit rounded-md cursor-pointer;
+}
+.p-confirm-dialog-reject {
+    @apply border-2  border-red-color text-red-color;
+}
+
+.p-confirm-dialog-reject:hover {
+    @apply bg-red-600 text-white;
+}
+
+.p-confirm-dialog-accept {
+    @apply bg-blue-500 text-white;
+}
+
+.p-confirm-dialog-accept:hover {
+    @apply bg-blue-600;
+}
+.p-button:not(.p-confirm-dialog-accept, .p-confirm-dialog-reject) {
     @apply bg-blue-500 text-white px-4 py-2;
 }
 
-.p-button:hover {
+.p-button:not(.p-confirm-dialog-accept, .p-confirm-dialog-reject):hover {
     @apply bg-blue-600;
 }
 

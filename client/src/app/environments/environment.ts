@@ -5,3 +5,7 @@ export const environment: Environment = {
     apiUrl: 'https://badminton-club-fqk6.onrender.com/api/v1',
     defaultLanguage: 'vi',
 };
+
+// apiUrl: 'http://localhost:3000/api/v1',
+
+

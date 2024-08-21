@@ -13,7 +13,7 @@
       </div>
       @if(hasPermission()){
         <p-toast />
-        <p-confirmDialog />
+        <p-confirmDialog styleClass="w-11/12 md:w-fit"/>
         <p-menu #menu [model]="items" [popup]="true" />
         <span (click)="menu.toggle($event)" class="pi pi-ellipsis-v text-xl cursor-pointer"></span>
       }

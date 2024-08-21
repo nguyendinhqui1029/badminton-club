@@ -1,5 +1,6 @@
 import { getUTCDate } from "../utils/date.util";
 import PostModel, { Post } from "../models/post.model";
+import FileUploadController from "../controllers/upload-file.controller";
 
 class PostService {
   public async getAll(): Promise<Post[]> {
@@ -22,7 +23,16 @@ class PostService {
   }
 
   public async delete(id: string): Promise<Post | null> {
-    return await PostModel.findByIdAndDelete(id, { new: true });
+    const result = await PostModel.findByIdAndDelete(id, { new: true });
+
+    if(result && result.images?.length) {
+      const fileNames = result.images.map((item: string)=>item.substring(item.lastIndexOf('/') + 1));
+      const deleteFileResponse = await FileUploadController.deleteFileUploadByIds(fileNames);
+      if(deleteFileResponse.statusCode === 200) {
+        return result;
+      }
+    }
+    return result;
   }
 }
 
