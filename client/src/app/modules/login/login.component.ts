@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
-import { LogoComponent } from '@app/components/logo/logo.component';
-
+import { InputTextModule } from 'primeng/inputtext';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [LogoComponent],
+  imports: [InputTextModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
