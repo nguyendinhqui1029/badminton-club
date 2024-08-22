@@ -137,11 +137,6 @@ export class AddPostDialogComponent implements OnInit, OnDestroy {
     this.postFormGroup.get('background')?.valueChanges.subscribe((value: string)=>{
       this.selectedBackgroundClass = value.replace('==/==', ' ');
     });
-    this.postFormGroup.get('images')?.valueChanges.subscribe((value: string)=>{
-      if(this.idPost) {
-        this.postService.updatePost(this.idPost,this.initRequestBody());
-      }
-    });
     if(this.idPost) {
       this.title = 'Chỉnh sữa bài viết';
       this.buttonSubmitTitle= 'Sữa bài';

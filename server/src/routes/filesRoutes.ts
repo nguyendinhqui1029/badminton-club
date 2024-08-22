@@ -33,7 +33,7 @@ router.post('/', upload.array('files', 10), [
     name: item.filename,
     type: item.mimetype,
     isUse: false,
-    linkCDN: `${env.NODE_ENV === 'DEV' ? 'http://' : 'https://'}${env.DOMAIN}:${env.PORT}/images/${item.filename}`,
+    linkCDN: `${env.NODE_ENV === 'DEV' ? `http://${env.DOMAIN}:${env.PORT}/images/${item.filename}` : `${env.DOMAIN}/images/${item.filename}`}`,
     createdAt: currentDateUTC,
     updatedAt: currentDateUTC
   }));

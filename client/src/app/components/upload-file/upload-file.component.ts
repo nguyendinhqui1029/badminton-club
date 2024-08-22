@@ -23,7 +23,6 @@ export class UploadFileComponent implements ControlValueAccessor {
  
   isShowButtonAdd = input<boolean>(true);
   @ViewChild('fileUploadElement') fileUploadElement!: ElementRef;
-  @Output() changeStatusFileDone = new EventEmitter();
 
   private fileService: FileService = inject(FileService);
 
