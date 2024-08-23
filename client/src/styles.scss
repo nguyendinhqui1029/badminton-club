@@ -15,11 +15,13 @@ p-avatar {
     @apply w-full aspect-square;
 }
 .p-checkbox {
-    @apply w-6 h-6;
+    @apply border-2 rounded-md w-6 h-6;
 }
-.p-dropdown,.p-checkbox {
-    @apply border-2 rounded-md;
+
+.p-dropdown {
+    @apply border-2 w-full rounded-3xl;
 }
+
 .p-inputtext:not(.p-dropdown-label) {
     @apply bg-three-color rounded-3xl px-4 min-h-11;
 }
@@ -38,11 +40,11 @@ p-avatar {
 }
 
 .p-confirm-dialog .p-dialog-content {
-    @apply px-8 py-10;
+    @apply px-6 py-4;
 }
 
 .p-confirm-dialog .p-dialog-footer {
-    @apply flex justify-end gap-4;
+    @apply flex justify-end gap-4 pt-4;
 }
 .p-confirm-dialog-accept, .p-confirm-dialog-reject {
     @apply px-4 py-2 min-w-14 w-fit rounded-md cursor-pointer;
@@ -62,12 +64,20 @@ p-avatar {
 .p-confirm-dialog-accept:hover {
     @apply bg-blue-600;
 }
-.p-button:not(.p-confirm-dialog-accept, .p-confirm-dialog-reject) {
-    @apply bg-blue-500 text-white px-4 py-2;
+.p-button:not(.p-confirm-dialog-accept, .p-confirm-dialog-reject, .p-button-link, .p-button-outlined) {
+    @apply bg-blue-500 border-blue-500 text-white px-4 py-2;
 }
 
-.p-button:not(.p-confirm-dialog-accept, .p-confirm-dialog-reject):hover {
+.p-button:not(.p-confirm-dialog-accept, .p-confirm-dialog-reject, .p-button-link, .p-button-outlined):hover {
     @apply bg-blue-600;
+}
+
+.p-button-outlined {
+    @apply border border-blue-500 bg-white text-blue-500 px-4 py-2 min-w-fit cursor-pointer;
+}
+
+.p-button:not(.p-confirm-dialog-accept, .p-confirm-dialog-reject, .p-button-link, .p-button-outlined):hover {
+    @apply bg-blue-600 text-white;
 }
 
 .roboto-thin {

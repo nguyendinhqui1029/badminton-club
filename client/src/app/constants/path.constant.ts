@@ -12,7 +12,9 @@ export const path = {
         ROOT: 'events'
     },
     LOGIN: {
-        ROOT: 'login'
+        ROOT: 'authentication',
+        REGISTER: 'register',
+        FORGOT_PASSWORD: 'forgot-password'
     },
     NOTIFY: {
         ROOT: 'notify'

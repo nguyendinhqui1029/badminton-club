@@ -1,7 +1,28 @@
-<div class="flex flex-col bg-white w-full rounded-xl p-4 gap-8">
+<form [formGroup]="loginForm">
+  <div class="flex flex-col bg-white w-full rounded-xl p-4 gap-4">
     <h3 class="font-bold text-2xl">Đăng nhập</h3>
-    <div class="flex flex-col gap-4">
-        <input type="text" pInputText />
-        <input type="text" pInputText />
+    <div class="flex flex-col gap-2">
+      <app-label-wrapper idLabel="phone" label="Số điện thoại" [isRequired]="true">
+        <input formControlName="phone" class="w-full" id="phone" type="text" pInputText />
+      </app-label-wrapper>
+
+      <app-label-wrapper idLabel="password" label="Mật khẩu" [isRequired]="true">
+        <input formControlName="password" class="w-full" id="password" type="password" pInputText />
+      </app-label-wrapper>
     </div>
-</div>
+
+    <div class="flex items-center justify-between mb-6">
+      <div class="flex items-center">
+        <p-checkbox formControlName="isRememberMe" [binary]="true" inputId="remember" />
+        <label for="remember" class="ml-2 block text-sm text-gray-900">Remember me</label>
+      </div>
+      <p-button [routerLink]="forgotPassword" class="text-sm font-medium text-blue-600 hover:text-blue-500"
+        [link]="true" label="Quên mật khẩu"></p-button>
+    </div>
+
+    <div class="flex justify-end gap-4">
+      <p-button [routerLink]="register" outlined label="Đăng kí" rounded></p-button>
+      <p-button (click)="onClickLogin()" class="min-w-fit" label="Đăng nhập" rounded />
+    </div>
+  </div>
+</form>

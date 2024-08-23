@@ -9,3 +9,13 @@ export const imageOrientation  = {
     PORTRAIT: 'portrait',
     SQUARE: 'square'
 }
+
+export const accountType  = {
+    CASUAL_PLAYER: 'Casual_Player',
+    FIXED_PLAYER: 'Fixed_Player'
+}
+
+export const genderType  = {
+    MALE: 'Male',
+    FEMALE: 'Female'
+}
