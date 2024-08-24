@@ -1,12 +1,16 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import { getUTCDate } from '../utils/date.util';
 
+export interface LikeInfo extends Document {
+  idUser: string;
+  icon: string;
+}
 // Define interface for TypeScript type-checking
 export interface Post extends Document {
   images: string[];
   background: string;
   content: string;
-  idUserLike: string[];
+  idUserLike: LikeInfo[];
   idComment: string[];
   shareLink: string;
   hashTag: string[];
@@ -18,6 +22,18 @@ export interface Post extends Document {
   feelingIcon: string;
   scope: 'Everyone' | 'Only_Me' | 'Friends';
 }
+
+const likeSchema = new mongoose.Schema({
+  idUser: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User', // Tham chiếu đến model User
+    default: null
+  },
+  icon: {
+    type: String,
+    default: ''
+  }
+});
 
 const postSchema = new mongoose.Schema({
   images: {
@@ -34,13 +50,12 @@ const postSchema = new mongoose.Schema({
     trim: true
   },
   idUserLike: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', // Tham chiếu đến model User
+    type: likeSchema,
     default: []
   }],
   idComment: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', // Tham chiếu đến model User
+    ref: 'Comment', // Tham chiếu đến model User
     default: []
   }],
   tagFriends: [{
@@ -56,10 +71,11 @@ const postSchema = new mongoose.Schema({
     type: String,
     trim: true
   },
-  shareLink: {
-    type: String,
-    default: ''
-  },
+  shareLink: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User', // Tham chiếu đến model User
+    default: []
+  }],
   hashTag: {
     type: [String],
     default: []

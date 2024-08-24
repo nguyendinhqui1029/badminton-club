@@ -14,7 +14,7 @@
       @if(hasPermission()){
         <p-toast />
         <p-confirmDialog styleClass="w-11/12 md:w-fit"/>
-        <p-menu #menu [model]="items" [popup]="true" />
+        <p-menu #menu [model]="actionsPost" [popup]="true" />
         <span (click)="menu.toggle($event)" class="pi pi-ellipsis-v text-xl cursor-pointer"></span>
       }
     </div>
@@ -56,10 +56,13 @@
         <span class="pi pi-comments text-2xl"></span>
         <small>100</small>
       </div>
-      <div class="cursor-pointer flex max-h-11 gap-2 items-center px-4 py-2 w-2/4 max-w-36 border-2 rounded-3xl bg-gray-color hover:bg-gray-300">
-        <span class="pi pi-share-alt text-2xl"></span>
-        <small>10</small>
-      </div>
+      <ng-container>
+        <p-menu #sharePost [model]="actionsSharePost" [popup]="true" />
+        <div (click)="sharePost.toggle($event)" class="cursor-pointer flex max-h-11 gap-2 items-center px-4 py-2 w-2/4 max-w-36 border-2 rounded-3xl bg-gray-color hover:bg-gray-300">
+          <span class="pi pi-share-alt text-2xl"></span>
+          <small>10</small>
+        </div>
+      </ng-container>
     </div>
   </div>
 </div>

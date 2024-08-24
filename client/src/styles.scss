@@ -8,6 +8,15 @@ p-avatar {
     @apply flex items-center;
 }
 
+.p-menu-list {
+    @apply flex flex-col gap-4 last:pb-4;
+}
+.p-menuitem-link {
+    @apply py-0;
+}
+.p-menu-overlay {
+    @apply rounded-md;
+}
 .p-avatar {
     @apply h-10 w-10;
 }
@@ -166,3 +175,12 @@ p-avatar {
         grid-template-columns: repeat(#{$i}, minmax(0, 1fr));
     }
 }
+
+.zalo-icon::before {
+    content: url('assets/images/zalo.svg');
+    width: 36px;
+    height: 36px;
+    object-fit: cover;
+    object-position: center;
+    display: inline-block;
+  }

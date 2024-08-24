@@ -31,3 +31,10 @@ export const localStorageKey = {
 export const emailType = {
     RESET_PASSWORD: 'Reset_Password'
 }
+
+export const socialType = {
+    FACEBOOK: 'Facebook',
+    ZALO: 'Zalo',
+    TWITTER: 'Twitter',
+    LINKEDIN: 'Linkedin'
+}

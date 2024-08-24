@@ -3,6 +3,7 @@ import { HomeComponent } from '@app/modules/home/home.component';
 import { path } from '@app/constants/path.constant';
 import { MessagePageComponent } from '@app/components/message-page/message-page.component';
 import { MainLayoutComponent } from '@app/layout/main-layout/main-layout.component';
+import { DetailComponent } from './modules/home/detail/detail.component';
 
 export const routes: Routes = [
     {
@@ -12,50 +13,35 @@ export const routes: Routes = [
             {
                 path: path.HOME.ROOT,
                 component: HomeComponent,
-                data: {
-                    contentFull: false
-                }
+            },
+            {
+                path: path.HOME.DETAIL,
+                component: DetailComponent,
             },
             { path: '', redirectTo: `/${path.HOME.ROOT}`, pathMatch: 'full' },
             {
-                path: path.ACCOUNT.ROOT, loadChildren: () => import('./modules/account/account.routes').then(module => module.accountRoutes), data: {
-                    contentFull: true
-                }
+                path: path.ACCOUNT.ROOT, loadChildren: () => import('./modules/account/account.routes').then(module => module.accountRoutes)
             },
             {
-                path: path.ATTENDANCE.ROOT, loadChildren: () => import('./modules/attendance/attendance.routes').then(module => module.attendanceRoutes), data: {
-                    contentFull: true
-                }
+                path: path.ATTENDANCE.ROOT, loadChildren: () => import('./modules/attendance/attendance.routes').then(module => module.attendanceRoutes)
             },
             {
-                path: path.EVENTS.ROOT, loadChildren: () => import('./modules/events/events.routes').then(module => module.eventsRoutes), data: {
-                    contentFull: true
-                }
+                path: path.EVENTS.ROOT, loadChildren: () => import('./modules/events/events.routes').then(module => module.eventsRoutes)
             },
             {
-                path: path.LOGIN.ROOT, loadChildren: () => import('./modules/login/login.routes').then(module => module.loginRoutes), data: {
-                    contentFull: true
-                }
+                path: path.LOGIN.ROOT, loadChildren: () => import('./modules/login/login.routes').then(module => module.loginRoutes)
             },
             {
-                path: path.NOTIFY.ROOT, loadChildren: () => import('./modules/notify/notify.routes').then(module => module.notifyRoutes), data: {
-                    contentFull: true
-                }
+                path: path.NOTIFY.ROOT, loadChildren: () => import('./modules/notify/notify.routes').then(module => module.notifyRoutes)
             },
             {
-                path: path.PAYMENT.ROOT, loadChildren: () => import('./modules/payment/payment.routes').then(module => module.paymentRoutes), data: {
-                    contentFull: true
-                }
+                path: path.PAYMENT.ROOT, loadChildren: () => import('./modules/payment/payment.routes').then(module => module.paymentRoutes)
             },
             {
-                path: path.SHOP.ROOT, loadChildren: () => import('./modules/shop/shop.routes').then(module => module.shopRoutes), data: {
-                    contentFull: true
-                }
+                path: path.SHOP.ROOT, loadChildren: () => import('./modules/shop/shop.routes').then(module => module.shopRoutes)
             },
             {
-                path: path.TERMS.ROOT, loadChildren: () => import('./modules/terms/terms.routes').then(module => module.termsRoutes), data: {
-                    contentFull: true
-                }
+                path: path.TERMS.ROOT, loadChildren: () => import('./modules/terms/terms.routes').then(module => module.termsRoutes)
             }
         ]
     },

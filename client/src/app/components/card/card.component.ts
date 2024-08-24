@@ -3,11 +3,11 @@ import { AvatarModule } from 'primeng/avatar';
 import { AvatarGroupModule } from 'primeng/avatargroup';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { AddPostDialogComponent } from '@app/components/dialogs/add-post-dialog/add-post-dialog.component';
-import { isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser, isPlatformServer } from '@angular/common';
 import { PostResponseValue } from '@app/models/post.model';
 import { UserInfoSearch, UserLoginResponse } from '@app/models/user.model';
 import { Subscription, take, Unsubscribable } from 'rxjs';
-import { scopePost } from '@app/constants/common.constant';
+import { scopePost, socialType } from '@app/constants/common.constant';
 import { getTimeDifference } from '@app/utils/date.util';
 import { ImagesGridComponent } from '@app/components/images-grid/images-grid.component';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
@@ -16,6 +16,8 @@ import { PostService } from '@app/services/post.service';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 import { UserService } from '@app/services/user.service';
+import { ActivatedRoute } from '@angular/router';
+import { environment } from '@app/environments/environment';
 
 interface UserStatus { avatar: string; userName: string; feeling?: {icon: string; value: string}; friends: string[];location: string;};
 
@@ -37,7 +39,7 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
   private messageService: MessageService = inject(MessageService);
   private dialogService: DialogService = inject(DialogService);
   private platformId: Object = inject(PLATFORM_ID);
-  
+
   private userUnSubscription!: Subscription;
 
   dynamicDialogRef: DynamicDialogRef | undefined;
@@ -76,7 +78,8 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
     return this.generateUserStatus();
   });
   hasPermission = computed(()=> this.currentUserId() === this.item().createdBy.id);
-  items: MenuItem[] | undefined;
+  actionsPost: MenuItem[] | undefined;
+  actionsSharePost: MenuItem[] | undefined;
   
   ngOnChanges(changes: SimpleChanges): void {
     if(changes['item']?.currentValue) {
@@ -133,7 +136,7 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
    this.userUnSubscription =  this.userService.currentUserLogin.subscribe((value: UserLoginResponse)=>{
       this.currentUserId.set(value.id);
     });
-    this.items = [
+    this.actionsPost = [
       {
           label: 'Tính năng',
           items: [
@@ -152,8 +155,45 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
                   }
               }
           ]
-      }
-  ];
+      }];
+    this.actionsSharePost = [
+        {
+            label: 'Chia sẻ',
+            items: [
+                {
+                    label: 'Facebook',
+                    icon: 'pi pi-facebook',
+                    iconClass: 'text-3xl text-blue-600',
+                    command: () => {
+                      this.shareToSocial(socialType.FACEBOOK);
+                    }
+                },
+                {
+                  label: 'Twitter',
+                  icon: 'pi pi-twitter',
+                  iconClass: 'text-3xl text-blue-300',
+                  command: () => {
+                    this.shareToSocial(socialType.TWITTER);
+                  }
+                },
+                {
+                    label: 'Zalo',
+                    icon: 'zalo-icon',
+                    command: () => {
+                      this.shareToSocial(socialType.ZALO);
+                    }
+                },
+                {
+                  label: 'Linkedin',
+                  icon: 'pi pi-linkedin',
+                  iconClass: 'text-3xl text-blue-500',
+                  command: () => {
+                    this.shareToSocial(socialType.LINKEDIN);
+                  }
+              }
+                
+            ]
+        }];
     this.backgroundClass.set(this.item().background.replace('==/==', ' '));
   }
 
@@ -202,6 +242,21 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
     this.dynamicDialogRef.onClose.pipe(take(1)).subscribe(()=>this.refreshDataListEvent.emit())
   }
 
+  shareToSocial(type: string) {
+    let linkPost = `${environment.domain}/`;
+    
+    const title = this.item().content;
+    const urlByType = {
+      [socialType.FACEBOOK]: `https://www.facebook.com/sharer/sharer.php?u=${linkPost}`,
+      [socialType.LINKEDIN]: `https://www.linkedin.com/sharing/share-offsite/?url=${linkPost}`,
+      [socialType.TWITTER]: `https://twitter.com/intent/tweet?url=${linkPost}&text=${title}`,
+      [socialType.ZALO]: `https://chat.zalo.me/?app=browser&url=${linkPost}&title=${title}`
+    }
+    // window.open(urlByType[type] || urlByType[socialType.FACEBOOK], '_blank');
+  }
+  onClickLike() {
+
+  }
   ngOnDestroy() {
     if (this.dynamicDialogRef) {
         this.dynamicDialogRef.close();

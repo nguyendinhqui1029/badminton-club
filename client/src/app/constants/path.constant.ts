@@ -1,6 +1,7 @@
 export const path = {
     HOME: {
-        ROOT: 'home'
+        ROOT: 'home',
+        DETAIL: 'detail/:id'
     },
     ACCOUNT: {
         ROOT: 'account'
