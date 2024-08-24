@@ -7,7 +7,7 @@ export const responseHandlerInterceptor: HttpInterceptorFn = (req, next) => {
     map((event: HttpEvent<any>) => {
       // Nếu cần thực hiện điều gì đó với phản hồi, làm ở đây
       if (event instanceof HttpResponse) {
-        if(event.status === 200 && event.body.statusCode === 200) {
+        if(event.status === 200 && event.body.statusCode === 200 && event.body.data) {
           const data = JSON.stringify(event.body.data).replace(/\"_id\":/gm,'\"id\":');
           event.body.data = JSON.parse(data);
         }

@@ -1,9 +1,10 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { SearchContainerDialogComponent } from '@app/components/dialogs/search-container-dialog/search-container-dialog.component';
-import { UserInfoSearch, UserInfoSearchResponse } from '@app/models/user.model';
+import { UserInfoSearch, UserInfoSearchResponse, UserLoginResponse } from '@app/models/user.model';
 import { UserService } from '@app/services/user.service';
 import { AvatarModule } from 'primeng/avatar';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-tag-friends-dialog',
@@ -12,22 +13,24 @@ import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
   templateUrl: './tag-friends-dialog.component.html',
   styleUrl: './tag-friends-dialog.component.scss'
 })
-export class TagFriendsDialogComponent implements OnInit {
+export class TagFriendsDialogComponent implements OnInit, OnDestroy {
   
   private dynamicDialogRef: DynamicDialogRef = inject(DynamicDialogRef);
   private dialogConfig: DynamicDialogConfig = inject(DynamicDialogConfig);
   private userService: UserService = inject(UserService);
 
+  private userUnSubscription!: Subscription;
+
   items = signal<UserInfoSearch[]>([]);
   selectedItems = signal<string[]>([]);
-  currentUserId: string = '66c17a38d69f28009ab7ab88';
+  currentUserId= signal<string>('');
   
   onCloseDialog(value: UserInfoSearch[]) {
     this.dynamicDialogRef.close(value);
   }
 
   getFriendsOfUser(keyword: string) {
-    this.userService.searchUserByKeyword(this.currentUserId, keyword).subscribe((response)=>{
+    this.userService.searchUserByKeyword(this.currentUserId(), keyword).subscribe((response)=>{
       if(response.statusCode !== 200) {
         this.items.set([]);
         return;
@@ -41,7 +44,16 @@ export class TagFriendsDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.userUnSubscription =  this.userService.currentUserLogin.subscribe((value: UserLoginResponse)=>{
+      this.currentUserId.set(value.id);
+    });
     this.getFriendsOfUser('');
     this.selectedItems.set(this.dialogConfig.data.initializeTagFriends)
+  }
+
+  ngOnDestroy(): void {
+    if(this.userUnSubscription) {
+      this.userUnSubscription.unsubscribe();
+    }
   }
 }

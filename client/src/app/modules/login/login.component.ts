@@ -1,36 +1,97 @@
-import { Component, inject, input, OnInit } from '@angular/core';
+import { afterNextRender, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { LabelWrapperComponent } from '@app/components/label-wrapper/label-wrapper.component';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 import { path } from '@app/constants/path.constant';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { UserService } from '@app/services/user.service';
+import { localStorageKey } from '@app/constants/common.constant';
+import { getUserInfoFromToken } from '@app/utils/auth.util';
+import { ConfirmationService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, RouterLink, CheckboxModule,ButtonModule, LabelWrapperComponent, InputTextModule],
+  imports: [ConfirmDialogModule, ReactiveFormsModule, FormsModule, RouterLink, CheckboxModule, ButtonModule, LabelWrapperComponent, InputTextModule],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.scss'
+  styleUrl: './login.component.scss',
+  providers: [ConfirmationService]
 })
 export class LoginComponent implements OnInit {
+  private formBuilder: FormBuilder = inject(FormBuilder);
+  private userService: UserService = inject(UserService);
+  private router: Router = inject(Router);
+  private changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
+  private confirmationService: ConfirmationService = inject(ConfirmationService);
 
-    forgotPassword = path.LOGIN.FORGOT_PASSWORD;
-    register = path.LOGIN.REGISTER;
+  forgotPassword = path.LOGIN.FORGOT_PASSWORD;
+  register = path.LOGIN.REGISTER;
 
-    formBuilder: FormBuilder = inject(FormBuilder);
 
-    loginForm!: FormGroup;
-    
-    ngOnInit(): void {
-      this.loginForm = this.formBuilder.group({
-        phone: ['', Validators.required],
-        password: ['', Validators.required],
-        isRememberMe: [false, Validators.required],
-      });
+  loginForm!: FormGroup;
+
+  constructor() {
+    afterNextRender(() => {
+      const phone = localStorage.getItem(localStorageKey.PHONE);
+      const password = localStorage.getItem(localStorageKey.PASSWORD);
+      const isRememberMeBoolean = localStorage.getItem(localStorageKey.IS_REMEMBER_ME) === 'true' && phone !== '' && password !== '';
+      this.loginForm.get('isRememberMe')?.patchValue(isRememberMeBoolean);
+      if(isRememberMeBoolean) {
+        this.loginForm.get('phone')?.setValue(phone);
+        this.loginForm.get('password')?.setValue(password);
+      }
+      this.changeDetectorRef.detectChanges();
+    });
+  }
+
+  ngOnInit(): void {
+    this.loginForm = this.formBuilder.group({
+      phone: ['', Validators.required],
+      password: ['', Validators.required],
+      isRememberMe: [false, Validators.required],
+    });
+    this.loginForm.get('isRememberMe')?.valueChanges.subscribe((value: boolean) => {
+      const valueString = value ? 'true' : 'false';
+      if(!valueString) {
+        localStorage.removeItem(localStorageKey.PHONE);
+        localStorage.removeItem(localStorageKey.PASSWORD);
+      }
+      localStorage.setItem(localStorageKey.IS_REMEMBER_ME, valueString);
+    });
+  }
+
+  onClickLogin() {
+    if (this.loginForm.invalid) {
+      return;
     }
+    this.userService.login(this.loginForm.value).subscribe((response) => {
+      if (response.statusCode === 402) {
+        this.confirmationService.confirm({
+          message: 'Số điện thoại hoặc Mật khẩu không đúng. Vui lòng kiểm tra lại.',
+          header: 'Thông báo',
+          acceptIcon: "none",
+          rejectIcon: "none",
+          rejectVisible: false
+        })
+        return;
+      }
+      localStorage.setItem(localStorageKey.ACCESS_TOKEN, response.data.accessToken);
+      localStorage.setItem(localStorageKey.REFRESH_TOKEN, response.data.refreshToken);
+      const currentUserLogin = getUserInfoFromToken(response.data.accessToken);
+      this.userService.updateData(currentUserLogin);
 
-    onClickLogin() {
-      console.log('login', this.loginForm.value)
-    }
+      if (this.loginForm.value.isRememberMe) {
+        localStorage.setItem(localStorageKey.PHONE, this.loginForm.value.phone);
+        localStorage.setItem(localStorageKey.PASSWORD, this.loginForm.value.password);
+        this.router.navigate([path.HOME.ROOT]);
+        return;
+      }
+
+      localStorage.removeItem(localStorageKey.PHONE);
+      localStorage.removeItem(localStorageKey.PASSWORD);
+      this.router.navigate([`/${path.HOME.ROOT}`]);
+    })
+  }
 }

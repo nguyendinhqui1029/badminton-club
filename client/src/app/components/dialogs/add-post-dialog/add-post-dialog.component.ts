@@ -10,13 +10,14 @@ import { UploadFileComponent } from '@app/components/upload-file/upload-file.com
 import { FileModel } from '@app/models/file-upload.model';
 import { TagFriendsDialogComponent } from '@app/components/dialogs/tag-friends-dialog/tag-friends-dialog.component';
 import { isPlatformBrowser } from '@angular/common';
-import { UserInfoSearch } from '@app/models/user.model';
+import { UserInfoSearch, UserLoginResponse } from '@app/models/user.model';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ValidatorService } from '@app/services/validators.service';
 import { PostService } from '@app/services/post.service';
 import { PostRequestBody, PostResponseValue } from '@app/models/post.model';
 import { PickerColorComponent } from '@app/components/picker-color/picker-color.component';
-import { take } from 'rxjs';
+import { Subscription, take } from 'rxjs';
+import { UserService } from '@app/services/user.service';
 
 interface UserStatus { avatar: string; userName: string; feeling?: {icon: string; value: string}; friends: string[];location: string;};
 @Component({
@@ -43,6 +44,10 @@ export class AddPostDialogComponent implements OnInit, OnDestroy {
   private platformId: Object = inject(PLATFORM_ID);
   private formBuilder: FormBuilder = inject(FormBuilder);
   private postService: PostService = inject(PostService);
+  private userService: UserService = inject(UserService);
+
+  private userUnSubscription!: Subscription;
+  currentUserId= signal<string>('');
 
   @ViewChild('fileUploadRef', {static: false}) fileUploadRef!: UploadFileComponent;
   
@@ -56,7 +61,6 @@ export class AddPostDialogComponent implements OnInit, OnDestroy {
     { label: 'Bạn bè', value: scopePost.FRIENDS },
     { label: 'Riêng tôi', value: scopePost.ONLY_ME },
   ];
-  currentUserId: string = '66c17a38d69f28009ab7ab88';
   selectedBackgroundClass: string = '';
   postFormGroup!: FormGroup;
   userStatusDisplay = computed(()=> {
@@ -108,7 +112,7 @@ export class AddPostDialogComponent implements OnInit, OnDestroy {
   }
   initFormData(post?: PostResponseValue) {
     this.postFormGroup = this.formBuilder.group({
-      createdBy: [post?.createdBy?.id || this.currentUserId],
+      createdBy: [post?.createdBy?.id || this.currentUserId()],
       images: [post?.images || []],
       background: [post?.background || 'bg-gray-color-20==/==placeholder:text-black-100 text-black'],
       content: [post?.content || '', [ValidatorService.fieldRequired('field_required_message')]],
@@ -132,6 +136,9 @@ export class AddPostDialogComponent implements OnInit, OnDestroy {
     });
   }
   ngOnInit(): void {
+    this.userUnSubscription =  this.userService.currentUserLogin.subscribe((value: UserLoginResponse)=>{
+      this.currentUserId.set(value.id);
+    });
     this.idPost = this.dialogConfig.data['id'] || null;
     this.initFormData();
     this.postFormGroup.get('background')?.valueChanges.subscribe((value: string)=>{
@@ -218,5 +225,8 @@ export class AddPostDialogComponent implements OnInit, OnDestroy {
     if (this.dynamicDialogTagFriendRef) {
       this.dynamicDialogTagFriendRef.close();
     } 
+    if(this.userUnSubscription) {
+      this.userUnSubscription.unsubscribe();
+    }
   }
 }

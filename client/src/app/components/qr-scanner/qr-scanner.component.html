@@ -1,0 +1,8 @@
+<div class="flex flex-col gap-4 justify-center">
+  <span class="pi pi-expand self-end cursor-pointer" (click)="scanQRCodeFromImage(IMAGE_BASE64_EXAMPLE)" ></span>
+  <h2 class="font-bold text-xl self-center">Quét QR Thanh toán</h2>
+  <img class="h-52 w-52 object-fill self-center rounded-xl" [src]="IMAGE_BASE64_EXAMPLE" alt="QR Code">
+  @if(result) {
+    <p>{{result}}</p>
+  }
+</div>

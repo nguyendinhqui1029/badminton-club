@@ -1,5 +1,6 @@
-<app-create-post (refreshDataListEvent)="handleReFreshDataList()"></app-create-post>
-@for(item of posts(); track item) {
-    <app-card [item]="item" (refreshDataListEvent)="handleReFreshDataList()"></app-card>
-}
-
+<section class="w-full flex flex-col gap-2">
+  <app-create-post (refreshDataListEvent)="handleReFreshDataList()"></app-create-post>
+  @for(item of posts(); track item) {
+  <app-card [item]="item" (refreshDataListEvent)="handleReFreshDataList()"></app-card>
+  }
+</section>

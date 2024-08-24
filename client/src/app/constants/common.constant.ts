@@ -19,3 +19,11 @@ export const genderType  = {
     MALE: 'Male',
     FEMALE: 'Female'
 }
+
+export const localStorageKey = {
+    IS_REMEMBER_ME: 'Is_Remember_Me',
+    PHONE: 'Phone',
+    PASSWORD: 'P1',
+    ACCESS_TOKEN: 'Access_Token',
+    REFRESH_TOKEN: 'Refresh_Token'
+}

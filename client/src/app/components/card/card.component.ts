@@ -5,8 +5,8 @@ import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { AddPostDialogComponent } from '@app/components/dialogs/add-post-dialog/add-post-dialog.component';
 import { isPlatformBrowser } from '@angular/common';
 import { PostResponseValue } from '@app/models/post.model';
-import { UserInfoSearch } from '@app/models/user.model';
-import { take } from 'rxjs';
+import { UserInfoSearch, UserLoginResponse } from '@app/models/user.model';
+import { Subscription, take, Unsubscribable } from 'rxjs';
 import { scopePost } from '@app/constants/common.constant';
 import { getTimeDifference } from '@app/utils/date.util';
 import { ImagesGridComponent } from '@app/components/images-grid/images-grid.component';
@@ -15,6 +15,7 @@ import { MenuModule } from 'primeng/menu';
 import { PostService } from '@app/services/post.service';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
+import { UserService } from '@app/services/user.service';
 
 interface UserStatus { avatar: string; userName: string; feeling?: {icon: string; value: string}; friends: string[];location: string;};
 
@@ -30,11 +31,15 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
   item = input.required<PostResponseValue>();
   @Output() refreshDataListEvent = new EventEmitter();
 
+  private userService: UserService = inject(UserService);
   private postService: PostService = inject(PostService);
   private confirmationService: ConfirmationService = inject(ConfirmationService);
   private messageService: MessageService = inject(MessageService);
   private dialogService: DialogService = inject(DialogService);
   private platformId: Object = inject(PLATFORM_ID);
+  
+  private userUnSubscription!: Subscription;
+
   dynamicDialogRef: DynamicDialogRef | undefined;
   
   
@@ -49,6 +54,7 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
     location: ''
   });
   backgroundClass = signal<string>('');
+  currentUserId= signal<string>('');
 
 
   scopeIcon = computed(()=> {
@@ -69,8 +75,7 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
   userStatusDisplay = computed(()=> {
     return this.generateUserStatus();
   });
-  hasPermission = computed(()=> this.currentUserId === this.item().createdBy.id);
-  currentUserId: string = '66c17a38d69f28009ab7ab88';
+  hasPermission = computed(()=> this.currentUserId() === this.item().createdBy.id);
   items: MenuItem[] | undefined;
   
   ngOnChanges(changes: SimpleChanges): void {
@@ -125,6 +130,9 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
   }
 
   ngOnInit(): void {
+   this.userUnSubscription =  this.userService.currentUserLogin.subscribe((value: UserLoginResponse)=>{
+      this.currentUserId.set(value.id);
+    });
     this.items = [
       {
           label: 'Tính năng',
@@ -172,8 +180,9 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
       }
   });
   }
+
   onClickOpenEditPost() {
-    if(this.currentUserId !== this.item().createdBy.id){
+    if(this.currentUserId() !== this.item().createdBy.id){
       return;
     }
     this.dynamicDialogRef = this.dialogService.open(AddPostDialogComponent, {
@@ -196,6 +205,10 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
   ngOnDestroy() {
     if (this.dynamicDialogRef) {
         this.dynamicDialogRef.close();
+    }
+
+    if(this.userUnSubscription) {
+      this.userUnSubscription.unsubscribe();
     }
   }
 }

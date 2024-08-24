@@ -84,7 +84,7 @@ export class RegisterComponent implements OnInit {
   onClickOpenTerm() {
     this.dynamicDialogRef = this.dialogService.open(TermsDialogComponent, {
       showHeader: false,
-      width: '450px',
+      width: '80vw',
       modal: true,
       transitionOptions: '450ms',
       appendTo: 'body',

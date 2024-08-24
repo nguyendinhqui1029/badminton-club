@@ -118,30 +118,50 @@ class UserController {
     try {
       const deletedUser = await this.userService.deleteUser(req.params.id,);
       res.status(204).json({
-        statusCode: 204,
+        statusCode: 200,
         statusText: 'Get user is successful.',
         totalCount: 0,
         page: 0,
         data: deletedUser
       });
     } catch (error: any) {
-      res.status(500).json({ message: error.message });
+      res.status(200).json({code: 500, message: error.message });
     }
   };
 
   public login= async (req: Request, res: Response): Promise<void> => {
     try {
-      const loginInfo = await this.userService.login({email: req.body['email'], password: req.body['password']});
-      if(loginInfo.code === '401') {
-        res.status(401).json({message: loginInfo.message});
+      const loginInfo = await this.userService.login({phone: req.body['phone'], password: req.body['password']});
+      if(loginInfo.code === '402') {
+        res.status(200).json({
+          statusCode: 402,
+          statusText: 'Login is error.',
+          totalCount: 0,
+          page: 0,
+          data: loginInfo.message
+        });
         return;
       }
       if(loginInfo.code === '200') {
-        res.status(200).json({accessToken: loginInfo.accessToken, refreshToken: loginInfo.refreshToken});
+        const maxAge = req.body['isRememberMe'] ? 30 * 24 * 60 * 60 * 1000 : 1 * 24 * 60 * 60 * 1000; // 30 ngày hoặc 1 ngày
+
+        // Gửi cookie với thuộc tính HttpOnly
+        res.cookie('authToken', loginInfo.accessToken, {
+          httpOnly: true, // Cookie không thể được truy cập từ JavaScript
+          secure: process.env.NODE_ENV === 'PRO', // Cookie chỉ được gửi qua HTTPS trong môi trường sản xuất
+          maxAge // Thời gian sống của cookie
+        });
+        res.status(200).json({
+          statusCode: 200,
+          statusText: 'Login is successful.',
+          totalCount: 0,
+          page: 0,
+          data:  {accessToken: loginInfo.accessToken, refreshToken: loginInfo.refreshToken}
+        });
         return;
       }
     } catch (error: any) {
-      res.status(500).json({ message: error.message });
+      res.status(200).json({statusCode: 500, message: error.message });
     }
   };
 
@@ -149,19 +169,48 @@ class UserController {
     const { refreshToken } = req.body;
 
     if (!refreshToken) {
-      res.status(401).json({ message: 'Refresh token is required' });
+      res.status(401).json({
+          statusCode: 200,
+          statusText: 'Refresh token is required',
+          totalCount: 0,
+          page: 0,
+          data: null
+        });
       return;
     }
     const refreshTokenInfo = await this.userService.refreshToken(refreshToken);
 
     if(refreshTokenInfo.code === '403') {
-      res.status(403).json({message: refreshTokenInfo.message});
+      res.status(403).json({
+        statusCode: 403,
+        statusText: refreshTokenInfo.message,
+        totalCount: 0,
+        page: 0,
+        data: null
+      });
       return;
     }
     if(refreshTokenInfo.code === '200') {
-      res.status(200).json({accessToken: refreshTokenInfo.accessToken});
+      res.status(200).json({
+        statusCode: 200,
+        statusText: 'Refresh Token Info is successful.',
+        totalCount: 0,
+        page: 0,
+        data: {accessToken: refreshTokenInfo.accessToken}
+      });
       return;
     }
+  };
+
+  public logout  =(req: Request, res: Response) => {
+    res.clearCookie('authToken');
+    res.status(200).json({
+      statusCode: 200,
+      statusText: 'Logout is successful.',
+      totalCount: 0,
+      page: 0,
+      data: null
+    });
   };
 }
 

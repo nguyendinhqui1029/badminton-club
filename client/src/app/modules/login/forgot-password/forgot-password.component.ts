@@ -13,6 +13,6 @@ import { InputTextModule } from 'primeng/inputtext';
   styleUrl: './forgot-password.component.scss'
 })
 export class ForgotPasswordComponent {
-  login = path.LOGIN.REGISTER;
+  login = `/${path.LOGIN.ROOT}`;
 
 }

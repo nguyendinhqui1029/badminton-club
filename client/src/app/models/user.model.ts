@@ -9,6 +9,7 @@ export interface UserInfoSearchResponse extends UserInfoSearch {
 }
 
 export interface UserResponse {
+    id: string;
     point: number;
     email: string;
     phone: string;
@@ -20,4 +21,15 @@ export interface UserResponse {
     status: 'BLOCK' | 'WAITING' | 'ON' | 'OFF';
     createdAt: Date;
     updatedAt: Date;
+}
+
+export interface UserLoginResponse {
+    id: string;
+    point: number;
+    email: string;
+    phone: string;
+    name: string;
+    role: string[];
+    avatar: string;
+    birthday: string;
 }

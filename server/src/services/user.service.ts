@@ -87,23 +87,23 @@ class UserService {
     return await UserModel.findByIdAndDelete(id, { new: true });
   }
 
-  public async login(account: { email: string; password: string }): Promise<Record<string, string>> {
+  public async login(account: { phone: string; password: string}): Promise<Record<string, string>> {
     try {
-      const user = await UserModel.findOne({ email: account.email });
+      const user = await UserModel.findOne({ phone: account.phone });
       if (!user) {
-        return { code: '401', message: 'Invalid username or password' };
+        return { code: '402', message: 'Invalid username or password' };
       }
 
       // So sánh mật khẩu
       const isMatch = await bcrypt.compare(account.password, user.password);
       if (!isMatch) {
-        return { code: '401', message: 'Invalid username or password' };
+        return { code: '402', message: 'Invalid username or password' };
       }
 
       // Tạo JWT
-      const accessToken = jwt.sign({ id: user._id, email: user.email, role: user.role }, env.JWT_SECRET, { expiresIn: '1h' });
-      const refreshToken = jwt.sign({ id: user._id, email: user.email, role: user.role }, env.JWT_REFRESH_SECRET, { expiresIn: '7d' });
-
+      const accessToken = jwt.sign({ id: user._id, point: user.point, avatar: user.avatar, email: user.email, phone: user.phone,  role: user.role }, env.JWT_SECRET, { expiresIn: '1h' });
+      const refreshToken = jwt.sign({ id: user._id, point: user.point, avatar: user.avatar, email: user.email, phone: user.phone, role: user.role}, env.JWT_REFRESH_SECRET, { expiresIn: '7d' });
+    
       // Gửi token về client
       return { code: '200', accessToken, refreshToken };
     } catch (error) {
