@@ -20,7 +20,7 @@
     </div>
   </div>
   
-  <div class="rounded-md bg-cover bg-no-repeat bg-center  w-full h-44 p-2 {{backgroundClass()}}">
+  <div [routerLink]="linkPostDetail()" class="rounded-md bg-cover bg-no-repeat bg-center  w-full h-44 p-2 {{backgroundClass()}}">
     <p class="line-clamp-5 text-xl font-medium">{{item().content}}
     </p>
   </div>

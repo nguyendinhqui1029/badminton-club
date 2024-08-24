@@ -17,7 +17,7 @@ export interface PostResponseValue {
     id?: string;
     images: string[];
     background: string;
-    content: UserInfoSearch[];
+    content: string;
     idUserLike: UserInfoSearch[];
     idComment: UserInfoSearch[];
     shareLink: string;

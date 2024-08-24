@@ -4,5 +4,5 @@ export const environment: Environment = {
     production: true,
     apiUrl: 'https://badminton-club-fqk6.onrender.com/api/v1',
     defaultLanguage: 'vi',
-    domain: 'http://localhost:4200'
+    domain: 'https://my-badminton-club.netlify.app'
   };

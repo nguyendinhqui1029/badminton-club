@@ -3,10 +3,10 @@ import { AvatarModule } from 'primeng/avatar';
 import { AvatarGroupModule } from 'primeng/avatargroup';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { AddPostDialogComponent } from '@app/components/dialogs/add-post-dialog/add-post-dialog.component';
-import { isPlatformBrowser, isPlatformServer } from '@angular/common';
+import { isPlatformBrowser } from '@angular/common';
 import { PostResponseValue } from '@app/models/post.model';
 import { UserInfoSearch, UserLoginResponse } from '@app/models/user.model';
-import { Subscription, take, Unsubscribable } from 'rxjs';
+import { Subscription, take } from 'rxjs';
 import { scopePost, socialType } from '@app/constants/common.constant';
 import { getTimeDifference } from '@app/utils/date.util';
 import { ImagesGridComponent } from '@app/components/images-grid/images-grid.component';
@@ -16,8 +16,9 @@ import { PostService } from '@app/services/post.service';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 import { UserService } from '@app/services/user.service';
-import { ActivatedRoute } from '@angular/router';
 import { environment } from '@app/environments/environment';
+import { path } from '@app/constants/path.constant';
+
 
 interface UserStatus { avatar: string; userName: string; feeling?: {icon: string; value: string}; friends: string[];location: string;};
 
@@ -80,7 +81,8 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
   hasPermission = computed(()=> this.currentUserId() === this.item().createdBy.id);
   actionsPost: MenuItem[] | undefined;
   actionsSharePost: MenuItem[] | undefined;
-  
+  linkPostDetail = computed(()=>`/${path.HOME.DETAIL.replace(':id', this.item()?.id || '' )}`);
+
   ngOnChanges(changes: SimpleChanges): void {
     if(changes['item']?.currentValue) {
       const post = changes['item']?.currentValue;
@@ -243,8 +245,7 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
   }
 
   shareToSocial(type: string) {
-    let linkPost = `${environment.domain}/`;
-    
+    let linkPost = encodeURIComponent(`${environment.domain}/detail/${this.item().id}`);
     const title = this.item().content;
     const urlByType = {
       [socialType.FACEBOOK]: `https://www.facebook.com/sharer/sharer.php?u=${linkPost}`,
@@ -252,7 +253,7 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
       [socialType.TWITTER]: `https://twitter.com/intent/tweet?url=${linkPost}&text=${title}`,
       [socialType.ZALO]: `https://chat.zalo.me/?app=browser&url=${linkPost}&title=${title}`
     }
-    // window.open(urlByType[type] || urlByType[socialType.FACEBOOK], '_blank');
+    window.open(urlByType[type] || urlByType[socialType.FACEBOOK], '_blank');
   }
   onClickLike() {
 
