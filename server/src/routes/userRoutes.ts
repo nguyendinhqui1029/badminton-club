@@ -13,5 +13,6 @@ router.delete('/:id', userController.deleteUser);
 router.post('/login', userController.login);
 router.post('/logout', userController.logout);
 router.post('/refresh-token', userController.refreshToken);
+router.post('/reset-password', userController.resetPassword);
 
 export default router;

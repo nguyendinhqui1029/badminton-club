@@ -22,7 +22,7 @@ interface UserStatus { avatar: string; userName: string; feeling?: {icon: string
 @Component({
   selector: 'app-card',
   standalone: true,
-  imports: [ConfirmDialogModule,ToastModule, AvatarModule, AvatarGroupModule, MenuModule, ImagesGridComponent],
+  imports: [ConfirmDialogModule, ToastModule, AvatarModule, AvatarGroupModule, MenuModule, ImagesGridComponent],
   templateUrl: './card.component.html',
   styleUrl: './card.component.scss',
   providers: [DialogService, PostService, ConfirmationService, MessageService]

@@ -33,7 +33,6 @@ export class NavigationComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.userUnSubscription = this.userService.currentUserLogin.subscribe((value: UserLoginResponse) => {
-      console.log('currentUser',value)
       this.currentUser.set(value);
     })
   }

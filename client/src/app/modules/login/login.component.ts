@@ -23,6 +23,7 @@ export class LoginComponent implements OnInit {
   private formBuilder: FormBuilder = inject(FormBuilder);
   private userService: UserService = inject(UserService);
   private router: Router = inject(Router);
+  private activatedRoute: ActivatedRoute = inject(ActivatedRoute);
   private changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
   private confirmationService: ConfirmationService = inject(ConfirmationService);
 
@@ -42,6 +43,15 @@ export class LoginComponent implements OnInit {
         this.loginForm.get('phone')?.setValue(phone);
         this.loginForm.get('password')?.setValue(password);
       }
+      this.activatedRoute.queryParams.subscribe((params)=>{
+        if(params['phone']) {
+          this.loginForm.get('phone')?.setValue(params['phone']);
+          this.loginForm.get('password')?.setValue('');
+          localStorage.removeItem(localStorageKey.PHONE);
+          localStorage.removeItem(localStorageKey.PASSWORD);
+          localStorage.setItem(localStorageKey.IS_REMEMBER_ME, 'false');
+        }
+      })
       this.changeDetectorRef.detectChanges();
     });
   }

@@ -64,6 +64,9 @@ p-avatar {
 .p-confirm-dialog-accept:hover {
     @apply bg-blue-600;
 }
+.p-button:not(.p-button-link) {
+    @apply min-h-11;
+}
 .p-button:not(.p-confirm-dialog-accept, .p-confirm-dialog-reject, .p-button-link, .p-button-outlined) {
     @apply bg-blue-500 border-blue-500 text-white px-4 py-2;
 }

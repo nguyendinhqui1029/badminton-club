@@ -212,6 +212,30 @@ class UserController {
       data: null
     });
   };
+
+  public resetPassword = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const email=req.body['email'];
+      const newPassword=req.body['password'];
+      const code=req.body['code'];
+      const resetPasswordResult = await this.userService.resetPassword(email, newPassword, code);
+      res.status(200).json({
+        statusCode: Number(resetPasswordResult.code),
+        statusText: Number(resetPasswordResult.code) !== 200 ? resetPasswordResult.data : 'Reset password success',
+        totalCount: 0,
+        page: 0,
+        data: resetPasswordResult.data
+      });
+    } catch (error: any) {
+      res.status(200).json({
+        statusCode: 500,
+        statusText: 'Reset password is fail.',
+        totalCount: 0,
+        page: 0,
+        data: error.message
+      });
+    }
+  };
 }
 
 export default UserController;

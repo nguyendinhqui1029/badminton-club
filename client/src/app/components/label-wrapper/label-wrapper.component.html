@@ -1,15 +1,23 @@
-<div class="flex gap-1 items-center">
-  <label [for]="idLabel()" class="font-bold text-base">{{label()}}</label>
-  @if(isRequired()) {
-    <span class="text-secondary-color">*</span>
+<div class="flex flex-col w-full gap-2">
+  <div class="flex gap-1 items-center">
+    <label [for]="idLabel()" class="font-bold text-base">{{label()}}</label>
+    @if(isRequired()) {
+      <span class="text-secondary-color">*</span>
+    }
+  </div>
+  <div class="w-full">
+    <ng-content ></ng-content>
+  </div>
+  @if(errorMessageFormControl() && isTouched()){
+    <small class="flex gap-2 items-center text-secondary-color">
+      <span class="pi pi-exclamation-triangle text-xl"></span>
+      <span> {{errorMessageFormControl()}}</span>
+    </small>
+  }
+  @if(!errorMessageFormControl() && errorMessageFormGroup() && isTouched()){
+    <small class="flex gap-2 items-center text-secondary-color">
+      <span class="pi pi-exclamation-triangle text-xl"></span>
+      <span> {{errorMessageFormGroup()}}</span>
+    </small>
   }
 </div>
-<div class="w-full mt-2">
-  <ng-content ></ng-content>
-</div>
-@if(errorMessage()){
-  <small class="flex gap-2 items-center text-secondary-color mt-2">
-    <span class="pi pi-exclamation-triangle text-xl"></span>
-    <span> {{errorMessage()}}</span>
-  </small>
-}

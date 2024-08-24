@@ -27,3 +27,7 @@ export const localStorageKey = {
     ACCESS_TOKEN: 'Access_Token',
     REFRESH_TOKEN: 'Refresh_Token'
 }
+
+export const emailType = {
+    RESET_PASSWORD: 'Reset_Password'
+}

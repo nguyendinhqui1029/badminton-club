@@ -41,4 +41,8 @@ export class UserService {
   logout() {
     return this.http.post<ApiResponseValue<{ message: string; }>>(`${environment.apiUrl}/user/logout`, {});
   }
+
+  resetPassword(body: {code: string; email: string; password: string}) {
+    return this.http.post<ApiResponseValue<{id: string; phone: string}>>(`${environment.apiUrl}/user/reset-password`, body);
+  }
 }

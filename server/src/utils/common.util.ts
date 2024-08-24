@@ -25,3 +25,16 @@ export async function isLogin(plainPassword: string, hashedPassword: string): Pr
   const isPasswordValid = await comparePassword(plainPassword, hashedPassword);
   return isPasswordValid;
 }
+
+export function generateUniqueRandomString(length: number): string {
+  const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const result = [];
+  const values = new Uint8Array(length);
+  crypto.getRandomValues(values);
+
+  for (let i = 0; i < length; i++) {
+    result.push(charset[values[i] % charset.length]);
+  }
+
+  return result.join('');
+}

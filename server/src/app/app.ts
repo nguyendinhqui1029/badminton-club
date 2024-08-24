@@ -12,6 +12,7 @@ import eventRoutes from '../routes/eventRoutes';
 import transactionRoutes from '../routes/transactionRoutes';
 import settingsRoutes from '../routes/settingsRoutes';
 import filesRoutes from '../routes/filesRoutes';
+import emailRoutes from '../routes/emailRoutes';
  class App {
   public app: Application;
   public port: number;
@@ -42,6 +43,7 @@ import filesRoutes from '../routes/filesRoutes';
     this.app.use(`${root}/${ROUTER_PATH.TRANSACTION}`, transactionRoutes);
     this.app.use(`${root}/${ROUTER_PATH.SETTINGS}`, settingsRoutes);
     this.app.use(`${root}/${ROUTER_PATH.FILES}`, filesRoutes);
+    this.app.use(`${root}/${ROUTER_PATH.EMAIL}`, emailRoutes);
     // Add more routes as needed
   }
 

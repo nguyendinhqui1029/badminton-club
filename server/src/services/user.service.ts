@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import env from '../config/env';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import mongoose from "mongoose";
+import EmailService from "./email.service";
 
 class UserService {
   public async searchAllUsers(idUser: string, keyword: string): Promise<any[]> {
@@ -122,6 +123,24 @@ class UserService {
       console.error('Error logging in:', error);
       return { code: '403', message: 'Refresh Token is invalid' };
     }
+  }
+
+  public async resetPassword(email: string, newPassword: string, code: string): Promise<Record<string, string | User | null>> {
+    const verifyCodeValid = await EmailService.sendVerifyCodeByEmailTo(email, code);
+    if(verifyCodeValid && verifyCodeValid.id) {
+      const deleteEmailByIdResult = await EmailService.deleteEmailById(verifyCodeValid.id);
+      if(!deleteEmailByIdResult) {
+        return { code: '500', data: 'Service error.' };
+      }
+      const hashedPassword = await hashPassword(newPassword);
+      const updatedUser = await UserModel.findOneAndUpdate({ email }, {password: hashedPassword}, {
+        fields: '_id phone',
+        new: true, // Trả về bản ghi mới sau khi cập nhật
+        runValidators: true // Chạy các validator để đảm bảo dữ liệu hợp lệ
+      }).exec();
+      return { code: '200', data: updatedUser };
+    }
+   return { code: '405', data: 'Code is invalid or Code is expired.' };
   }
 }
 

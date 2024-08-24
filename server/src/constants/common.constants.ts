@@ -10,5 +10,6 @@ export const ROUTER_PATH = {
     EVENT: 'event',
     TRANSACTION: 'transaction',
     SETTINGS: 'settings',
-    FILES: 'files'
+    FILES: 'files',
+    EMAIL: 'email'
 }
