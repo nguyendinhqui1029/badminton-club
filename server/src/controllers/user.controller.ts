@@ -76,7 +76,7 @@ class UserController {
     try {
       const newUser = await this.userService.createUser(req.body);
       res.status(201).json({
-        statusCode: 201,
+        statusCode: 200,
         statusText: 'Get user is successful.',
         totalCount: 0,
         page: 0,
@@ -97,7 +97,7 @@ class UserController {
     try {
       const updatedUser = await this.userService.updateUser(req.params.id, req.body);
       res.status(201).json({
-        statusCode: 201,
+        statusCode: 200,
         statusText: 'Get user is successful.',
         totalCount: 0,
         page: 0,

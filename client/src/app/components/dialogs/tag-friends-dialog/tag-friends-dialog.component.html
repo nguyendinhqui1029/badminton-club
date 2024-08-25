@@ -1,4 +1,4 @@
-<app-search-container-dialog [initializeValue]="selectedItems()" [items]="items()"
+<app-search-container-dialog  searchTitle="Tìm bạn bè" [initializeValue]="selectedItems()" [items]="items()"
   (onCloseDialog)="onCloseDialog($event)" [isMultipleSelect]="true" (searchInputChange)="searchInputChange($event)">
     <ng-template #contentRowTemplate let-data>
         <div class="flex gap-3 items-center">

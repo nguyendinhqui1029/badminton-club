@@ -17,6 +17,7 @@ interface EnvConfig {
   DOMAIN: string;
   EMAIL_PASS: string;
   EMAIL_USER: string;
+  HERE_PLACES_API_KEY: string;
 }
 const env: EnvConfig = {
   PORT: parseInt(process.env.PORT as string, 10) || 3000,
@@ -31,6 +32,7 @@ const env: EnvConfig = {
   DOMAIN: process.env.DOMAIN as string || 'localhost',
   EMAIL_PASS: process.env.EMAIL_PASS as string,
   EMAIL_USER: process.env.EMAIL_USER as string,
+  HERE_PLACES_API_KEY: process.env.HERE_PLACES_API_KEY as string,
 };
 
 export default env;

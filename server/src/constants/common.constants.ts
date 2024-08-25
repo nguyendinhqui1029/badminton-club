@@ -11,5 +11,6 @@ export const ROUTER_PATH = {
     TRANSACTION: 'transaction',
     SETTINGS: 'settings',
     FILES: 'files',
-    EMAIL: 'email'
+    EMAIL: 'email',
+    LOCATION: 'location'
 }

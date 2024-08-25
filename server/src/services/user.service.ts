@@ -9,51 +9,52 @@ import EmailService from "./email.service";
 class UserService {
   public async searchAllUsers(idUser: string, keyword: string): Promise<any[]> {
     const pipeline = [
-      {
-        $match: {
-          _id: new mongoose.Types.ObjectId(idUser) // Find the user by ID
-        }
-      },
-      {
+      // Bước 1: Tìm người dùng theo idUser
+      { $match: { _id: new mongoose.Types.ObjectId(idUser) } },
+      
+      // Bước 2: Giải nén thông tin bạn bè từ trường idFriends
+      { 
         $lookup: {
-          from: 'users', // Collection name in MongoDB
+          from: 'users', // Tên của collection chứa dữ liệu người dùng
           localField: 'idFriends',
           foreignField: '_id',
           as: 'friends'
         }
       },
-      {
-        $unwind: {
-          path: '$friends',
-          preserveNullAndEmptyArrays: true
-        }
-      },
-      {
-        $match: {
-          'friends._id': { $ne: new mongoose.Types.ObjectId(idUser) },
-          $or: [
-            {
-              'friends.name': { $regex: keyword, $options: 'i' }
-            },
-            {
-              $expr: { $eq: [keyword, ''] }
+      
+      // Bước 3: Lọc bạn bè theo từ khóa trong trường name
+      { 
+        $addFields: {
+          friends: {
+            $filter: {
+              input: '$friends',
+              as: 'friend',
+              cond: {
+                $regexMatch: {
+                  input: { $toLower: '$$friend.name' },
+                  regex: new RegExp(keyword.toLowerCase(), 'i')
+                }
+              }
             }
-          ]
+          }
         }
       },
-      {
+      
+      // Bước 4: Chọn các trường cần thiết từ bạn bè
+      { 
         $project: {
-          'name': 1,
-          'avatar': 1,
-          'friends._id': 1,
-          'friends.name': 1,
-          'friends.avatar': 1
+          friends: {
+            _id: 1,
+            name: 1,
+            avatar: 1
+          }
         }
       }
-    ];
+    ]
     try {
       const result = await UserModel.aggregate(pipeline).exec();
-      return result;
+      const friends = result.length > 0 ? result[0].friends : [];
+      return friends;
     } catch (error) {
       console.error('Error in searchAllUsers:', error);
       throw new Error('Failed to search users');
@@ -80,7 +81,7 @@ class UserService {
   public async updateUser(id: string, userData: User): Promise<User | null> {
     const hashedPassword = await hashPassword(userData.password);
     const idFriendObjectList = userData.idFriends.map((idFriend: string) => new mongoose.Types.ObjectId(idFriend));
-    const updatedUser = await UserModel.findByIdAndUpdate(id, { ...userData, idFriends: idFriendObjectList, password: hashedPassword }, { new: true });
+    const updatedUser = await UserModel.findByIdAndUpdate(new mongoose.Types.ObjectId(id), { ...userData, idFriends: idFriendObjectList, password: hashedPassword }, { new: true });
     return updatedUser;
   }
 

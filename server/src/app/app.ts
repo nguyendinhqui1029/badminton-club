@@ -13,6 +13,8 @@ import transactionRoutes from '../routes/transactionRoutes';
 import settingsRoutes from '../routes/settingsRoutes';
 import filesRoutes from '../routes/filesRoutes';
 import emailRoutes from '../routes/emailRoutes';
+import locationRoutes from '../routes/locationRoutes';
+
  class App {
   public app: Application;
   public port: number;
@@ -44,6 +46,7 @@ import emailRoutes from '../routes/emailRoutes';
     this.app.use(`${root}/${ROUTER_PATH.SETTINGS}`, settingsRoutes);
     this.app.use(`${root}/${ROUTER_PATH.FILES}`, filesRoutes);
     this.app.use(`${root}/${ROUTER_PATH.EMAIL}`, emailRoutes);
+    this.app.use(`${root}/${ROUTER_PATH.LOCATION}`, locationRoutes);
     // Add more routes as needed
   }
 

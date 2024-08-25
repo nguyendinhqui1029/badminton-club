@@ -9,6 +9,7 @@ import { ButtonModule } from 'primeng/button';
 import { UploadFileComponent } from '@app/components/upload-file/upload-file.component';
 import { FileModel } from '@app/models/file-upload.model';
 import { TagFriendsDialogComponent } from '@app/components/dialogs/tag-friends-dialog/tag-friends-dialog.component';
+import { TagLocationDialogComponent } from '@app/components/dialogs/tag-location-dialog/tag-location-dialog.component';
 import { isPlatformBrowser } from '@angular/common';
 import { UserInfoSearch, UserLoginResponse } from '@app/models/user.model';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -42,6 +43,8 @@ interface UserStatus { avatar: string; userName: string; feeling?: {icon: string
 export class AddPostDialogComponent implements OnInit, OnDestroy {
   private dynamicDialogRef: DynamicDialogRef = inject(DynamicDialogRef);
   private dynamicDialogTagFriendRef: DynamicDialogRef = inject(DynamicDialogRef);
+  private dynamicDialogTagLocationRef: DynamicDialogRef = inject(DynamicDialogRef);
+  
   private dialogConfig: DynamicDialogConfig = inject(DynamicDialogConfig);
   private dialogService: DialogService = inject(DialogService);
   private platformId: Object = inject(PLATFORM_ID);
@@ -172,6 +175,7 @@ export class AddPostDialogComponent implements OnInit, OnDestroy {
     this.dynamicDialogRef.close();
   }
 
+
   initRequestBody() {
     const body: PostRequestBody = {
       images: this.postFormGroup.value.images || [],
@@ -228,11 +232,34 @@ export class AddPostDialogComponent implements OnInit, OnDestroy {
       this.titleGroup.update((userStatus: UserStatus)=>({...userStatus, friends: value.map((item:UserInfoSearch)=>item.name)}));
     })
   }
+  openTagLocationDialog() {
+    this.dynamicDialogTagFriendRef = this.dialogService.open(TagLocationDialogComponent, {
+      showHeader: false,
+      width: '450px',
+      height: '100vh',
+      modal: true,
+      transitionOptions: '450ms',
+      appendTo: 'body',
+      data: {
+        initializeTagFriends: this.postFormGroup.value.tagFriends || []
+      }
+    });
 
+    if(isPlatformBrowser(this.platformId) && window.matchMedia('(max-width: 500px)').matches) {
+      this.dialogService.getInstance(this.dynamicDialogTagFriendRef).maximize();
+    }
+    this.dynamicDialogTagFriendRef.onClose.pipe(take(1)).subscribe((value: string)=>{
+      this.postFormGroup.get('tagLocation')?.setValue(value);
+      this.titleGroup.update((userStatus: UserStatus)=>({...userStatus, tagLocation: value}));
+    })
+  }
   ngOnDestroy() {
     if (this.dynamicDialogRef) {
         this.dynamicDialogRef.close();
     }
+    if (this.dynamicDialogTagLocationRef) {
+      this.dynamicDialogTagLocationRef.close();
+    } 
     if (this.dynamicDialogTagFriendRef) {
       this.dynamicDialogTagFriendRef.close();
     } 
