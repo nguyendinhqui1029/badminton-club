@@ -52,7 +52,6 @@ export default class EmailService {
         createdAt: { $gte: past300Seconds }})
       .sort({ createdAt: -1 })
       .exec();
-      console.log(result)
       return result;
     } catch (error: any) {
      return null; 

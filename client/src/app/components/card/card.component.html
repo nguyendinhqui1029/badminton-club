@@ -56,10 +56,10 @@
         <span class="pi pi-comments text-xl"></span>
         <small class="min-w-fit">Bình luận</small>
       </div>
-      <div (click)="sharePost.toggle($event)"
+      <div  (click)="sharePost.toggle($event)"
           class="cursor-pointer flex max-h-11 gap-2 items-center p-2 w-2/4 max-w-36 border-2 rounded-3xl bg-gray-color hover:bg-gray-300">
           <span class="pi pi-share-alt text-xl"></span>
-          <small class="min-w-fit">Chia sẻ</small>
+          <small class="min-w-fit" #buttonShare>Chia sẻ</small>
           <p-menu #sharePost [model]="actionsSharePost" [popup]="true" />
       </div>
     </div>
