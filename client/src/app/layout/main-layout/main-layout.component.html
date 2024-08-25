@@ -1,6 +1,7 @@
 <div class="flex gap-4 justify-center max-w-6xl mx-auto">
-  <div class="flex flex-col max-w-xl min-w-80 w-full gap-1">
-    <app-navigation></app-navigation>
+  <div class="relative flex flex-col max-w-xl min-w-80 w-full gap-1">
+    <app-navigation class="fixed min-w-80 max-w-xl w-full"></app-navigation>
+    <div class="h-32"></div>
     <router-outlet />
   </div>
   <!-- <div class="flex flex-col hidden lg:flex">

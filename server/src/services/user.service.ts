@@ -102,8 +102,8 @@ class UserService {
       }
 
       // Tạo JWT
-      const accessToken = jwt.sign({ id: user._id, point: user.point, avatar: user.avatar, email: user.email, phone: user.phone,  role: user.role }, env.JWT_SECRET, { expiresIn: '1h' });
-      const refreshToken = jwt.sign({ id: user._id, point: user.point, avatar: user.avatar, email: user.email, phone: user.phone, role: user.role}, env.JWT_REFRESH_SECRET, { expiresIn: '7d' });
+      const accessToken = jwt.sign({ id: user._id, name: user.name, point: user.point, avatar: user.avatar, email: user.email, phone: user.phone,  role: user.role }, env.JWT_SECRET, { expiresIn: '1h' });
+      const refreshToken = jwt.sign({ id: user._id, name: user.name, point: user.point, avatar: user.avatar, email: user.email, phone: user.phone, role: user.role}, env.JWT_REFRESH_SECRET, { expiresIn: '7d' });
     
       // Gửi token về client
       return { code: '200', accessToken, refreshToken };
@@ -117,7 +117,7 @@ class UserService {
     try {
       const verifySuccess: JwtPayload = await jwt.verify(refreshToken, env.JWT_REFRESH_SECRET) as JwtPayload;
       // Tạo access token mới
-      const accessToken = jwt.sign({ id: verifySuccess['id'], email: verifySuccess['email'], role: verifySuccess['role'] }, env.JWT_SECRET, { expiresIn: '1h' });
+      const accessToken = jwt.sign({ id: verifySuccess['id'], name: verifySuccess?.name, phone: verifySuccess.phone, point: verifySuccess?.point, avatar: verifySuccess?.avatar, email: verifySuccess['email'], role: verifySuccess['role'] }, env.JWT_SECRET, { expiresIn: '1h' });
       return { code: '200', accessToken };
     } catch (error) {
       console.error('Error logging in:', error);

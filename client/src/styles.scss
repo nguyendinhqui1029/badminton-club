@@ -8,11 +8,8 @@ p-avatar {
     @apply flex items-center;
 }
 
-.p-menu-list {
-    @apply flex flex-col gap-4 last:pb-4;
-}
 .p-menuitem-link {
-    @apply py-0;
+    @apply py-2;
 }
 .p-menu-overlay {
     @apply rounded-md;

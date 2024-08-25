@@ -1,3 +1,4 @@
+import { CURRENT_USER_INIT } from '@app/constants/common.constant';
 import { UserLoginResponse } from '@app/models/user.model';
 import {jwtDecode} from 'jwt-decode';
 
@@ -8,21 +9,14 @@ export function getCookie(name: string): string | null {
   return null;
 }
 
-export function getUserInfoFromToken(token: string) {
+export function getUserInfoFromToken(token: string | null) {
   try {
-    const decoded: UserLoginResponse = jwtDecode<UserLoginResponse>(token);
-    return decoded; // This contains the payload of the token
+    if(!token) {
+      return CURRENT_USER_INIT;
+    }
+    return jwtDecode<UserLoginResponse>(token);
   } catch (error) {
     console.error('Invalid token', error);
-    return {
-      id: '',
-      point: 0,
-      email: '',
-      phone: '',
-      name: '',
-      role: [],
-      avatar: '',
-      birthday: ''
-    };
+    return CURRENT_USER_INIT;
   }
 }

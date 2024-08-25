@@ -1,18 +1,14 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import { getUTCDate } from '../utils/date.util';
 
-export interface LikeInfo extends Document {
-  idUser: string;
-  icon: string;
-}
 // Define interface for TypeScript type-checking
 export interface Post extends Document {
   images: string[];
   background: string;
   content: string;
-  idUserLike: LikeInfo[];
+  idUserLike: string[];
   idComment: string[];
-  shareLink: string;
+  shareLink: string[];
   hashTag: string[];
   createdAt: string;
   updatedAt: string;
@@ -23,17 +19,6 @@ export interface Post extends Document {
   scope: 'Everyone' | 'Only_Me' | 'Friends';
 }
 
-const likeSchema = new mongoose.Schema({
-  idUser: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', // Tham chiếu đến model User
-    default: null
-  },
-  icon: {
-    type: String,
-    default: ''
-  }
-});
 
 const postSchema = new mongoose.Schema({
   images: {
@@ -50,7 +35,8 @@ const postSchema = new mongoose.Schema({
     trim: true
   },
   idUserLike: [{
-    type: likeSchema,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User', // Tham chiếu đến model User
     default: []
   }],
   idComment: [{

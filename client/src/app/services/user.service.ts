@@ -1,5 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
+import { CURRENT_USER_INIT } from '@app/constants/common.constant';
 import { environment } from '@app/environments/environment';
 import { ApiResponseValue } from '@app/models/api-response.model';
 import { UserInfoSearchResponse, UserLoginResponse } from '@app/models/user.model';
@@ -10,16 +11,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 })
 export class UserService {
   private http: HttpClient = inject(HttpClient);
-  private currentUserLoginSubject = new BehaviorSubject<UserLoginResponse>({
-    id: '',
-    point: 0,
-    email: '',
-    phone: '',
-    name: '',
-    role: [],
-    avatar: '',
-    birthday: ''
-  });
+  private currentUserLoginSubject = new BehaviorSubject<UserLoginResponse>(CURRENT_USER_INIT);
 
   get currentUserLogin() {
     return this.currentUserLoginSubject.asObservable();

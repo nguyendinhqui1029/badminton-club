@@ -4,10 +4,10 @@ import { AvatarGroupModule } from 'primeng/avatargroup';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { AddPostDialogComponent } from '@app/components/dialogs/add-post-dialog/add-post-dialog.component';
 import { isPlatformBrowser } from '@angular/common';
-import { PostResponseValue } from '@app/models/post.model';
+import { PostRequestBody, PostResponseValue } from '@app/models/post.model';
 import { UserInfoSearch, UserLoginResponse } from '@app/models/user.model';
 import { Subscription, take } from 'rxjs';
-import { scopePost, socialType } from '@app/constants/common.constant';
+import { CURRENT_USER_INIT, INIT_POST_VALUE, scopePost, socialType } from '@app/constants/common.constant';
 import { getTimeDifference } from '@app/utils/date.util';
 import { ImagesGridComponent } from '@app/components/images-grid/images-grid.component';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
@@ -18,6 +18,7 @@ import { ToastModule } from 'primeng/toast';
 import { UserService } from '@app/services/user.service';
 import { environment } from '@app/environments/environment';
 import { path } from '@app/constants/path.constant';
+import { formatLargeNumber } from '@app/utils/common.util';
 
 
 interface UserStatus { avatar: string; userName: string; feeling?: {icon: string; value: string}; friends: string[];location: string;};
@@ -28,7 +29,7 @@ interface UserStatus { avatar: string; userName: string; feeling?: {icon: string
   imports: [ConfirmDialogModule, ToastModule, AvatarModule, AvatarGroupModule, MenuModule, ImagesGridComponent],
   templateUrl: './card.component.html',
   styleUrl: './card.component.scss',
-  providers: [DialogService, PostService, ConfirmationService, MessageService]
+  providers: [DialogService, PostService, ConfirmationService]
 })
 export class CardComponent implements OnDestroy, OnInit, OnChanges {
   item = input.required<PostResponseValue>();
@@ -45,7 +46,7 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
 
   dynamicDialogRef: DynamicDialogRef | undefined;
   
-  
+  disableLike = signal<boolean>(false);
   titleGroup = signal<UserStatus>({
     avatar: '',
     userName: '',
@@ -57,34 +58,38 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
     location: ''
   });
   backgroundClass = signal<string>('');
-  currentUserId= signal<string>('');
+  currentUser= signal<UserLoginResponse>(CURRENT_USER_INIT);
+  itemClone = signal<PostResponseValue>(INIT_POST_VALUE);
 
 
+  isLiked = computed(()=> this.itemClone().idUserLike.find((item)=>item?.id === this.currentUser().id))
   scopeIcon = computed(()=> {
     const scopeIcon = {
       [scopePost.EVERYONE]: 'pi pi-users',
       [scopePost.FRIENDS]: 'pi pi-user',
       [scopePost.ONLY_ME]: 'pi pi-lock',
     }
-    return scopeIcon[this.item().scope] || 'pi pi-users';
+    return scopeIcon[this.itemClone().scope] || 'pi pi-users';
   });
-  createdTime = computed(()=>getTimeDifference(new Date(this.item().createdAt)));
+  createdTime = computed(()=>getTimeDifference(new Date(this.itemClone().createdAt)));
   userLikeAvatar = computed(()=> {
-    if(this.item().idUserLike.length > 5){
-      return [...this.item().idUserLike.splice(0,5), {avatar: `+${this.item().idUserLike.length}`, name:''}]
+    if(this.itemClone().idUserLike.length > 5){
+      return [...this.itemClone().idUserLike.splice(0,5), {avatar: `+${this.itemClone().idUserLike.length}`, name:''}]
     }
-    return this.item().idUserLike;
+    return this.itemClone().idUserLike;
   });
   userStatusDisplay = computed(()=> {
     return this.generateUserStatus();
   });
-  hasPermission = computed(()=> this.currentUserId() === this.item().createdBy.id);
+  hasPermission = computed(()=> this.currentUser()?.id === this.itemClone().createdBy?.id);
   actionsPost: MenuItem[] | undefined;
   actionsSharePost: MenuItem[] | undefined;
-  linkPostDetail = computed(()=>`/${path.HOME.DETAIL.replace(':id', this.item()?.id || '' )}`);
+  linkPostDetail = computed(()=>`/${path.HOME.DETAIL.replace(':id', this.itemClone()?.id || '' )}`);
+  countComment = computed(()=>formatLargeNumber(this.itemClone().idComment?.length));
 
   ngOnChanges(changes: SimpleChanges): void {
     if(changes['item']?.currentValue) {
+      this.itemClone.set(changes['item']?.currentValue);
       const post = changes['item']?.currentValue;
       const feelingAfterSplit = (post?.feelingIcon || '==/==').split('==/==');
       this.titleGroup.set({
@@ -136,7 +141,7 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
 
   ngOnInit(): void {
    this.userUnSubscription =  this.userService.currentUserLogin.subscribe((value: UserLoginResponse)=>{
-      this.currentUserId.set(value.id);
+      this.currentUser.set(value);
     });
     this.actionsPost = [
       {
@@ -144,14 +149,14 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
           items: [
               {
                   label: 'Cập nhật',
-                  icon: 'pi pi-pen-to-square',
+                  icon: 'text-2xl pi pi-pen-to-square',
                   command: () => {
                     this.onClickOpenEditPost();
                   }
               },
               {
                   label: 'Xoá',
-                  icon: 'pi pi-upload',
+                  icon: 'text-2xl pi pi-upload',
                   command: () => {
                     this.onDeletePost();
                   }
@@ -165,7 +170,7 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
                 {
                     label: 'Facebook',
                     icon: 'pi pi-facebook',
-                    iconClass: 'text-3xl text-blue-600',
+                    iconClass: 'text-4xl text-blue-600',
                     command: () => {
                       this.shareToSocial(socialType.FACEBOOK);
                     }
@@ -173,7 +178,7 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
                 {
                   label: 'Twitter',
                   icon: 'pi pi-twitter',
-                  iconClass: 'text-3xl text-blue-300',
+                  iconClass: 'flex items-center justify-center w-9 h-9 rounded-full bg-black text-white',
                   command: () => {
                     this.shareToSocial(socialType.TWITTER);
                   }
@@ -196,7 +201,7 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
                 
             ]
         }];
-    this.backgroundClass.set(this.item().background.replace('==/==', ' '));
+    this.backgroundClass.set(this.itemClone().background.replace('==/==', ' '));
   }
 
   onDeletePost() {
@@ -208,13 +213,13 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
       rejectIcon:"none",
       rejectButtonStyleClass:"p-button-text",
       accept: () => {
-       this.postService.deletePost(this.item().id || '').subscribe((response)=>{
+       this.postService.deletePost(this.itemClone().id || '').subscribe((response)=>{
         if(response.statusCode !== 200) {
           this.messageService.add({ severity: 'danger', summary: 'Thông báo xoá', detail: 'Bài viết chưa được xoá. Vui lòng thử lại.' })
           return;
         }
-        this.messageService.add({ severity: 'success', summary: 'Xác nhận', detail: 'Xoá thành công.' });
         this.refreshDataListEvent.emit();
+        this.messageService.add({ severity: 'success', summary: 'Xác nhận', detail: 'Xoá thành công.' });
        });
       },
       reject: () => {
@@ -224,7 +229,7 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
   }
 
   onClickOpenEditPost() {
-    if(this.currentUserId() !== this.item().createdBy.id){
+    if(this.currentUser().id !== this.itemClone().createdBy?.id){
       return;
     }
     this.dynamicDialogRef = this.dialogService.open(AddPostDialogComponent, {
@@ -234,7 +239,7 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
       transitionOptions: '450ms',
       appendTo: 'body',
       data: {
-        id: this.item().id
+        id: this.itemClone().id
       }
     });
 
@@ -245,8 +250,8 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
   }
 
   shareToSocial(type: string) {
-    let linkPost = encodeURIComponent(`${environment.domain}/detail/${this.item().id}`);
-    const title = this.item().content;
+    let linkPost = encodeURIComponent(`${environment.domain}/detail/${this.itemClone().id}`);
+    const title = this.itemClone().content;
     const urlByType = {
       [socialType.FACEBOOK]: `https://www.facebook.com/sharer/sharer.php?u=${linkPost}`,
       [socialType.LINKEDIN]: `https://www.linkedin.com/sharing/share-offsite/?url=${linkPost}`,
@@ -255,8 +260,41 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
     }
     window.open(urlByType[type] || urlByType[socialType.FACEBOOK], '_blank');
   }
-  onClickLike() {
 
+  onClickLike() {
+    if(this.disableLike()){
+      return;
+    }
+    this.disableLike.set(true);
+    const index = this.itemClone().idUserLike.findIndex((item)=>item?.id === this.currentUser().id);
+    const userLikeClone = [...this.itemClone().idUserLike];
+    if(index === -1) {
+      userLikeClone.unshift(this.currentUser())
+    } else {
+      userLikeClone.splice(index, 1);
+    }
+    const body: PostRequestBody={
+      id: this.itemClone()?.id || '',
+      images: this.itemClone()?.images || [],
+      background: this.itemClone()?.background || '',
+      content: this.itemClone()?.content || '',
+      hashTag: this.itemClone()?.hashTag || [],
+      idUserLike: (userLikeClone||[]).map((item)=>item.id),
+      idComment:  (this.itemClone()?.idComment||[]).map((item)=>item.id),
+      shareLink:  (this.itemClone()?.shareLink||[]).map((item)=>item.id),
+      tagFriends: (this.itemClone()?.tagFriends||[]).map((item)=>item.id),
+      tagLocation: this.itemClone()?.tagLocation || '',
+      feelingIcon: this.itemClone()?.feelingIcon || '',
+      createdBy: this.itemClone()?.createdBy?.id,
+      scope: this.itemClone().scope
+  };
+    this.postService.updatePost(this.itemClone().id || '', body).subscribe((response)=>{
+      this.disableLike.set(false);
+      if(response.statusCode !== 200) {
+        return;
+      }
+      this.itemClone.set(response.data);
+    });
   }
   ngOnDestroy() {
     if (this.dynamicDialogRef) {
@@ -268,3 +306,4 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
     }
   }
 }
+

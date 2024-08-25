@@ -10,9 +10,11 @@ export interface PostRequestBody {
     tagLocation: string;
     feelingIcon: string;
     createdBy: string;
+    idUserLike?: string[];
+    idComment?: string[];
+    shareLink?: string[];
     scope: 'Everyone' | 'Only_Me' | 'Friends';
 }
-
 export interface PostResponseValue {
     id?: string;
     images: string[];
@@ -20,7 +22,7 @@ export interface PostResponseValue {
     content: string;
     idUserLike: UserInfoSearch[];
     idComment: UserInfoSearch[];
-    shareLink: string;
+    shareLink: UserInfoSearch[];
     hashTag: string[];
     createdAt: string;
     updatedAt: string;
@@ -29,4 +31,4 @@ export interface PostResponseValue {
     tagLocation: string;
     feelingIcon: string;
     scope: 'Everyone' | 'Only_Me' | 'Friends';
-  }
+}

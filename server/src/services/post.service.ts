@@ -1,12 +1,13 @@
 import { getUTCDate } from "../utils/date.util";
 import PostModel, { Post } from "../models/post.model";
 import FileUploadController from "../controllers/upload-file.controller";
+import mongoose from "mongoose";
 
 class PostService {
   public async getAll(): Promise<Post[]> {
      const result = await PostModel.find().populate('createdBy','id name avatar').populate('idUserLike').populate('idComment').populate('tagFriends', 'name id');
      return result.sort((firstPost: Post, secondPost: Post) => {
-      return new Date(secondPost.updatedAt).getTime() - new Date(firstPost.updatedAt).getTime(); // Sắp xếp giảm dần
+      return new Date(firstPost.updatedAt).getTime() - new Date(secondPost.updatedAt).getTime(); // Sắp xếp giảm dần
     });
   }
 
@@ -18,8 +19,14 @@ class PostService {
     return await PostModel.create(Post);
   }
 
-  public async update(id: string, Post: Post): Promise<Post | null> {
-    return await PostModel.findByIdAndUpdate(id, {...Post, updatedAt: getUTCDate(new Date())}, { new: true });
+  public async update(id: string, post: Post): Promise<Post | null> {
+    const result = await PostModel.findByIdAndUpdate(id, {...post, updatedAt: getUTCDate(new Date())}, { new: true });
+    
+    if(result) {
+      return this.getById(id);
+    }
+    return result;
+
   }
 
   public async delete(id: string): Promise<Post | null> {

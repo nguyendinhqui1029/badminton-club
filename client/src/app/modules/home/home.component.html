@@ -1,5 +1,18 @@
 <section class="w-full flex flex-col gap-2">
-  <app-create-post (refreshDataListEvent)="handleReFreshDataList()"></app-create-post>
+  @if(currentUserLogin().id) {
+    <app-create-post (refreshDataListEvent)="handleReFreshDataList()"></app-create-post>
+  } @else {
+    <div class="flex rounded-xl bg-white w-full p-4">
+      <p class="text-center">
+        Có vẻ như bạn chưa đăng nhập đúng không? Hãy <p-button [routerLink]="loginPage" link class="underline text-blue-600">đăng nhập</p-button> để có thể đăng tải bài viết nha.
+      </p>
+    </div>
+  }
+  @if(!posts().length) {
+    <div class="flex rounded-xl bg-white w-full p-4">
+      <p class="text-center">Chưa có bài viết nào được đăng tải. Hãy đăng gì đó để trờ thành người đầu tiên trải nghiệm tính năng này. 🥰</p>
+    </div>
+  }
   @for(item of posts(); track item) {
   <app-card [item]="item" (refreshDataListEvent)="handleReFreshDataList()"></app-card>
   }

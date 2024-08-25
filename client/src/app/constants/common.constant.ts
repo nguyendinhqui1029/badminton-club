@@ -1,3 +1,5 @@
+import { PostResponseValue } from "@app/models/post.model"
+
 export const scopePost = {
     EVERYONE: 'Everyone',
     ONLY_ME: 'Only_Me',
@@ -25,7 +27,7 @@ export const localStorageKey = {
     PHONE: 'Phone',
     PASSWORD: 'P1',
     ACCESS_TOKEN: 'Access_Token',
-    REFRESH_TOKEN: 'Refresh_Token'
+    REFRESH_TOKEN: 'Refresh_Token',
 }
 
 export const emailType = {
@@ -38,3 +40,35 @@ export const socialType = {
     TWITTER: 'Twitter',
     LINKEDIN: 'Linkedin'
 }
+
+export const CURRENT_USER_INIT = {
+    id: '',
+    point: 0,
+    email: '',
+    phone: '',
+    name: '',
+    role: [],
+    avatar: '',
+    birthday: ''
+};
+
+export const INIT_POST_VALUE = {
+    images: [],
+    background: 'bg-gray-color-20==/==placeholder:text-black-100 text-black',
+    content: '',
+    idUserLike: [],
+    idComment: [],
+    shareLink: [],
+    hashTag: [],
+    createdAt: '',
+    updatedAt: '',
+    createdBy: {
+        id: '',
+        name: '',
+        avatar: '',
+    },
+    tagFriends: [],
+    tagLocation: '',
+    feelingIcon: '',
+    scope: scopePost.EVERYONE
+} as PostResponseValue;

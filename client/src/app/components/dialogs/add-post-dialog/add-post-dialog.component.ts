@@ -1,4 +1,4 @@
-import { Component, computed, ElementRef, inject, OnDestroy, OnInit, PLATFORM_ID, signal, ViewChild } from '@angular/core';
+import { Component, computed, ElementRef, inject, OnDestroy, OnInit, PLATFORM_ID, signal, ViewChild, WritableSignal } from '@angular/core';
 import { AvatarModule } from 'primeng/avatar';
 import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { InputTextareaModule } from 'primeng/inputtextarea';
@@ -18,6 +18,8 @@ import { PostRequestBody, PostResponseValue } from '@app/models/post.model';
 import { PickerColorComponent } from '@app/components/picker-color/picker-color.component';
 import { Subscription, take } from 'rxjs';
 import { UserService } from '@app/services/user.service';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 interface UserStatus { avatar: string; userName: string; feeling?: {icon: string; value: string}; friends: string[];location: string;};
 @Component({
@@ -31,7 +33,8 @@ interface UserStatus { avatar: string; userName: string; feeling?: {icon: string
     InputTextareaModule, 
     DropdownModule, 
     UploadFileComponent,
-    PickerColorComponent],
+    PickerColorComponent,
+    ToastModule],
   templateUrl: './add-post-dialog.component.html',
   styleUrl: './add-post-dialog.component.scss',
   providers: [DialogService]
@@ -45,6 +48,7 @@ export class AddPostDialogComponent implements OnInit, OnDestroy {
   private formBuilder: FormBuilder = inject(FormBuilder);
   private postService: PostService = inject(PostService);
   private userService: UserService = inject(UserService);
+  private messageService: MessageService = inject(MessageService);
 
   private userUnSubscription!: Subscription;
   currentUserId= signal<string>('');
@@ -64,7 +68,7 @@ export class AddPostDialogComponent implements OnInit, OnDestroy {
   selectedBackgroundClass: string = '';
   postFormGroup!: FormGroup;
   userStatusDisplay = computed(()=> {
-    return this.generateUserStatus();
+    return this.generateUserStatus(this.titleGroup);
   });
   titleGroup = signal<UserStatus>({
     avatar: '',
@@ -78,38 +82,39 @@ export class AddPostDialogComponent implements OnInit, OnDestroy {
   });
   idPost: string| null = null;
 
-  generateUserStatus() {
+  generateUserStatus(titleGroup: WritableSignal<UserStatus>) {
       let status = '';
-      if(this.titleGroup()?.userName) {
-        status += `<h4 class="font-bold text-lg">${this.titleGroup()?.userName}</h4>`;
+      if(titleGroup()?.userName) {
+        status += `<h4 class="font-bold text-lg">${titleGroup()?.userName}</h4>`;
       }
 
-      if(this.titleGroup()?.feeling?.icon && this.titleGroup()?.feeling?.value) {
-         status += `&nbsp;đang cảm thấy&nbsp; <strong> ${this.titleGroup()?.feeling?.value} </strong> &nbsp;${this.titleGroup()?.feeling?.icon}`;
-         if(!this.titleGroup()?.location && !this.titleGroup()?.friends?.length) {
+      if(titleGroup()?.feeling?.icon && titleGroup()?.feeling?.value) {
+         status += `&nbsp;đang cảm thấy&nbsp; <strong> ${titleGroup()?.feeling?.value} </strong> &nbsp;${titleGroup()?.feeling?.icon}`;
+         if(!titleGroup()?.location && !titleGroup()?.friends?.length) {
           return `${status}.`;
         }
       }
 
-      if(this.titleGroup()?.friends?.length) {
+      if(titleGroup()?.friends?.length) {
         status += `&nbsp;cùng với&nbsp;<strong> 
               ${
-                this.titleGroup()?.friends?.length < 2 
-                ? this.titleGroup()?.friends[0]
-                : this.titleGroup()?.friends?.length == 2 
-                ? `${this.titleGroup()?.friends[0]}, ${this.titleGroup()?.friends[1]}`
-                : `${this.titleGroup()?.friends[0]}, ${this.titleGroup()?.friends[1]}</strong>&nbsp;và&nbsp;<strong>${this.titleGroup()?.friends.length - 2}</strong>&nbsp;người khác`
+                titleGroup()?.friends?.length < 2 
+                ? titleGroup()?.friends[0]
+                : titleGroup()?.friends?.length == 2 
+                ? `${titleGroup()?.friends[0]}, ${titleGroup()?.friends[1]}`
+                : `${titleGroup()?.friends[0]}, ${titleGroup()?.friends[1]}</strong>&nbsp;và&nbsp;<strong>${titleGroup()?.friends.length - 2}</strong>&nbsp;người khác`
               }`;
-        if(!this.titleGroup()?.location) {
+        if(!titleGroup()?.location) {
           return `${status}.`;
         }
       }
-      if(this.titleGroup()?.location) {
-        status += `&nbsp;tại&nbsp;<strong> ${this.titleGroup()?.location}.</strong>`;
+      if(titleGroup()?.location) {
+        status += `&nbsp;tại&nbsp;<strong> ${titleGroup()?.location}.</strong>`;
         return status;
       }
       return status;
   }
+
   initFormData(post?: PostResponseValue) {
     this.postFormGroup = this.formBuilder.group({
       createdBy: [post?.createdBy?.id || this.currentUserId()],
@@ -136,11 +141,13 @@ export class AddPostDialogComponent implements OnInit, OnDestroy {
     });
   }
   ngOnInit(): void {
-    this.userUnSubscription =  this.userService.currentUserLogin.subscribe((value: UserLoginResponse)=>{
-      this.currentUserId.set(value.id);
+    this.initFormData();
+    this.userUnSubscription =  this.userService.currentUserLogin.subscribe((userResponse: UserLoginResponse)=>{
+      this.currentUserId.set(userResponse.id);
+      this.initFormData();
+      this.titleGroup.set({...this.titleGroup(), avatar: userResponse.avatar, userName: userResponse.name});
     });
     this.idPost = this.dialogConfig.data['id'] || null;
-    this.initFormData();
     this.postFormGroup.get('background')?.valueChanges.subscribe((value: string)=>{
       this.selectedBackgroundClass = value.replace('==/==', ' ');
     });
@@ -164,6 +171,7 @@ export class AddPostDialogComponent implements OnInit, OnDestroy {
   onClickCloseDialog() {
     this.dynamicDialogRef.close();
   }
+
   initRequestBody() {
     const body: PostRequestBody = {
       images: this.postFormGroup.value.images || [],
@@ -178,14 +186,17 @@ export class AddPostDialogComponent implements OnInit, OnDestroy {
   };
   return body;
   }
+
   onClickSubmit() {
     if(this.postFormGroup.valid) {
       (this.idPost ? this.postService.updatePost(this.idPost,this.initRequestBody()) : this.postService.createPost(this.initRequestBody())).subscribe((response)=>{
         if(response.statusCode !== 200) {
+          this.messageService.add({ severity: 'danger', summary: 'Thông báo', detail: 'Có lỗi xảy ra trong quá trình tạo. Vui lòng tạo lại.' })
           return;
         }
         this.fileUploadRef.requestChangeStatusFile(()=>{
           this.dynamicDialogRef.close();
+          this.messageService.add({severity: 'success', summary: 'Thông báo', detail: 'Bài viết được tạo thành công!' })
         })
       });
     }

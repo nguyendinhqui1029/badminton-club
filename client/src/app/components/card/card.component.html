@@ -12,57 +12,56 @@
         </div>
       </div>
       @if(hasPermission()){
-        <p-toast />
-        <p-confirmDialog styleClass="w-11/12 md:w-fit"/>
-        <p-menu #menu [model]="actionsPost" [popup]="true" />
-        <span (click)="menu.toggle($event)" class="pi pi-ellipsis-v text-xl cursor-pointer"></span>
+      <p-confirmDialog styleClass="w-11/12 md:w-fit" />
+      <p-menu #menu [model]="actionsPost" [popup]="true" />
+      <span (click)="menu.toggle($event)" class="pi pi-ellipsis-v text-xl cursor-pointer"></span>
       }
     </div>
   </div>
-  
-  <div [routerLink]="linkPostDetail()" class="rounded-md bg-cover bg-no-repeat bg-center  w-full h-44 p-2 {{backgroundClass()}}">
-    <p class="line-clamp-5 text-xl font-medium">{{item().content}}
+
+  <div [routerLink]="linkPostDetail()"
+    class="rounded-md bg-cover bg-no-repeat bg-center  w-full h-44 p-2 {{backgroundClass()}}">
+    <p class="line-clamp-5 text-xl font-medium">{{itemClone().content}}
     </p>
   </div>
-  @if(item().images.length) {
-   <app-images-grid [images]="item().images"></app-images-grid>
+  @if(itemClone().images.length) {
+  <app-images-grid [images]="itemClone().images"></app-images-grid>
   }
   <div class="flex flex-col gap-2">
+    <div class="flex justify-between items-start p-2 border-b">
       <p-avatarGroup>
         @for(item of userLikeAvatar(); track item; let last=$last;) {
-          @if(last) {
-            <p-avatar 
-            styleClass="w-8 h-8 text-sm"
-            [label]="item.avatar" 
-            shape="circle"
-            size="large" 
+          @if(last && userLikeAvatar().length > 5) {
+          <p-avatar styleClass="w-8 h-8 text-sm" [label]="item.avatar" shape="circle" size="large"
             [style]="{ 'background-color': '#fe5101', color: '#EBEDF0' }" />
           } @else {
-            <p-avatar 
-          styleClass="w-8 h-8"
-          [image]="item.avatar" 
-          size="large" 
-          shape="circle" />
+          <p-avatar styleClass="w-8 h-8" [image]="item.avatar" size="large" shape="circle" />
           }
         }
-    </p-avatarGroup>
-    <div class="flex items-center gap-2 justify-between">
-      
-      <div class="cursor-pointer flex max-h-11 gap-2 items-center px-4 py-2 w-2/4 max-w-36 border-2 rounded-3xl bg-gray-color hover:bg-gray-300">
-        <span class="pi pi-thumbs-up text-2xl"></span>
-        <small>100</small>
+      </p-avatarGroup>
+      <p>{{countComment()}} Bình luận</p>
+    </div>
+
+    <div class="flex items-center gap-1 justify-between">
+      <div
+        (click)="onClickLike()"
+        [class.text-secondary-color]="isLiked()"
+        [class.cursor-progress]="disableLike()"
+        class="cursor-pointer flex max-h-11 gap-2 items-center p-2 w-2/4 max-w-36 border-2 rounded-3xl bg-gray-color hover:bg-gray-300">
+        <span class="pi pi-thumbs-up text-xl"></span>
+        <small class="min-w-fit">Yêu thích</small>
       </div>
-      <div class="cursor-pointer flex max-h-11 gap-2 items-center px-4 py-2 w-2/4 max-w-36 border-2 rounded-3xl bg-gray-color hover:bg-gray-300">
-        <span class="pi pi-comments text-2xl"></span>
-        <small>100</small>
+      <div
+        class="cursor-pointer flex max-h-11 gap-2 items-center p-2 w-2/4 max-w-36 border-2 rounded-3xl bg-gray-color hover:bg-gray-300">
+        <span class="pi pi-comments text-xl"></span>
+        <small class="min-w-fit">Bình luận</small>
       </div>
-      <ng-container>
-        <p-menu #sharePost [model]="actionsSharePost" [popup]="true" />
-        <div (click)="sharePost.toggle($event)" class="cursor-pointer flex max-h-11 gap-2 items-center px-4 py-2 w-2/4 max-w-36 border-2 rounded-3xl bg-gray-color hover:bg-gray-300">
-          <span class="pi pi-share-alt text-2xl"></span>
-          <small>10</small>
-        </div>
-      </ng-container>
+      <div (click)="sharePost.toggle($event)"
+          class="cursor-pointer flex max-h-11 gap-2 items-center p-2 w-2/4 max-w-36 border-2 rounded-3xl bg-gray-color hover:bg-gray-300">
+          <span class="pi pi-share-alt text-xl"></span>
+          <small class="min-w-fit">Chia sẻ</small>
+          <p-menu #sharePost [model]="actionsSharePost" [popup]="true" />
+      </div>
     </div>
   </div>
 </div>

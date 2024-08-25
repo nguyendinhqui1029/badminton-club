@@ -35,7 +35,7 @@ export class TagFriendsDialogComponent implements OnInit, OnDestroy {
         this.items.set([]);
         return;
       }
-      this.items.set(response.data.map((item: UserInfoSearchResponse)=>item.friends));
+      this.items.set((response.data || []).map((item: UserInfoSearchResponse)=>item));
     });
   }
 

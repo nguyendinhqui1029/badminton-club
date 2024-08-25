@@ -6,6 +6,7 @@ import { path } from '@app/constants/path.constant';
 import { UserLoginResponse } from '@app/models/user.model';
 import { UserService } from '@app/services/user.service';
 import { Subscription } from 'rxjs';
+import { CURRENT_USER_INIT, localStorageKey } from '@app/constants/common.constant';
 
 @Component({
   selector: 'app-navigation',
@@ -20,16 +21,7 @@ export class NavigationComponent implements OnInit, OnDestroy {
   private userUnSubscription!: Subscription;
 
   private userService: UserService = inject(UserService);
-  currentUser = signal<UserLoginResponse>({
-    id: '',
-    point: 0,
-    email: '',
-    phone: '',
-    name: '',
-    role: [],
-    avatar: '',
-    birthday: '',
-  });
+  currentUser = signal<UserLoginResponse>(CURRENT_USER_INIT);
 
   ngOnInit(): void {
     this.userUnSubscription = this.userService.currentUserLogin.subscribe((value: UserLoginResponse) => {
@@ -39,8 +31,8 @@ export class NavigationComponent implements OnInit, OnDestroy {
 
   onLogoutClick() {
     this.userService.logout().subscribe(()=>{
-      localStorage.removeItem('username');
-      localStorage.removeItem('password');
+      localStorage.removeItem(localStorageKey.ACCESS_TOKEN);
+      localStorage.removeItem(localStorageKey.REFRESH_TOKEN);
       this.userService.updateData({
         id: '',
         point: 0,
