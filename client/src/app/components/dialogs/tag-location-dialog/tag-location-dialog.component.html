@@ -1,9 +1,9 @@
 <app-search-container-dialog searchTitle="Tìm địa điểm" [initializeValue]="selectedItems()" [items]="items()"
   (onCloseDialog)="onCloseDialog($event)" [isMultipleSelect]="false" (searchInputChange)="searchInputChange($event)">
   <ng-template #contentRowTemplate let-data>
-    <div class="flex gap-3 items-center">
-      <span class="pi pi-map-marker"></span>
-      <span class="text-base">{{data.item?.name}}</span>
+    <div class="flex gap-3 items-start">
+      <span class="pi pi-map-marker pt-1"></span>
+      <span class="text-base leading-tight">{{data.item?.name}}</span>
     </div>
   </ng-template>
 </app-search-container-dialog>

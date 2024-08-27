@@ -27,7 +27,9 @@ p-avatar {
 .p-dropdown {
     @apply border-2 w-full rounded-3xl;
 }
-
+.p-dropdown-label:hover  {
+    @apply rounded-3xl rounded-e-none;
+}
 .p-inputtext:not(.p-dropdown-label) {
     @apply bg-three-color rounded-3xl px-4 min-h-11;
 }

@@ -252,9 +252,12 @@ export class AddPostDialogComponent implements OnInit, OnDestroy {
     if(isPlatformBrowser(this.platformId) && window.matchMedia('(max-width: 500px)').matches) {
       this.dialogService.getInstance(this.dynamicDialogTagFriendRef).maximize();
     }
-    this.dynamicDialogTagFriendRef.onClose.pipe(take(1)).subscribe((value: string)=>{
-      this.postFormGroup.get('tagLocation')?.setValue(value);
-      this.titleGroup.update((userStatus: UserStatus)=>({...userStatus, tagLocation: value}));
+    this.dynamicDialogTagFriendRef.onClose.pipe(take(1)).subscribe((value: {id: string; name: string}[])=>{
+      if(value && value.length){
+        console.log(value)
+        this.postFormGroup.get('tagLocation')?.setValue(value[0].name);
+        this.titleGroup.update((userStatus: UserStatus)=>({...userStatus, location: value[0].name}));
+      }
     })
   }
   openTagFeelingDialog() {

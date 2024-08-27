@@ -1,4 +1,4 @@
-<header class="absolute w-full flex p-4 gap-4 items-center justify-between border-b-2 border-gray-color">
+<header class="absolute bg-white w-full flex p-4 gap-4 items-center justify-between border-b-2 border-gray-color">
   <div class="flex gap-4">
     <span class="pi pi-arrow-left font-bold text-2xl cursor-pointer" (click)="onClickCloseDialog()"></span>
     <h4 class="font-bold text-xl">{{title}}</h4>
@@ -15,7 +15,7 @@
       <div class="flex flex-col gap-2">
         <div class="flex flex-wrap items-center" [innerHTML]="userStatusDisplay()">
         </div>
-        <p-dropdown styleClass="h-8 items-center text-xs" formControlName="scope" [options]="postScopeOptions"
+        <p-dropdown styleClass="h-8 items-center text-xs max-w-fit" formControlName="scope" [options]="postScopeOptions"
           optionLabel="label" optionValue="value" />
       </div>
     </div>
@@ -35,19 +35,19 @@
       <app-upload-file #fileUploadRef formControlName="images"></app-upload-file>
     </div>
 
-    <div class="flex gap-2 px-4 py-1 w-full overflow-auto">
-      <ul class="flex flex-col gap-3">
-        <li class="flex gap-2 items-center cursor-pointer" (click)="openTagFriendDialog()">
-          <span class="pi pi-user-plus text-2xl"> </span>
-          <label class="leading-6 text-xl">Tag name</label>
+    <div class="flex gap-2 px-4 pb-4 w-full overflow-auto">
+      <ul class="flex flex-col w-full">
+        <li class="flex gap-2 items-center" (click)="openTagFriendDialog()">
+          <span class="pi pi-user-plus text-2xl cursor-pointer"> </span>
+          <label class="leading-6 text-base cursor-pointer">Tag name</label>
         </li>
-        <li class="flex gap-2 items-center cursor-pointer" (click)="openTagLocationDialog()">
-          <span class="pi pi-map-marker text-2xl"> </span>
-          <label class="leading-6 text-xl">Add location</label>
+        <li class="flex gap-2 items-center" (click)="openTagLocationDialog()">
+          <span class="pi pi-map-marker text-2xl cursor-pointer"> </span>
+          <label class="leading-6 text-base cursor-pointer">Add location</label>
         </li>
-        <li class="flex gap-2 items-center cursor-pointer" (click)="openTagFeelingDialog()">
-          <span class="pi pi-face-smile text-2xl"> </span>
-          <label class="leading-6 text-xl">Feeling</label>
+        <li class="flex gap-2 items-center" (click)="openTagFeelingDialog()">
+          <span class="pi pi-face-smile text-2xl cursor-pointer"> </span>
+          <label class="leading-6 text-base cursor-pointer">Feeling</label>
         </li>
       </ul>
     </div>

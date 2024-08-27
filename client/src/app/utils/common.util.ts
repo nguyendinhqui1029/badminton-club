@@ -15,21 +15,36 @@ export function startTimer(countdown: WritableSignal<number>, callback?: Functio
 
 export function formatLargeNumber(num: number) {
   const units = [
-      { value: 1000000000000000, symbol: 'P' }, // Peta
-      { value: 1000000000000, symbol: 'T' },    // Tera
-      { value: 1000000000, symbol: 'B' },        // Billion
-      { value: 1000000, symbol: 'M' },            // Million
-      { value: 1000, symbol: 'K' }                  // Thousand
+    { value: 1000000000000000, symbol: 'P' }, // Peta
+    { value: 1000000000000, symbol: 'T' },    // Tera
+    { value: 1000000000, symbol: 'B' },        // Billion
+    { value: 1000000, symbol: 'M' },            // Million
+    { value: 1000, symbol: 'K' }                  // Thousand
   ];
-  
+
   if (num < 1000) {
-      return num.toString();
+    return num.toString();
   }
 
   for (const unit of units) {
-      if (num >= unit.value) {
-          return (num / unit.value).toFixed(2) + unit.symbol;
-      }
+    if (num >= unit.value) {
+      return (num / unit.value).toFixed(2) + unit.symbol;
+    }
   }
   return num?.toString() || 0;
+}
+
+export async function getUserLocation(callback: Function) {
+  if ("geolocation" in navigator) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        callback(position);
+      },
+      (error) => {
+        console.error("Error getting location: ", error);
+      }
+    );
+    return;
+  }
+  console.error("Geolocation API is not supported in this browser.");
 }

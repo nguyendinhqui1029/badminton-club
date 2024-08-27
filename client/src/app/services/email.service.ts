@@ -11,7 +11,6 @@ import { Observable } from 'rxjs';
 export class EmailService {
     private http: HttpClient = inject(HttpClient);
     sendEmailResetPassword(body: EmailRequestBody): Observable<ApiResponseValue<EmailResponseValue>> {
-        console.log('body', body)
         return this.http.post<ApiResponseValue<EmailResponseValue>>(`${environment.apiUrl}/email/reset-password`, body);
     }
 }
