@@ -11,7 +11,7 @@ import { FileModel } from '@app/models/file-upload.model';
 import { TagFriendsDialogComponent } from '@app/components/dialogs/tag-friends-dialog/tag-friends-dialog.component';
 import { TagLocationDialogComponent } from '@app/components/dialogs/tag-location-dialog/tag-location-dialog.component';
 import { isPlatformBrowser } from '@angular/common';
-import { UserInfoSearch, UserLoginResponse } from '@app/models/user.model';
+import { FeelingValue, UserInfoSearch, UserLoginResponse } from '@app/models/user.model';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ValidatorService } from '@app/services/validators.service';
 import { PostService } from '@app/services/post.service';
@@ -21,8 +21,9 @@ import { Subscription, take } from 'rxjs';
 import { UserService } from '@app/services/user.service';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import { TagFeelingDialogComponent } from '@app/components/dialogs/tag-feeling-dialog/tag-feeling-dialog.component';
 
-interface UserStatus { avatar: string; userName: string; feeling?: {icon: string; value: string}; friends: string[];location: string;};
+interface UserStatus { avatar: string; userName: string; feeling?: {id: string; icon: string; value: string}; friends: string[];location: string;};
 @Component({
   selector: 'app-add-post-dialog',
   standalone: true,
@@ -44,7 +45,8 @@ export class AddPostDialogComponent implements OnInit, OnDestroy {
   private dynamicDialogRef: DynamicDialogRef = inject(DynamicDialogRef);
   private dynamicDialogTagFriendRef: DynamicDialogRef = inject(DynamicDialogRef);
   private dynamicDialogTagLocationRef: DynamicDialogRef = inject(DynamicDialogRef);
-  
+  private dynamicDialogTagFeelingRef: DynamicDialogRef = inject(DynamicDialogRef);
+
   private dialogConfig: DynamicDialogConfig = inject(DynamicDialogConfig);
   private dialogService: DialogService = inject(DialogService);
   private platformId: Object = inject(PLATFORM_ID);
@@ -77,6 +79,7 @@ export class AddPostDialogComponent implements OnInit, OnDestroy {
     avatar: '',
     userName: '',
     feeling: {
+      id: '',
       value: '',
       icon: ''
     },
@@ -136,8 +139,9 @@ export class AddPostDialogComponent implements OnInit, OnDestroy {
       avatar: post?.createdBy?.avatar || '',
       userName: post?.createdBy?.name || '',
       feeling: {
-        value: feelingAfterSplit[0] || '',
-        icon: feelingAfterSplit[1] || ''
+        id: feelingAfterSplit[0],
+        value: feelingAfterSplit[1] || '',
+        icon: feelingAfterSplit[2] || ''
       },
       friends: (post?.tagFriends || []).map((item)=>item.name),
       location: post?.tagLocation || ''
@@ -241,7 +245,7 @@ export class AddPostDialogComponent implements OnInit, OnDestroy {
       transitionOptions: '450ms',
       appendTo: 'body',
       data: {
-        initializeTagFriends: this.postFormGroup.value.tagFriends || []
+        initializeTagLocation: this.postFormGroup.value.tagLocation || []
       }
     });
 
@@ -253,10 +257,40 @@ export class AddPostDialogComponent implements OnInit, OnDestroy {
       this.titleGroup.update((userStatus: UserStatus)=>({...userStatus, tagLocation: value}));
     })
   }
+  openTagFeelingDialog() {
+    const feelingSplit = (this.postFormGroup.value?.feelingIcon as string).split('==/==');
+    this.dynamicDialogTagFeelingRef = this.dialogService.open(TagFeelingDialogComponent, {
+      showHeader: false,
+      width: '450px',
+      height: '100vh',
+      modal: true,
+      transitionOptions: '450ms',
+      appendTo: 'body',
+      data: {
+        initializeTagFeeling:feelingSplit?.[0] ? [feelingSplit[0]] : []
+      }
+    });
+
+    if(isPlatformBrowser(this.platformId) && window.matchMedia('(max-width: 500px)').matches) {
+      this.dialogService.getInstance(this.dynamicDialogTagFeelingRef).maximize();
+    }
+    this.dynamicDialogTagFeelingRef.onClose.pipe(take(1)).subscribe((value: FeelingValue)=>{
+      this.postFormGroup.get('feelingIcon')?.setValue(`${value.id}==/==${value.name}==/==${value.icon}`);
+      this.titleGroup.update((userStatus: UserStatus)=>({...userStatus, feelingIcon: {
+        id: value.id,
+        value: value.name,
+        icon: value.icon
+      }}));
+    })
+    
+  }
   ngOnDestroy() {
     if (this.dynamicDialogRef) {
         this.dynamicDialogRef.close();
     }
+    if (this.dynamicDialogTagFeelingRef) {
+      this.dynamicDialogTagFeelingRef.close();
+  }
     if (this.dynamicDialogTagLocationRef) {
       this.dynamicDialogTagLocationRef.close();
     } 

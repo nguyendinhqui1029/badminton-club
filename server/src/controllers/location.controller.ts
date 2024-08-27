@@ -24,13 +24,13 @@ export default class LocationController {
          });
          return;
        }
-      const result = this.locationService.getLocationNearby(latitude, longitude, keyword);
+      const result = await this.locationService.getLocationNearby(latitude, longitude, keyword);
       res.status(200).json({
         statusCode: 200,
         statusText: 'Get location success',
         totalCount: 0,
         page: 0,
-        data: result 
+        data: result
       });
     } catch (error: any) {
       res.status(500).json({ message: error.message });

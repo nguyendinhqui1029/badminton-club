@@ -16,7 +16,7 @@ import { MessageService } from 'primeng/api';
 export class AppComponent {
   private userService: UserService = inject(UserService);
   title = 'client';
-  breakpoints = { '920px': { width: '100%', right: '0', left: '0' } };
+  breakpoints = { '410px': { width: '100%', right: '0', left: '0' } };
   constructor() {
     afterNextRender(() => {
       const currentUserLogin = getUserInfoFromToken(localStorage.getItem(localStorageKey.ACCESS_TOKEN));

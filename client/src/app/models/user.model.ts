@@ -4,6 +4,16 @@ export interface UserInfoSearch {
     avatar: string;
 }
 
+export interface FeelingValue {
+    id: string;
+    name: string;
+    icon: string;
+}
+export interface FeelingGroupValue {
+    id: string;
+    groupName: string;
+    children: FeelingValue[];
+}
 export interface UserInfoSearchResponse extends UserInfoSearch {
     friends: UserInfoSearch;
 }

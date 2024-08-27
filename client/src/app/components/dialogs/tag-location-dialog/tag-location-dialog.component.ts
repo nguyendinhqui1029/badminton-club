@@ -34,7 +34,7 @@ export class TagLocationDialogComponent {
 
   ngOnInit(): void {
     this.getLocationOfUser('');
-    this.selectedItems.set(this.dialogConfig.data.initializeTagFriends)
+    this.selectedItems.set(this.dialogConfig.data.initializeTagLocation)
   }
 
   ngOnDestroy(): void {

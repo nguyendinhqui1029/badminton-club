@@ -7,6 +7,4 @@ export const environment: Environment = {
     domain: 'https://my-badminton-club.netlify.app'
 };
 
-// apiUrl: 'http://localhost:3000/api/v1',
-
 
