@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, ContentChild, EventEmitter, input, OnChanges, OnDestroy, OnInit, Output, signal, SimpleChanges, TemplateRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { DataSearchGroup } from '@app/models/search-group.model';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxChangeEvent, CheckboxModule } from 'primeng/checkbox';
 import { InputTextModule } from 'primeng/inputtext';
@@ -14,7 +15,7 @@ import { debounceTime, Subject, Subscription } from 'rxjs';
   styleUrl: './search-container-group.component.scss'
 })
 export class SearchContainerGroupComponent<T> implements OnInit, OnChanges, OnDestroy {
-  items = input.required<{ id: string, groupName: string, children: (T & { id: string })[] }[]>();
+  items = input.required<DataSearchGroup<T>[]>();
   initializeValue = input.required<string[]>();
   isMultipleSelect = input<boolean>(false);
   submitButtonLabel = input<string>('Chọn');
@@ -28,19 +29,22 @@ export class SearchContainerGroupComponent<T> implements OnInit, OnChanges, OnDe
 
   @ContentChild('contentRowTemplate') contentRowTemplate: TemplateRef<any> | null = null;
   @Output() searchInputChange = new EventEmitter<string>();
-  @Output() onCloseDialog = new EventEmitter<T[]>();
+  @Output() onCloseDialog = new EventEmitter<DataSearchGroup<T>[]>();
 
+  convertListToObject(list: DataSearchGroup<T>[]) {
+    const objectMap: Record<string, { isSelectedAll: boolean; itemsSelected: string[] }> = {};
+    list.forEach(item => {
+      const selectedItems = this.initializeValue().filter((initItem) => item.children.find((child: Omit<T, 'id'> & {id: string}) => child['id'] === initItem)) || [];
+      objectMap[item.id] = {
+        isSelectedAll: selectedItems.length === item.children.length,
+        itemsSelected: selectedItems
+      };
+    });
+    return objectMap;
+  }
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['items']?.currentValue?.length || changes['initializeValue']?.currentValue?.length) {
-      const objectMap: Record<string, { isSelectedAll: boolean; itemsSelected: string[] }> = {};
-      this.items().forEach(item => {
-        const selectedItems = this.initializeValue().filter((initItem) => item.children.find((child: (T & { id: string })) => child.id === initItem)) || [];
-        objectMap[item.id] = {
-          isSelectedAll: selectedItems.length === item.children.length,
-          itemsSelected: selectedItems
-        };
-      });
-      this.selectedItems.set(objectMap);
+      this.selectedItems.set(this.convertListToObject(this.items()));
     }
   }
 
@@ -50,35 +54,51 @@ export class SearchContainerGroupComponent<T> implements OnInit, OnChanges, OnDe
     });
   }
 
-  // mappingFinalSelectedItems(selectedItem: string[]) {
-  //   return (this.items() || []).filter((item: T)=> item.id && selectedItems().children.includes(item.id));
-  // }
+  mappingFinalSelectedItems(selectedItem: Record<string, { isSelectedAll: boolean; itemsSelected: string[] }>) {
+    const result: DataSearchGroup<T>[] = [];
+    Object.entries(selectedItem).forEach(([key, value]: [string, { isSelectedAll: boolean; itemsSelected: string[] }])=>{
+      const item = this.items().find((item)=>item.id === key)
+      if(value.itemsSelected.length) {
+        result.push({ id: item?.id || '', groupName: item?.groupName || '', children: item?.children.filter((child)=>value.itemsSelected.includes(child.id)) || [] });
+      }
+    });
+    return result;
+  }
 
   onClickSubmit() {
     if (this.isMultipleSelect()) {
-      // this.onCloseDialog.emit(this.mappingFinalSelectedItems(this.selectedItems()));
+      this.onCloseDialog.emit(this.mappingFinalSelectedItems(this.selectedItems()));
     }
   }
 
-  onOnlyItemSelect(id: string) {
+  onOnlyItemSelect(parentId: string, childeId: string) {
+    const childrenByGroup = (this.items() || []).find(item => item.id === parentId)?.children ;
     if (!this.isMultipleSelect()) {
-      // this.onCloseDialog.emit(this.mappingFinalSelectedItems([id]));
+      this.onCloseDialog.emit(this.mappingFinalSelectedItems({[parentId]: { isSelectedAll: (this.selectedItems()[parentId].itemsSelected || []).length === childrenByGroup?.length, itemsSelected: [childeId] }}));
     }
+    this.selectedItems.update((value)=>{
+      return {...value, [parentId]: {
+        isSelectedAll:  (this.selectedItems()[parentId].itemsSelected || []).length === childrenByGroup?.length,
+        itemsSelected: this.selectedItems()[parentId].itemsSelected || []
+      }}
+    });
   }
 
   onGroupClick(id: string) {
     if (!this.isMultipleSelect()) {
-      // this.onCloseDialog.emit(this.mappingFinalSelectedItems([id]));
+      return;
     }
     const hasChildrenGroup = this.items().find(item => item.id === id);
-    this.selectedItems()[id] = {
-      isSelectedAll: !this.selectedItems()[id].isSelectedAll,
-      itemsSelected: this.selectedItems()[id].isSelectedAll ? [...(hasChildrenGroup?.children || [])].map(item => item.id) : []
-    };
+    this.selectedItems.update((value)=>({...value, 
+      [id]: {
+        isSelectedAll: this.selectedItems()[id].isSelectedAll,
+        itemsSelected: this.selectedItems()[id].isSelectedAll ?  [...(hasChildrenGroup?.children || [])].map(item => item.id):[] 
+      }
+    }));
   }
 
   onClickCloseDialog() {
-    // this.onCloseDialog.emit(this.mappingFinalSelectedItems(this.initializeValue()));
+    this.onCloseDialog.emit(this.mappingFinalSelectedItems(this.convertListToObject(this.items())));
   }
 
   onInputChange(event: Event) {

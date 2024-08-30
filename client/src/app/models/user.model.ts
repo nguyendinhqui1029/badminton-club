@@ -1,3 +1,4 @@
+import type { accountType, genderType } from '@app/constants/common.constant';
 export interface UserInfoSearch {
     id: string;
     name: string;
@@ -14,6 +15,7 @@ export interface FeelingGroupValue {
     groupName: string;
     children: FeelingValue[];
 }
+
 export interface UserInfoSearchResponse extends UserInfoSearch {
     friends: UserInfoSearch;
 }
@@ -42,4 +44,16 @@ export interface UserLoginResponse {
     role: string[];
     avatar: string;
     birthday: string;
+}
+
+export interface UserRequestBody {
+    id: string | null;
+    email: string;
+    phone: string;
+    name: string;
+    password:string;
+    birthday: Date;
+    status: 'BLOCK' | 'WAITING' | 'ON' | 'OFF';
+    gender: typeof genderType;
+    accountType: typeof accountType;
 }

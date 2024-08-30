@@ -17,6 +17,8 @@ export interface User extends Document {
   birthday: Date;
   idFriends: string[];
   status: 'BLOCK' | 'WAITING' | 'ON' | 'OFF';
+  gender: 'Male' | 'Female',
+  accountType: 'Casual_Player' | 'Fixed_Player',
   createdAt: Date;
   updatedAt: Date;
 }
@@ -50,6 +52,16 @@ const userSchema: Schema = new Schema({
     required: true,
     minlength: 6 // Tùy chỉnh độ dài tối thiểu của mật khẩu
   },
+  gender: {
+    type: String,
+    enum: ['Male' , 'Female'], // Định nghĩa các vai trò có thể có
+    default: 'Male'
+  },
+  accountType: {
+    type: String,
+    enum: ['Casual_Player' , 'Fixed_Player'], // Định nghĩa các vai trò có thể có
+    default: 'Fixed_Player'
+  },
   role: {
     type: [String],
     enum: ['admin', 'user', 'moderator'], // Định nghĩa các vai trò có thể có
@@ -66,6 +78,7 @@ const userSchema: Schema = new Schema({
   idFriends: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user',
+    default: []
   }],
   status: {
     type: String,
@@ -82,7 +95,7 @@ const userSchema: Schema = new Schema({
   }
 });
 // Cập nhật thời gian cập nhật mỗi khi tài liệu được lưu
-userSchema.pre('save', function(next) {
+userSchema.pre('save', function (next) {
   this.updatedAt = getUTCDate(new Date());
   next();
 });

@@ -14,3 +14,8 @@ export const ROUTER_PATH = {
     EMAIL: 'email',
     LOCATION: 'location'
 }
+
+export const accountType  = {
+    CASUAL_PLAYER: 'Casual_Player',
+    FIXED_PLAYER: 'Fixed_Player'
+}

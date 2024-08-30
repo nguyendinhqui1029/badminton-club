@@ -7,7 +7,12 @@
 p-avatar {
     @apply flex items-center;
 }
-
+.p-panel-toggleable {
+    @apply border-2 rounded-xl overflow-hidden;
+}
+.p-highlight .p-tabview-nav-link {
+    @apply text-secondary-color;
+}
 .p-menuitem-link {
     @apply py-2;
 }

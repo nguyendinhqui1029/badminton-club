@@ -17,28 +17,26 @@
   <h3 class="font-bold text-md">{{resultLabel()}}</h3>
   <div class="flex flex-col gap-2">
     @for(item of items(); track item; let index = $index;) {
-      <label class="flex gap-2 items-center justify-between cursor-pointer" (click)="onGroupClick(item.id || '')">
+      <label class="flex gap-2 items-center justify-between cursor-pointer">
         <h3 class="font-bold text-md">{{item.groupName}}</h3>
-        @if(isMultipleSelect()) {
           <p-checkbox 
+          [class.hidden]="!isMultipleSelect()"
           [(ngModel)]="selectedItems()[item.id].isSelectedAll"
           binary
-          [ngModelOptions]="{standalone: true}"
+          (onChange)="onGroupClick(item.id || '')"
           />
-        }
       </label>
       @for(child of item.children; track child;) {
-        <label class="flex gap-2 items-center justify-between cursor-pointer" [for]="item.id" (click)="onOnlyItemSelect(item.id || '')">
+        <label class="ml-2 flex gap-2 items-center justify-between cursor-pointer" [for]="child.id" (click)="onOnlyItemSelect(item.id || '', child.id || '')">
           <ng-template [ngTemplateOutlet]="contentRowTemplate" 
           [ngTemplateOutletContext]="{ $implicit: { item: child, index: index} }">
           </ng-template>
-          @if(isMultipleSelect()) {
-            <p-checkbox 
+          <p-checkbox 
+            [class.hidden]="!isMultipleSelect()"
             [(ngModel)]="selectedItems()[item.id].itemsSelected"
             [value]="child.id" 
             [inputId]="child.id" 
             [ngModelOptions]="{standalone: true}"/>
-          }
         </label>
       }
     }

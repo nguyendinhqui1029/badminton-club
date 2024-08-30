@@ -46,7 +46,7 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
 
   dynamicDialogRef: DynamicDialogRef | undefined;
   
-  disableLike = signal<boolean>(false);
+  waitingLike = signal<boolean>(false);
   titleGroup = signal<UserStatus>({
     avatar: '',
     userName: '',
@@ -86,6 +86,7 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
   actionsSharePost: MenuItem[] | undefined;
   linkPostDetail = computed(()=>`/${path.HOME.DETAIL.replace(':id', this.itemClone()?.id || '' )}`);
   countComment = computed(()=>formatLargeNumber(this.itemClone().idComment?.length));
+  disableButton = computed(()=> !this.currentUser().id);
 
   ngOnChanges(changes: SimpleChanges): void {
     if(changes['item']?.currentValue) {
@@ -262,10 +263,10 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
   }
 
   onClickLike() {
-    if(this.disableLike()){
+    if(this.waitingLike() || !this.disableButton()){
       return;
     }
-    this.disableLike.set(true);
+    this.waitingLike.set(true);
     const index = this.itemClone().idUserLike.findIndex((item)=>item?.id === this.currentUser().id);
     const userLikeClone = [...this.itemClone().idUserLike];
     if(index === -1) {
@@ -289,12 +290,18 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
       scope: this.itemClone().scope
   };
     this.postService.updatePost(this.itemClone().id || '', body).subscribe((response)=>{
-      this.disableLike.set(false);
+      this.waitingLike.set(false);
       if(response.statusCode !== 200) {
         return;
       }
       this.itemClone.set(response.data);
     });
+  }
+
+  onClickComment() {
+    if(!this.currentUser()?.id){
+      return;
+    }
   }
   ngOnDestroy() {
     if (this.dynamicDialogRef) {

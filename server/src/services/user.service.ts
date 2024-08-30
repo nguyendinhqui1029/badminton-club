@@ -73,7 +73,7 @@ class UserService {
 
   public async createUser(userData: User): Promise<User> {
     const hashedPassword = await hashPassword(userData.password);
-    const idFriendObjectList = userData.idFriends.map((id: string) => new mongoose.Types.ObjectId(id));
+    const idFriendObjectList = (userData?.idFriends || []).map((id: string) => new mongoose.Types.ObjectId(id));
     const newUser = await UserModel.create({ ...userData, idFriends: idFriendObjectList, password: hashedPassword });
     return newUser;
   }

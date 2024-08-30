@@ -1,64 +1,64 @@
-
 <div class="flex flex-col bg-white w-full rounded-xl p-4 gap-4">
   <h3 class="font-bold text-2xl">Đăng kí</h3>
   <form [formGroup]="registerForm">
 
     <div class="flex flex-col gap-2">
-      <app-label-wrapper idLabel="name" label="Họ tên" [isRequired]="true">
+      <app-label-wrapper [isTouched]="!!registerForm.get('name')?.touched"
+        [errorsControl]="registerForm.get('name')?.errors" idLabel="name" label="Họ tên" [isRequired]="true">
         <input formControlName="name" class="w-full" id="name" type="text" pInputText />
       </app-label-wrapper>
-      
-      <app-label-wrapper idLabel="birthday" label="Ngày sinh" [isRequired]="true">
+
+      <app-label-wrapper [isTouched]="!!registerForm.get('birthday')?.touched"
+        [errorsControl]="registerForm.get('birthday')?.errors" idLabel="birthday" label="Ngày sinh" [isRequired]="true">
         <p-calendar formControlName="birthday" styleClass="w-full" inputId="birthday" />
       </app-label-wrapper>
 
       <app-label-wrapper idLabel="gender" label="Giới tính" [isRequired]="true">
-        <p-dropdown 
-        formControlName="gender"
-        inputId="gender"
-        [options]="genderOptions()"  
-        optionLabel="label" 
-        optionValue="value" 
-        placeholder="Chọn giới tính" />    
+        <p-dropdown formControlName="gender" inputId="gender" [options]="genderOptions()" optionLabel="label"
+          optionValue="value" placeholder="Chọn giới tính" />
       </app-label-wrapper>
 
       <app-label-wrapper idLabel="accountType" label="Loại tài khoản" [isRequired]="true">
-        <p-dropdown 
-        formControlName="accountType"
-        inputId="accountType"
-        [options]="accountTypeOptions()"  
-        optionLabel="label" 
-        optionValue="value" 
-        placeholder="Chọn loại tài khoản" /> 
-        <p-confirmDialog styleClass="w-11/12 md:w-fit"/>   
+        <p-dropdown formControlName="accountType" inputId="accountType" [options]="accountTypeOptions()"
+          optionLabel="label" optionValue="value" placeholder="Chọn loại tài khoản" />
+        <p-confirmDialog styleClass="w-11/12 md:w-fit" />
       </app-label-wrapper>
-    
-      <app-label-wrapper idLabel="email" label="Email" [isRequired]="true">
+
+      <app-label-wrapper [isTouched]="!!registerForm.get('email')?.touched"
+        [errorsControl]="registerForm.get('email')?.errors" idLabel="email" label="Email" [isRequired]="true">
         <input formControlName="email" class="w-full" id="email" type="text" pInputText />
       </app-label-wrapper>
 
-      <app-label-wrapper idLabel="phone" label="Số điện thoại" [isRequired]="true">
+      <app-label-wrapper [isTouched]="!!registerForm.get('phone')?.touched"
+        [errorsControl]="registerForm.get('phone')?.errors" idLabel="phone" label="Số điện thoại" [isRequired]="true">
         <input formControlName="phone" class="w-full" id="phone" type="text" pInputText />
       </app-label-wrapper>
 
-      <app-label-wrapper idLabel="password" label="Mật khẩu" [isRequired]="true">
+      <app-label-wrapper [isTouched]="!!registerForm.get('password')?.touched"
+        [errorsControl]="registerForm.get('password')?.errors" idLabel="password" label="Mật khẩu" [isRequired]="true">
         <input formControlName="password" class="w-full" id="password" type="password" pInputText />
       </app-label-wrapper>
 
-      <app-label-wrapper idLabel="re-password" label="Nhập lại mật khẩu" [isRequired]="true">
-        <input formControlName="rePassword" class="w-full" id="re-password" type="password" pInputText />
+      <app-label-wrapper [isTouched]="!!registerForm.get('confirmPassword')?.touched" [errorsGroup]="registerForm.errors"
+        [errorsControl]="registerForm.get('confirmPassword')?.errors" idLabel="re-password" label="Nhập lại mật khẩu"
+        [isRequired]="true">
+        <input formControlName="confirmPassword" class="w-full" id="re-password" type="password" pInputText />
       </app-label-wrapper>
 
-      <div class="flex items-start gap-2 mt-4">
-        <p-checkbox formControlName="terms" [binary]="true" inputId="terms" />
-        <label for="terms" class="block text-md text-gray-900">
-          Tôi đã đọc và đồng ý với các <p-button (click)="onClickOpenTerm()" link styleClass="text-md underline font-medium text-blue-600 hover:text-blue-500">điều khoản</p-button> này.
-        </label>
-      </div>
+      <app-label-wrapper [isTouched]="!!registerForm.get('terms')?.touched" [errorsControl]="registerForm.get('terms')?.errors" idLabel="terms" label="'">
+        <div class="flex items-start gap-2 mt-4">
+          <p-checkbox 
+            formControlName="terms" [binary]="true" inputId="terms" />
+          <label for="terms" class="block text-md text-gray-900">
+            Tôi đã đọc và đồng ý với các <p-button (click)="onClickOpenTerm()" link
+              styleClass="text-md underline font-medium text-blue-600 hover:text-blue-500">điều khoản</p-button> này.
+          </label>
+        </div>
+      </app-label-wrapper>
     </div>
   </form>
   <div class="flex justify-end gap-4">
-    <p-button [routerLink]="login" outlined rounded class="min-w-fit" label="Trở lại"/>
+    <p-button [routerLink]="login" outlined rounded class="min-w-fit" label="Trở lại" />
     <p-button (click)="onClickRegister()" class="min-w-fit" label="Đăng kí" rounded></p-button>
   </div>
 </div>

@@ -64,10 +64,24 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
         sendDate: new Date(),
         type: emailType.RESET_PASSWORD
     }
-      this.emailService.sendEmailResetPassword(body).subscribe();
-      this.countdownSubscription = startTimer(this.countdown, () => {
-        this.isButtonEnabled = true;
-      }, 2*60);
+      this.emailService.sendEmailResetPassword(body).subscribe((response) => {
+        if(+response.statusCode === 503) {
+          this.confirmationService.confirm({
+            message: 'Địa chỉ email không tồn tại. Vui lòng kiểm tra lại.',
+            header: 'Thông báo',
+            icon: 'pi pi-exclamation-triangle',
+            acceptIcon: "none",
+            rejectIcon: "none",
+            rejectVisible: false,
+            rejectButtonStyleClass: "p-button-text",
+            accept: ()=>this.isButtonEnabled = true
+          });
+          return;
+        }
+        this.countdownSubscription = startTimer(this.countdown, () => {
+          this.isButtonEnabled = true;
+        }, 2*60);
+      });
     }
   }
   

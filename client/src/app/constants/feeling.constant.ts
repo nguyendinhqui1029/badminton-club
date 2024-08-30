@@ -1,6 +1,7 @@
+import { DataSearchGroup } from "@app/models/search-group.model";
 import { FeelingGroupValue, FeelingValue } from "@app/models/user.model";
 
-export const INITIALIZE_FEELING_DATA: FeelingGroupValue[] = [
+export const INITIALIZE_FEELING_DATA: DataSearchGroup<FeelingValue>[] = [
   {
     id: 'GROUP01',
     groupName: 'Đang cảm thấy...',

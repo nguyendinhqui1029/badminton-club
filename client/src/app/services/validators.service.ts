@@ -5,6 +5,25 @@ import { AbstractControl, FormGroup, ValidationErrors } from '@angular/forms';
   providedIn: 'root'
 })
 export class ValidatorService {
+  static checkboxRequired(message: string): ValidationErrors | null {
+    return (control: AbstractControl): {
+      [key: string]: {
+        invalid: boolean,
+        errorMessage: string
+      }
+    } | null => {
+      if (!control.value) {
+        return {
+          required: {
+            invalid: true,
+            errorMessage: message
+          }
+        };
+      }
+      return null;
+    }
+  }
+
   static fieldRequired(message: string): ValidationErrors | null {
     return (control: AbstractControl): {
       [key: string]: {

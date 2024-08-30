@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { CURRENT_USER_INIT } from '@app/constants/common.constant';
 import { environment } from '@app/environments/environment';
 import { ApiResponseValue } from '@app/models/api-response.model';
-import { UserInfoSearchResponse, UserLoginResponse } from '@app/models/user.model';
+import { UserInfoSearchResponse, UserLoginResponse, UserRequestBody } from '@app/models/user.model';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
@@ -36,5 +36,9 @@ export class UserService {
 
   resetPassword(body: {code: string; email: string; password: string}) {
     return this.http.post<ApiResponseValue<{id: string; phone: string}>>(`${environment.apiUrl}/user/reset-password`, body);
+  }
+
+  create(body: UserRequestBody): Observable<ApiResponseValue<UserLoginResponse>> {
+    return this.http.post<ApiResponseValue<UserLoginResponse>>(`${environment.apiUrl}/user`, body);
   }
 }

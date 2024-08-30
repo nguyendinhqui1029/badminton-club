@@ -28,7 +28,7 @@
   <app-images-grid [images]="itemClone().images"></app-images-grid>
   }
   <div class="flex flex-col gap-2">
-    <div class="flex justify-between items-start p-2 border-b">
+    <div class="flex justify-between items-center h-12 p-2 border-b">
       <p-avatarGroup>
         @for(item of userLikeAvatar(); track item; let last=$last;) {
           @if(last && userLikeAvatar().length > 5) {
@@ -46,18 +46,22 @@
       <div
         (click)="onClickLike()"
         [class.text-secondary-color]="isLiked()"
-        [class.cursor-progress]="disableLike()"
-        class="cursor-pointer flex max-h-11 gap-2 items-center p-2 w-2/4 max-w-36 border-2 rounded-3xl bg-gray-color hover:bg-gray-300">
+        [class.cursor-progress]="waitingLike()"
+        [class.cursor-pointer]="!disableButton()"
+        [class.cursor-not-allowed]="disableButton()"
+        class="flex max-h-11 gap-2 justify-center items-center p-2 w-2/4 max-w-36 border-2 rounded-3xl bg-gray-color hover:bg-gray-300">
         <span class="pi pi-thumbs-up text-xl"></span>
         <small class="min-w-fit">Yêu thích</small>
       </div>
       <div
-        class="cursor-pointer flex max-h-11 gap-2 items-center p-2 w-2/4 max-w-36 border-2 rounded-3xl bg-gray-color hover:bg-gray-300">
+      [class.cursor-pointer]="!disableButton()"
+      [class.cursor-not-allowed]="disableButton()"
+        class="flex max-h-11 gap-2 justify-center items-center p-2 w-2/4 max-w-36 border-2 rounded-3xl bg-gray-color hover:bg-gray-300">
         <span class="pi pi-comments text-xl"></span>
         <small class="min-w-fit">Bình luận</small>
       </div>
       <div  (click)="sharePost.toggle($event)"
-          class="cursor-pointer flex max-h-11 gap-2 items-center p-2 w-2/4 max-w-36 border-2 rounded-3xl bg-gray-color hover:bg-gray-300">
+          class="cursor-pointer flex max-h-11 gap-2 justify-center items-center p-2 w-2/4 max-w-36 border-2 rounded-3xl bg-gray-color hover:bg-gray-300">
           <span class="pi pi-share-alt text-xl"></span>
           <small class="min-w-fit" #buttonShare>Chia sẻ</small>
           <p-menu #sharePost [model]="actionsSharePost" [popup]="true" />

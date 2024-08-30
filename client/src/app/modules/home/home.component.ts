@@ -9,6 +9,7 @@ import { CURRENT_USER_INIT } from '@app/constants/common.constant';
 import { ButtonModule } from 'primeng/button';
 import { path } from '@app/constants/path.constant';
 import { RouterLink } from '@angular/router';
+import { debounce, debounceTime, timer } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -23,12 +24,15 @@ export class HomeComponent implements OnInit {
   posts = signal<PostResponseValue[]>([]);
   currentUserLogin = signal<UserLoginResponse>(CURRENT_USER_INIT);
   loginPage = `/${path.LOGIN.ROOT}`;
+  isLoading = signal<boolean>(true);
+
   getDataList() {
     this.postService.getAllPost().subscribe((response)=>{
       if(response.statusCode !== 200) {
         return;
       }
       this.posts.update(()=>[...response.data]);
+      this.isLoading.set(false);
     });
   }
   ngOnInit(): void {

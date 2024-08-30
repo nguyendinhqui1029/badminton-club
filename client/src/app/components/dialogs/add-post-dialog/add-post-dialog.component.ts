@@ -22,6 +22,7 @@ import { UserService } from '@app/services/user.service';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { TagFeelingDialogComponent } from '@app/components/dialogs/tag-feeling-dialog/tag-feeling-dialog.component';
+import { DataSearchGroup } from '@app/models/search-group.model';
 
 interface UserStatus { avatar: string; userName: string; feeling?: {id: string; icon: string; value: string}; friends: string[];location: string;};
 @Component({
@@ -93,7 +94,6 @@ export class AddPostDialogComponent implements OnInit, OnDestroy {
       if(titleGroup()?.userName) {
         status += `<h4 class="font-bold text-lg">${titleGroup()?.userName}</h4>`;
       }
-
       if(titleGroup()?.feeling?.icon && titleGroup()?.feeling?.value) {
          status += `&nbsp;đang cảm thấy&nbsp; <strong> ${titleGroup()?.feeling?.value} </strong> &nbsp;${titleGroup()?.feeling?.icon}`;
          if(!titleGroup()?.location && !titleGroup()?.friends?.length) {
@@ -236,6 +236,7 @@ export class AddPostDialogComponent implements OnInit, OnDestroy {
       this.titleGroup.update((userStatus: UserStatus)=>({...userStatus, friends: value.map((item:UserInfoSearch)=>item.name)}));
     })
   }
+
   openTagLocationDialog() {
     this.dynamicDialogTagFriendRef = this.dialogService.open(TagLocationDialogComponent, {
       showHeader: false,
@@ -260,6 +261,7 @@ export class AddPostDialogComponent implements OnInit, OnDestroy {
       }
     })
   }
+
   openTagFeelingDialog() {
     const feelingSplit = (this.postFormGroup.value?.feelingIcon as string).split('==/==');
     this.dynamicDialogTagFeelingRef = this.dialogService.open(TagFeelingDialogComponent, {
@@ -277,13 +279,17 @@ export class AddPostDialogComponent implements OnInit, OnDestroy {
     if(isPlatformBrowser(this.platformId) && window.matchMedia('(max-width: 500px)').matches) {
       this.dialogService.getInstance(this.dynamicDialogTagFeelingRef).maximize();
     }
-    this.dynamicDialogTagFeelingRef.onClose.pipe(take(1)).subscribe((value: FeelingValue)=>{
-      this.postFormGroup.get('feelingIcon')?.setValue(`${value.id}==/==${value.name}==/==${value.icon}`);
-      this.titleGroup.update((userStatus: UserStatus)=>({...userStatus, feelingIcon: {
-        id: value.id,
-        value: value.name,
-        icon: value.icon
+    this.dynamicDialogTagFeelingRef.onClose.pipe(take(1)).subscribe((value: DataSearchGroup<FeelingValue>[])=>{
+      if(!value.length) {
+        return;
+      }
+      this.postFormGroup.get('feelingIcon')?.setValue(`${value[0].children[0].id}==/==${value[0].children[0].name}==/==${value[0].children[0].icon}`);
+      this.titleGroup.update((userStatus: UserStatus)=>({...userStatus, feeling: {
+        id: value[0].children[0].id,
+        value: value[0].children[0].name.toLocaleLowerCase(),
+        icon: value[0].children[0].icon
       }}));
+      console.log(this.titleGroup())
     })
     
   }

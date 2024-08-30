@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { SearchContainerGroupComponent } from '@app/components/search-container-group/search-container-group.component';
 import { INITIALIZE_FEELING_DATA } from '@app/constants/feeling.constant';
+import { DataSearchGroup } from '@app/models/search-group.model';
 import { FeelingGroupValue, FeelingValue } from '@app/models/user.model';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Subscription } from 'rxjs';
@@ -18,17 +19,17 @@ export class TagFeelingDialogComponent {
 
   private userUnSubscription!: Subscription;
 
-  items = signal<FeelingGroupValue[]>([]);
+  items = signal<DataSearchGroup<FeelingValue>[]>([]);
   selectedItems = signal<string[]>([]);
   currentUserId= signal<string>('');
   
-  onCloseDialog(value: FeelingValue[]) {
+  onCloseDialog(value: DataSearchGroup<FeelingValue>[]) {
     this.dynamicDialogRef.close(value);
   }
 
   getFeelingOfUser(keyword: string) {
     if(keyword?.trim()) {
-      this.items.set(INITIALIZE_FEELING_DATA.map((item:FeelingGroupValue)=> ({
+      this.items.set(INITIALIZE_FEELING_DATA.map((item:DataSearchGroup<FeelingValue>)=> ({
         ...item,
         children: item.children.filter((feeling: FeelingValue)=> feeling.name.toLocaleLowerCase().includes(keyword.toLocaleLowerCase()))
       })));
