@@ -13,7 +13,7 @@
         <p-dropdown  optionLabel="label"
         optionValue="value" placeholder="Trạng thái" [options]="statusOptions"/>
       </div>
-      <app-payment-card [paymentInfo]="paymentInfo"></app-payment-card>
+      <app-payment-card [isNotifyButton]="true" [paymentInfo]="paymentInfo"></app-payment-card>
     </p-tabPanel>
   </p-tabView>
 </div>

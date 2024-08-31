@@ -12,7 +12,8 @@ export const ROUTER_PATH = {
     SETTINGS: 'settings',
     FILES: 'files',
     EMAIL: 'email',
-    LOCATION: 'location'
+    LOCATION: 'location',
+    QR_CODE: 'qr-code'
 }
 
 export const accountType  = {

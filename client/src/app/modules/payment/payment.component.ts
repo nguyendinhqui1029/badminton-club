@@ -35,6 +35,7 @@ export class PaymentComponent {
     }
   ];
   paymentInfo: PaymentCard = {
+    createdAt: '31-08-2024',
     id: '1232',
     userName: 'Nguyễn Văn A',
     total: 10000,

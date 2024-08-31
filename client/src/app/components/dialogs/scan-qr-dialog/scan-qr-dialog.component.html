@@ -1,0 +1,12 @@
+<header class="absolute w-full bg-white flex p-4 gap-4 items-center justify-between border-b-2 border-gray-color">
+  <div class="flex gap-4">
+    <span class="pi pi-arrow-left font-bold text-2xl cursor-pointer" (click)="onClickCloseDialog()"></span>
+    <h4 class="font-bold text-xl">Quét QR</h4>
+  </div>
+</header>
+<div class="flex gap-4 h-20">
+</div>
+<section class="px-4 flex flex-col flex-1 items-center justify-center">
+  <small>Mã thanh toán</small>
+  <img [src]="paymentQrCodeBase64" alt="Payment Qr Code"/>
+</section>

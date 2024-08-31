@@ -21,7 +21,10 @@
       <p-button icon="pi pi-megaphone" size="small" rounded label="Nhắc nhở"></p-button>
     </div>
   }
-  <p><span class="font-bold text-base">Id: </span> <i>#{{paymentInfo().id}}</i></p>
+  <p class="flex justify-between">
+    <span class="font-bold text-base">Id <i class="font-normal">#{{paymentInfo().id}}</i></span> 
+    <span class="font-bold text-base">Ngày <i class="font-normal">{{paymentInfo().createdAt}}</i></span>
+  </p>
   <h3 class="font-bold text-base mt-4">Chi tiết</h3>
   <ul class="list-disc ml-5">
     @for(item of paymentInfo().detail; track item) {

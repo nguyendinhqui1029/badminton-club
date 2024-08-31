@@ -7,5 +7,6 @@ export interface PaymentCard {
   userName: string;
   total: number;
   status: string;
+  createdAt: string;
   detail: PaymentDetail[];
 }

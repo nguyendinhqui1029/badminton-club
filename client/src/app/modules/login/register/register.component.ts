@@ -81,7 +81,7 @@ export class RegisterComponent implements OnInit {
           }
         });
       }
-    })
+    });
   }
 
   onClickRegister() {

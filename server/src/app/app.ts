@@ -1,4 +1,5 @@
 import express, { Application } from 'express';
+import helmet from 'helmet';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import env from '../config/env';
@@ -14,6 +15,7 @@ import settingsRoutes from '../routes/settingsRoutes';
 import filesRoutes from '../routes/filesRoutes';
 import emailRoutes from '../routes/emailRoutes';
 import locationRoutes from '../routes/locationRoutes';
+import qrCodeRoutes from '../routes/qrCodeRoutes';
 
  class App {
   public app: Application;
@@ -28,6 +30,13 @@ import locationRoutes from '../routes/locationRoutes';
   }
 
   private config(): void {
+    this.app.use(helmet());
+    this.app.use(helmet.frameguard({ action: 'deny' }));
+    this.app.use(helmet.contentSecurityPolicy({
+      directives: {
+        frameAncestors: ["'none'"]
+      }
+    }));
     this.app.use(express.static('public'));
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
@@ -47,6 +56,7 @@ import locationRoutes from '../routes/locationRoutes';
     this.app.use(`${root}/${ROUTER_PATH.FILES}`, filesRoutes);
     this.app.use(`${root}/${ROUTER_PATH.EMAIL}`, emailRoutes);
     this.app.use(`${root}/${ROUTER_PATH.LOCATION}`, locationRoutes);
+    this.app.use(`${root}/${ROUTER_PATH.QR_CODE}`, qrCodeRoutes);
     // Add more routes as needed
   }
 
