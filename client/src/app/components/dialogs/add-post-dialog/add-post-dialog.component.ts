@@ -4,7 +4,7 @@ import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dy
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { DropdownModule } from 'primeng/dropdown';
 import { CommonOption } from '@app/models/common-option.model';
-import { scopePost } from '@app/constants/common.constant';
+import { defaultAvatar, scopePost } from '@app/constants/common.constant';
 import { ButtonModule } from 'primeng/button';
 import { UploadFileComponent } from '@app/components/upload-file/upload-file.component';
 import { FileModel } from '@app/models/file-upload.model';
@@ -58,6 +58,7 @@ export class AddPostDialogComponent implements OnInit, OnDestroy {
 
   private userUnSubscription!: Subscription;
   currentUserId= signal<string>('');
+  defaultAvatar = defaultAvatar;
 
   @ViewChild('fileUploadRef', {static: false}) fileUploadRef!: UploadFileComponent;
   

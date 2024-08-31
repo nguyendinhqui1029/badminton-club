@@ -6,7 +6,7 @@ import { path } from '@app/constants/path.constant';
 import { UserLoginResponse } from '@app/models/user.model';
 import { UserService } from '@app/services/user.service';
 import { Subscription } from 'rxjs';
-import { CURRENT_USER_INIT, localStorageKey } from '@app/constants/common.constant';
+import { CURRENT_USER_INIT, defaultAvatar, localStorageKey } from '@app/constants/common.constant';
 
 @Component({
   selector: 'app-navigation',
@@ -22,7 +22,7 @@ export class NavigationComponent implements OnInit, OnDestroy {
 
   private userService: UserService = inject(UserService);
   currentUser = signal<UserLoginResponse>(CURRENT_USER_INIT);
-
+  defaultAvatar = defaultAvatar;
   ngOnInit(): void {
     this.userUnSubscription = this.userService.currentUserLogin.subscribe((value: UserLoginResponse) => {
       this.currentUser.set(value);

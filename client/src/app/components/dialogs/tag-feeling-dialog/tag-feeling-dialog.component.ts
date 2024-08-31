@@ -22,12 +22,14 @@ export class TagFeelingDialogComponent {
   items = signal<DataSearchGroup<FeelingValue>[]>([]);
   selectedItems = signal<string[]>([]);
   currentUserId= signal<string>('');
-  
+  isLoading = signal<boolean>(true);
+
   onCloseDialog(value: DataSearchGroup<FeelingValue>[]) {
     this.dynamicDialogRef.close(value);
   }
 
   getFeelingOfUser(keyword: string) {
+    this.isLoading.set(true);
     if(keyword?.trim()) {
       this.items.set(INITIALIZE_FEELING_DATA.map((item:DataSearchGroup<FeelingValue>)=> ({
         ...item,
@@ -36,6 +38,7 @@ export class TagFeelingDialogComponent {
       return;
     }
     this.items.set(INITIALIZE_FEELING_DATA);
+    this.isLoading.set(false);
   }
 
   searchInputChange(value: string) {

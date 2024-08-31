@@ -7,7 +7,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { PostRequestBody, PostResponseValue } from '@app/models/post.model';
 import { UserInfoSearch, UserLoginResponse } from '@app/models/user.model';
 import { Subscription, take } from 'rxjs';
-import { CURRENT_USER_INIT, INIT_POST_VALUE, scopePost, socialType } from '@app/constants/common.constant';
+import { CURRENT_USER_INIT, defaultAvatar, INIT_POST_VALUE, scopePost, socialType } from '@app/constants/common.constant';
 import { getTimeDifference } from '@app/utils/date.util';
 import { ImagesGridComponent } from '@app/components/images-grid/images-grid.component';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
@@ -87,7 +87,8 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
   linkPostDetail = computed(()=>`/${path.HOME.DETAIL.replace(':id', this.itemClone()?.id || '' )}`);
   countComment = computed(()=>formatLargeNumber(this.itemClone().idComment?.length));
   disableButton = computed(()=> !this.currentUser().id);
-
+  defaultAvatar = defaultAvatar;
+  
   ngOnChanges(changes: SimpleChanges): void {
     if(changes['item']?.currentValue) {
       this.itemClone.set(changes['item']?.currentValue);
@@ -263,7 +264,7 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
   }
 
   onClickLike() {
-    if(this.waitingLike() || !this.disableButton()){
+    if(this.waitingLike() || this.disableButton()){
       return;
     }
     this.waitingLike.set(true);

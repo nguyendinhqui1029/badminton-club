@@ -1,9 +1,9 @@
-<app-search-container-dialog  searchTitle="Tìm bạn bè" [initializeValue]="selectedItems()" [items]="items()"
+<app-search-container-dialog [isLoading]="isLoading()" searchTitle="Tìm bạn bè" [initializeValue]="selectedItems()" [items]="items()"
   (onCloseDialog)="onCloseDialog($event)" [isMultipleSelect]="true" (searchInputChange)="searchInputChange($event)">
     <ng-template #contentRowTemplate let-data>
         <div class="flex gap-3 items-center">
             <p-avatar styleClass="w-12 h-12" size="large"
-              [image]="data.item?.avatar" shape="circle" />
+              [image]="data.item?.avatar || defaultAvatar" shape="circle" />
             <span class="text-base">{{data.item?.name}}</span>
         </div>
     </ng-template>

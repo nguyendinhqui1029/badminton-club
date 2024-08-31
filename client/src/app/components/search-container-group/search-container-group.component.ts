@@ -23,6 +23,7 @@ export class SearchContainerGroupComponent<T> implements OnInit, OnChanges, OnDe
   searchPlaceholder = input<string>('Tìm kiếm...');
   resultLabel = input<string>('Kết quả');
   selectedItems = signal<Record<string, { isSelectedAll: boolean; itemsSelected: string[] }>>({});
+  isLoading = input.required<boolean>();
 
   private unSubscription!: Subscription;
   private searchSubject = new Subject<string>();

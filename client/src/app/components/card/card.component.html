@@ -1,6 +1,6 @@
 <div class="flex flex-col gap-4 bg-white w-full rounded-xl p-4">
   <div class="flex gap-2 w-full items-start">
-    <p-avatar styleClass="w-10 h-10" size="large" [image]="titleGroup().avatar" shape="circle" />
+    <p-avatar styleClass="w-10 h-10" size="large" [image]="titleGroup().avatar || defaultAvatar" shape="circle" />
     <div class="flex gap-2 justify-between items-start w-full">
       <div class="flex flex-col gap-1">
         <div class="flex flex-wrap items-center" [innerHTML]="userStatusDisplay()">
@@ -35,7 +35,7 @@
           <p-avatar styleClass="w-8 h-8 text-sm" [label]="item.avatar" shape="circle" size="large"
             [style]="{ 'background-color': '#fe5101', color: '#EBEDF0' }" />
           } @else {
-          <p-avatar styleClass="w-8 h-8" [image]="item.avatar" size="large" shape="circle" />
+          <p-avatar styleClass="w-8 h-8" [image]="item.avatar || defaultAvatar" size="large" shape="circle" />
           }
         }
       </p-avatarGroup>
@@ -49,21 +49,21 @@
         [class.cursor-progress]="waitingLike()"
         [class.cursor-pointer]="!disableButton()"
         [class.cursor-not-allowed]="disableButton()"
-        class="flex max-h-11 gap-2 justify-center items-center p-2 w-2/4 max-w-36 border-2 rounded-3xl bg-gray-color hover:bg-gray-300">
+        class="cursor-pointer flex max-h-11 gap-2 justify-center items-center p-2 w-2/4 max-w-36 border-2 rounded-3xl bg-gray-color hover:bg-gray-300">
         <span class="pi pi-thumbs-up text-xl"></span>
-        <small class="min-w-fit">Yêu thích</small>
+        <span class="min-w-fit font-bold text-sm">Yêu thích</span>
       </div>
       <div
       [class.cursor-pointer]="!disableButton()"
       [class.cursor-not-allowed]="disableButton()"
         class="flex max-h-11 gap-2 justify-center items-center p-2 w-2/4 max-w-36 border-2 rounded-3xl bg-gray-color hover:bg-gray-300">
         <span class="pi pi-comments text-xl"></span>
-        <small class="min-w-fit">Bình luận</small>
+        <span class="min-w-fit font-bold text-sm">Bình luận</span>
       </div>
       <div  (click)="sharePost.toggle($event)"
           class="cursor-pointer flex max-h-11 gap-2 justify-center items-center p-2 w-2/4 max-w-36 border-2 rounded-3xl bg-gray-color hover:bg-gray-300">
           <span class="pi pi-share-alt text-xl"></span>
-          <small class="min-w-fit" #buttonShare>Chia sẻ</small>
+          <span class="min-w-fit font-bold text-sm" #buttonShare>Chia sẻ</span>
           <p-menu #sharePost [model]="actionsSharePost" [popup]="true" />
       </div>
     </div>

@@ -22,7 +22,8 @@ export class SearchContainerDialogComponent<T extends { id?: string }> implement
   searchPlaceholder = input<string>('Tìm kiếm...');
   resultLabel = input<string>('Kết quả');
   selectedItems = signal<string[]>([]);
-
+  isLoading = input.required<boolean>();
+  
   private unSubscription!:Subscription;
   private searchSubject = new Subject<string>();
   

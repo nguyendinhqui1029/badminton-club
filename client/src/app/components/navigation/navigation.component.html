@@ -4,7 +4,7 @@
     <div class="flex gap-4 items-center">
       <span class="pi pi-search text-3xl cursor-pointer"></span>
       @if(currentUser().id) {
-      <p-avatar [image]="currentUser().avatar" shape="circle" />
+      <p-avatar [image]="currentUser().avatar || defaultAvatar" shape="circle" />
       }
     </div>
   </div>

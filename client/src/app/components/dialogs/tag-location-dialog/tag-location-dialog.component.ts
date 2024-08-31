@@ -22,16 +22,19 @@ export class TagLocationDialogComponent {
   items = signal<{id: string; name: string}[]>([]);
   selectedItems = signal<string[]>([]);
   currentUserId= signal<string>('');
-  
+  isLoading= signal<boolean>(true);
+
   onCloseDialog(value: {id: string; name: string}[]) {
     this.dynamicDialogRef.close(value);
   }
 
   getLocationOfUser(keyword: string) {
+    this.isLoading.set(true);
     getUserLocation((position: {coords: {latitude: number; longitude: number;}})=>{
       const latitude = position?.coords?.latitude || 0;
       const longitude = position?.coords?.longitude || 0;
       this.locationService.getLocationNearby({keyword, latitude, longitude}).subscribe((response)=>{
+        this.isLoading.set(false);
         if(response.statusCode === 200) {
           this.items.set(response.data.map((item)=>({id: item.id, name: item.address.label})))
         }

@@ -72,3 +72,11 @@ export const INIT_POST_VALUE = {
     feelingIcon: '',
     scope: scopePost.EVERYONE
 } as PostResponseValue;
+
+export const paymentStatus = {
+    WAITING: 'waiting',
+    DONE: 'done',
+    LATE: 'late'
+}
+
+export const defaultAvatar = 'assets/images/default_avatar.webp';

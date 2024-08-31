@@ -1,4 +1,4 @@
-<app-search-container-group searchTitle="Tìm icon" [initializeValue]="selectedItems()" [items]="items()"
+<app-search-container-group [isLoading]="isLoading()" searchTitle="Tìm icon" [initializeValue]="selectedItems()" [items]="items()"
   (onCloseDialog)="onCloseDialog($event)" [isMultipleSelect]="false" (searchInputChange)="searchInputChange($event)">
   <ng-template #contentRowTemplate let-data>
     <div class="flex gap-2 items-center">

@@ -1,5 +1,6 @@
 import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { SearchContainerDialogComponent } from '@app/components/dialogs/search-container-dialog/search-container-dialog.component';
+import { defaultAvatar } from '@app/constants/common.constant';
 import { UserInfoSearch, UserInfoSearchResponse, UserLoginResponse } from '@app/models/user.model';
 import { UserService } from '@app/services/user.service';
 import { AvatarModule } from 'primeng/avatar';
@@ -24,13 +25,16 @@ export class TagFriendsDialogComponent implements OnInit, OnDestroy {
   items = signal<UserInfoSearch[]>([]);
   selectedItems = signal<string[]>([]);
   currentUserId= signal<string>('');
-  
+  isLoading = signal<boolean>(false)
+  defaultAvatar = defaultAvatar;
   onCloseDialog(value: UserInfoSearch[]) {
     this.dynamicDialogRef.close(value);
   }
 
   getFriendsOfUser(keyword: string) {
+    this.isLoading.set(true);
     this.userService.searchUserByKeyword(this.currentUserId(), keyword).subscribe((response)=>{
+      this.isLoading.set(true);
       if(response.statusCode !== 200) {
         this.items.set([]);
         return;
