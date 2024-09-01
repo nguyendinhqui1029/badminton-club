@@ -3,4 +3,5 @@ export interface Environment {
     apiUrl: string;
     defaultLanguage: string;
     domain: string;
+    pushNotificationPublishKey: string;
 }

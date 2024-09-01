@@ -18,6 +18,8 @@ interface EnvConfig {
   EMAIL_PASS: string;
   EMAIL_USER: string;
   HERE_PLACES_API_KEY: string;
+  WEB_PUSH_PUBLIC_KEY: string;
+  WEB_PUSH_PRIVATE_KEY: string;
 }
 const env: EnvConfig = {
   PORT: parseInt(process.env.PORT as string, 10) || 3000,
@@ -33,6 +35,8 @@ const env: EnvConfig = {
   EMAIL_PASS: process.env.EMAIL_PASS as string,
   EMAIL_USER: process.env.EMAIL_USER as string,
   HERE_PLACES_API_KEY: process.env.HERE_PLACES_API_KEY as string,
+  WEB_PUSH_PUBLIC_KEY: process.env.WEB_PUSH_PUBLIC_KEY as string,
+  WEB_PUSH_PRIVATE_KEY: process.env.WEB_PUSH_PRIVATE_KEY as string,
 };
 
 export default env;

@@ -16,7 +16,7 @@ import filesRoutes from '../routes/filesRoutes';
 import emailRoutes from '../routes/emailRoutes';
 import locationRoutes from '../routes/locationRoutes';
 import qrCodeRoutes from '../routes/qrCodeRoutes';
-
+import pushNotificationRoutes from '../routes/pushNotificationRoutes';
  class App {
   public app: Application;
   public port: number;
@@ -57,6 +57,7 @@ import qrCodeRoutes from '../routes/qrCodeRoutes';
     this.app.use(`${root}/${ROUTER_PATH.EMAIL}`, emailRoutes);
     this.app.use(`${root}/${ROUTER_PATH.LOCATION}`, locationRoutes);
     this.app.use(`${root}/${ROUTER_PATH.QR_CODE}`, qrCodeRoutes);
+    this.app.use(`${root}/${ROUTER_PATH.PUSH_NOTIFICATION}`, pushNotificationRoutes);
     // Add more routes as needed
   }
 

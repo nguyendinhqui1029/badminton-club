@@ -12,7 +12,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     provideClientHydration(withHttpTransferCacheOptions({
-        includePostRequests: true,
+      includePostRequests: true,
     })),
     importProvidersFrom(BrowserAnimationsModule, HttpClientModule),
     provideRouter(routes),
@@ -20,8 +20,8 @@ export const appConfig: ApplicationConfig = {
     provideAnimations(),
     provideHttpClient(withInterceptors([responseHandlerInterceptor])),
     provideServiceWorker('ngsw-worker.js', {
-        enabled: !isDevMode(),
-        registrationStrategy: 'registerWhenStable:30000'
+      enabled: !isDevMode(),
+      registrationStrategy: 'registerWhenStable:30000'
     })
-]
+  ]
 };
