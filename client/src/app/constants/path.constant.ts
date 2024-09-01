@@ -3,8 +3,8 @@ export const path = {
         ROOT: 'home',
         DETAIL: 'detail/:id'
     },
-    ACCOUNT: {
-        ROOT: 'account'
+    SETTINGS: {
+        ROOT: 'settings'
     },
     ATTENDANCE: {
         ROOT: 'attendance'
@@ -25,9 +25,6 @@ export const path = {
     },
     SHOP: {
         ROOT: 'shop'
-    },
-    TERMS: {
-        ROOT: 'terms'
     },
     NOT_FOUND: '**',
     NO_PERMISSION: 'no-permission',

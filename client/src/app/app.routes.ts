@@ -20,7 +20,7 @@ export const routes: Routes = [
             },
             { path: '', redirectTo: `/${path.HOME.ROOT}`, pathMatch: 'full' },
             {
-                path: path.ACCOUNT.ROOT, loadChildren: () => import('./modules/account/account.routes').then(module => module.accountRoutes)
+                path: path.SETTINGS.ROOT, loadChildren: () => import('./modules/settings/settings.routes').then(module => module.settingsRoutes)
             },
             {
                 path: path.ATTENDANCE.ROOT, loadChildren: () => import('./modules/attendance/attendance.routes').then(module => module.attendanceRoutes)
@@ -39,9 +39,6 @@ export const routes: Routes = [
             },
             {
                 path: path.SHOP.ROOT, loadChildren: () => import('./modules/shop/shop.routes').then(module => module.shopRoutes)
-            },
-            {
-                path: path.TERMS.ROOT, loadChildren: () => import('./modules/terms/terms.routes').then(module => module.termsRoutes)
             }
         ]
     },

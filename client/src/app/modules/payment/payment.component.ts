@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { TabViewModule } from 'primeng/tabview';
 import { PanelModule } from 'primeng/panel';
 import { DropdownModule } from 'primeng/dropdown';
@@ -45,4 +45,5 @@ export class PaymentComponent {
       amount: 10000
     }]
   };
+  isAdmin = signal<boolean>(true);
 }

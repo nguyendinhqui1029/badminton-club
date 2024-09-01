@@ -1,6 +1,11 @@
 <div class="bg-white p-4 rounded-xl gap-4">
   <h3 class="text-2xl font-bold">Thanh toán</h3>
   <p-tabView>
+    @if(isAdmin()) {
+      <p-tabPanel header="Tạo phiếu thu">
+        Admin add phiếu thu
+      </p-tabPanel>
+    }
     <p-tabPanel header="Chờ thanh toán">
       <app-payment-card [paymentInfo]="paymentInfo"></app-payment-card>
     </p-tabPanel>

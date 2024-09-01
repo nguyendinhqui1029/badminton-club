@@ -1,0 +1,42 @@
+<div class="flex flex-col gap-2">
+  <p-panel [toggleable]="true" [collapsed]="true">
+    <ng-template pTemplate="header">
+      <div class="flex items-center justify-between w-full">
+        <span class="flex flex-col font-bold">
+          Cài đặt tài khoản
+        </span>
+      </div>
+    </ng-template>
+  </p-panel>
+  @if(isShowForAdmin()) {
+    <p-panel [toggleable]="true" [collapsed]="true">
+      <ng-template pTemplate="header">
+        <div class="flex items-center justify-between w-full">
+          <span class="flex flex-col font-bold">
+            Cài đặt địa điểm checkin 
+          </span>
+        </div>
+      </ng-template>
+    </p-panel>
+    
+    <p-panel [toggleable]="true" [collapsed]="true">
+      <ng-template pTemplate="header">
+        <div class="flex items-center justify-between w-full">
+          <span class="flex flex-col font-bold">
+            Cài đặt phí phạt  
+          </span>
+        </div>
+      </ng-template>
+    </p-panel>
+  }
+  <p-panel [toggleable]="true" [collapsed]="true">
+    <ng-template pTemplate="header">
+      <div class="flex items-center justify-between w-full">
+        <span class="flex flex-col font-bold">
+          Điều khoản
+        </span>
+      </div>
+    </ng-template>
+    <app-terms-content></app-terms-content>
+</p-panel>
+</div>
