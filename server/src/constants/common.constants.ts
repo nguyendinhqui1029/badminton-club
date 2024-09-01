@@ -14,7 +14,7 @@ export const ROUTER_PATH = {
     EMAIL: 'email',
     LOCATION: 'location',
     QR_CODE: 'qr-code',
-    PUSH_NOTIFICATION: 'send-notification'
+    NOTIFICATION: 'notification'
 }
 
 export const accountType  = {

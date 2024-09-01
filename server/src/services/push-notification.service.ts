@@ -19,11 +19,11 @@ export default class PushNotificationService {
 
     sendNotification = (subscription: webPush.PushSubscription)=>{
       const payload = JSON.stringify({
-        title: 'Có bài viết mới!',
-        body: 'Nhấp vào đây để xem bài viết mới.',
-        icon: '/path/to/icon.png',
-        badge: '/path/to/badge.png'
+        title: 'Test Notification',
+        body: 'This is a test notification'
       });
-      webPush.sendNotification(subscription, payload);
+      webPush.sendNotification(subscription, payload)
+      .then(response => console.log('Notification sent:', response))
+      .catch(error => console.error('Error sending notification:', error));
     }
 }

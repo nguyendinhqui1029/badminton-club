@@ -57,7 +57,7 @@ import pushNotificationRoutes from '../routes/pushNotificationRoutes';
     this.app.use(`${root}/${ROUTER_PATH.EMAIL}`, emailRoutes);
     this.app.use(`${root}/${ROUTER_PATH.LOCATION}`, locationRoutes);
     this.app.use(`${root}/${ROUTER_PATH.QR_CODE}`, qrCodeRoutes);
-    this.app.use(`${root}/${ROUTER_PATH.PUSH_NOTIFICATION}`, pushNotificationRoutes);
+    this.app.use(`${root}/${ROUTER_PATH.NOTIFICATION}`, pushNotificationRoutes);
     // Add more routes as needed
   }
 
