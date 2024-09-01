@@ -1,4 +1,5 @@
 @if(!isLoading()) {
+  <div (click)="sendNotification()">Click me</div>
   <section class="w-full flex flex-col gap-2">
     @if(currentUserLogin().id) {
       <app-create-post (refreshDataListEvent)="handleReFreshDataList()"></app-create-post>

@@ -61,8 +61,4 @@ export class AppComponent {
     this.pushNotificationService.requestSubscription();
     // New
   }
-
-  sendNotification() {
-    this.pushNotificationService.sendNotification().subscribe();
-  }
 }

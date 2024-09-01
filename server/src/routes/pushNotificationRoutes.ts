@@ -5,5 +5,5 @@ const router = express.Router();
 const pushNotificationController = new PushNotificationController();
 
 router.post('/send-notification', pushNotificationController.sendNotification);
-router.post('/subscription', pushNotificationController.sendNotification);
+router.post('/subscription', pushNotificationController.subscription);
 export default router;

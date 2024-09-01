@@ -9,7 +9,7 @@ import { CURRENT_USER_INIT } from '@app/constants/common.constant';
 import { ButtonModule } from 'primeng/button';
 import { path } from '@app/constants/path.constant';
 import { RouterLink } from '@angular/router';
-import { debounce, debounceTime, timer } from 'rxjs';
+import { PushNotificationService } from '@app/services/push-notification.service';
 
 @Component({
   selector: 'app-home',
@@ -21,6 +21,8 @@ import { debounce, debounceTime, timer } from 'rxjs';
 export class HomeComponent implements OnInit {
   private userService: UserService = inject(UserService);
   private postService: PostService = inject(PostService);
+  private pushNotificationService: PushNotificationService = inject(PushNotificationService);
+
   posts = signal<PostResponseValue[]>([]);
   currentUserLogin = signal<UserLoginResponse>(CURRENT_USER_INIT);
   loginPage = `/${path.LOGIN.ROOT}`;
@@ -44,5 +46,13 @@ export class HomeComponent implements OnInit {
 
   handleReFreshDataList() {
     this.getDataList();
+  }
+
+
+  sendNotification() {
+    console.log('click me work')
+    this.pushNotificationService.sendNotification().subscribe((response)=>{
+      console.log('click me work response',response )
+    });
   }
 }
