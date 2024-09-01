@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --ssl --ssl-key certs/localhost-key.pem --ssl-cert certs/localhost.pem",
-    "build": "ng build --ssl --ssl-key certs/key.pem --ssl-cert certs/cert.pem --configuration=production",
+    "build": "ng build --configuration=production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:client": "node dist/client/server/server.mjs"
