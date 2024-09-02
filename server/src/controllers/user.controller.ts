@@ -114,6 +114,28 @@ class UserController {
     }
   };
 
+  public addFriend = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const idFriends = req.body['idFriends'] || [];
+      const updatedUser = await this.userService.addFriend(req.body.id, idFriends);
+      res.status(200).json({
+        statusCode: 200,
+        statusText: 'Get user is successful.',
+        totalCount: 0,
+        page: 0,
+        data: updatedUser
+      });
+    } catch (error: any) {
+      res.status(200).json({
+        statusCode: 500,
+        statusText: 'Get user is fail.',
+        totalCount: 0,
+        page: 0,
+        data: error.message
+      });
+    }
+  };
+  
   public deleteUser = async (req: Request, res: Response): Promise<void> => {
     try {
       const deletedUser = await this.userService.deleteUser(req.params.id,);

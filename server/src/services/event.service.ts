@@ -6,6 +6,11 @@ class EventService {
     return await EventModel.find();
   }
 
+  public async getByName(name: string): Promise<Event[] | null> {
+    const regex = new RegExp(name, 'i'); // 'i' là tùy chọn để tìm kiếm không phân biệt chữ hoa chữ thường
+    return await EventModel.find({ content: { $regex: regex } });
+  }
+
   public async getById(id: string): Promise<Event | null> {
     return await EventModel.findById(id);
   }

@@ -61,8 +61,13 @@ class UserService {
     }
   }
 
+  public async getUserByName(name: string): Promise<User[] | null> {
+    const regex = new RegExp(name, 'i'); // 'i' là tùy chọn để tìm kiếm không phân biệt chữ hoa chữ thường
+    return await UserModel.find({ name: { $regex: regex } }).sort({ name: 1 });
+  }
+  
   public async getAllUsers(): Promise<User[]> {
-    const users = await UserModel.find();
+    const users = await UserModel.find({},'point name email phone avatar birthday gender createdAt');
     return users;
   }
 
@@ -85,6 +90,12 @@ class UserService {
     return updatedUser;
   }
 
+  public async addFriend(id: string, idFriends: string[]): Promise<User | null> {
+    const objectIdFriends = idFriends.map((idFriend: string) => new mongoose.Types.ObjectId(idFriend));
+    const updatedUser = await UserModel.findByIdAndUpdate(new mongoose.Types.ObjectId(id), { $set: { idFriends: objectIdFriends } }, { new: true });
+    return updatedUser;
+  }
+
   public async deleteUser(id: string): Promise<User | null> {
     return await UserModel.findByIdAndDelete(id, { new: true });
   }
@@ -103,8 +114,8 @@ class UserService {
       }
 
       // Tạo JWT
-      const accessToken = jwt.sign({ id: user._id, name: user.name, point: user.point, avatar: user.avatar, email: user.email, phone: user.phone,  role: user.role }, env.JWT_SECRET, { expiresIn: '1h' });
-      const refreshToken = jwt.sign({ id: user._id, name: user.name, point: user.point, avatar: user.avatar, email: user.email, phone: user.phone, role: user.role}, env.JWT_REFRESH_SECRET, { expiresIn: '7d' });
+      const accessToken = jwt.sign({ id: user._id, name: user.name, point: user.point, avatar: user.avatar, email: user.email, phone: user.phone,  role: user.role, idFriends: user.idFriends  }, env.JWT_SECRET, { expiresIn: '1h' });
+      const refreshToken = jwt.sign({ id: user._id, name: user.name, point: user.point, avatar: user.avatar, email: user.email, phone: user.phone, role: user.role, idFriends: user.idFriends}, env.JWT_REFRESH_SECRET, { expiresIn: '7d' });
     
       // Gửi token về client
       return { code: '200', accessToken, refreshToken };
@@ -118,7 +129,7 @@ class UserService {
     try {
       const verifySuccess: JwtPayload = await jwt.verify(refreshToken, env.JWT_REFRESH_SECRET) as JwtPayload;
       // Tạo access token mới
-      const accessToken = jwt.sign({ id: verifySuccess['id'], name: verifySuccess?.name, phone: verifySuccess.phone, point: verifySuccess?.point, avatar: verifySuccess?.avatar, email: verifySuccess['email'], role: verifySuccess['role'] }, env.JWT_SECRET, { expiresIn: '1h' });
+      const accessToken = jwt.sign({ id: verifySuccess['id'], name: verifySuccess?.name, phone: verifySuccess.phone, point: verifySuccess?.point, avatar: verifySuccess?.avatar, email: verifySuccess['email'], role: verifySuccess['role'], idFriends: verifySuccess['idFriends'] }, env.JWT_SECRET, { expiresIn: '1h' });
       return { code: '200', accessToken };
     } catch (error) {
       console.error('Error logging in:', error);

@@ -64,7 +64,7 @@ const userSchema: Schema = new Schema({
   },
   role: {
     type: [String],
-    enum: ['admin', 'user', 'moderator'], // Định nghĩa các vai trò có thể có
+    enum: ['admin', 'user', 'supperAdmin'], // Định nghĩa các vai trò có thể có
     default: ['user']
   },
   avatar: {

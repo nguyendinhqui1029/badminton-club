@@ -3,7 +3,7 @@ import { Component, ContentChild, EventEmitter, input, OnChanges, OnDestroy, OnI
 import { FormsModule } from '@angular/forms';
 import { DataSearchGroup } from '@app/models/search-group.model';
 import { ButtonModule } from 'primeng/button';
-import { CheckboxChangeEvent, CheckboxModule } from 'primeng/checkbox';
+import { CheckboxModule } from 'primeng/checkbox';
 import { InputTextModule } from 'primeng/inputtext';
 import { debounceTime, Subject, Subscription } from 'rxjs';
 

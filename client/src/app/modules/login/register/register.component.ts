@@ -1,5 +1,5 @@
 import { Component, computed, inject, OnInit, PLATFORM_ID } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { LabelWrapperComponent } from '@app/components/label-wrapper/label-wrapper.component';
 import { path } from '@app/constants/path.constant';
 import { ButtonModule } from 'primeng/button';

@@ -8,7 +8,7 @@
       </div>
     </ng-template>
   </p-panel>
-  @if(isShowForAdmin()) {
+  @if(isAdmin() || isSuperAdmin()) {
     <p-panel [toggleable]="true" [collapsed]="true">
       <ng-template pTemplate="header">
         <div class="flex items-center justify-between w-full">
@@ -24,6 +24,17 @@
         <div class="flex items-center justify-between w-full">
           <span class="flex flex-col font-bold">
             Cài đặt phí phạt  
+          </span>
+        </div>
+      </ng-template>
+    </p-panel>
+  }
+  @if(isSuperAdmin()) {
+    <p-panel [toggleable]="true" [collapsed]="true">
+      <ng-template pTemplate="header">
+        <div class="flex items-center justify-between w-full">
+          <span class="flex flex-col font-bold">
+            Cấp quyền tài khoản 
           </span>
         </div>
       </ng-template>

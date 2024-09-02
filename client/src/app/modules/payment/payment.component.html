@@ -1,9 +1,28 @@
-<div class="bg-white p-4 rounded-xl gap-4">
+<div class="bg-white p-4 rounded-xl gap-4 mb-2">
   <h3 class="text-2xl font-bold">Thanh toán</h3>
   <p-tabView>
-    @if(isAdmin()) {
+    @if(isAdmin() || isSupperAdmin()) {
       <p-tabPanel header="Tạo phiếu thu">
-        Admin add phiếu thu
+        <form class="flex flex-col gap-3">
+          <app-label-wrapper  idLabel="name" label="Họ tên" [isRequired]="true">
+            <p-multiSelect [options]="userList()" optionLabel="label" optionValue="value" placeholder="Gửi đến người dùng" />
+          </app-label-wrapper>
+          <app-label-wrapper  idLabel="title" label="Tiêu đề" [isRequired]="true">
+            <input class="w-full" id="title" type="text" pInputText placeholder="Nhập tiêu đề"/>
+          </app-label-wrapper>
+          <app-label-wrapper  idLabel="description" label="Mô tả" [isRequired]="true">
+            <textarea placeholder="Nhập mô tả" rows="2" styleClass="w-full" pInputTextarea></textarea>
+          </app-label-wrapper>
+          <app-label-wrapper idLabel="amount" label="Số tiền" [isRequired]="true">
+            <p-inputNumber styleClass="w-full" inputId="amount" placeholder="Nhập số tiền"/> 
+          </app-label-wrapper>
+          <app-label-wrapper idLabel="files" label="Ảnh" [isRequired]="true">
+            <app-upload-file #fileUploadRef></app-upload-file>
+          </app-label-wrapper>
+          <div class="flex justify-end mt-2">
+            <p-button styleClass="min-w-28" label="Lưu" rounded/>
+          </div>
+        </form>
       </p-tabPanel>
     }
     <p-tabPanel header="Chờ thanh toán">
@@ -12,13 +31,107 @@
     <p-tabPanel header="Đã thanh toán">
       <app-payment-card [isHiddenQrButton]="true" [paymentInfo]="paymentInfo"></app-payment-card>
     </p-tabPanel>
-    <p-tabPanel header="Thanh toán của thành viên">
-      <div class="flex gap-2 mb-4">
-        <input  placeholder="Từ khoá..." class="w-full" type="text" pInputText />
-        <p-dropdown  optionLabel="label"
-        optionValue="value" placeholder="Trạng thái" [options]="statusOptions"/>
-      </div>
-      <app-payment-card [isNotifyButton]="true" [paymentInfo]="paymentInfo"></app-payment-card>
+    @if(isAdmin() || isSupperAdmin()) {
+      <p-tabPanel header="Thanh toán của thành viên">
+        <div class="flex gap-2 mb-4">
+          <input  placeholder="Từ khoá..." class="w-full" type="text" pInputText />
+          <p-dropdown  optionLabel="label"
+          optionValue="value" placeholder="Trạng thái" [options]="statusOptions"/>
+        </div>
+        <app-payment-card [isNotifyButton]="true" [paymentInfo]="paymentInfo"></app-payment-card>
+      </p-tabPanel>
+    }
+  </p-tabView>
+</div>
+
+<div class="bg-white p-4 rounded-xl gap-4">
+  <h3 class="text-2xl font-bold">Quỹ nhóm</h3>
+  <p-tabView>
+    <p-tabPanel header="Thông tin quỹ nhóm">
+      <ul class="flex flex-col">
+        <li class="flex justify-between bg-secondary-color p-2 text-white"><h3 class="font-bold">Tổng ({{currentDate() | date: 'dd-MM-yyyy'}})</h3> {{100000 | currency: 'VND'}}</li>
+        <li class="flex justify-between p-2"><h3 class="font-bold">Tháng 9</h3> {{70000 | currency: 'VND'}}</li>
+        <li class="flex justify-between p-2"><h3 class="font-bold">Tháng 8</h3> {{70000 | currency: 'VND'}}</li>
+        <li class="flex justify-between p-2"><h3 class="font-bold">Tháng 7</h3> {{70000 | currency: 'VND'}}</li>
+        <li class="flex justify-between p-2"><h3 class="font-bold">Tháng 6</h3> {{70000 | currency: 'VND'}}</li>
+        <li class="flex justify-between p-2"><h3 class="font-bold">Tháng 5</h3> {{70000 | currency: 'VND'}}</li>
+      </ul>
+    </p-tabPanel>
+    <p-tabPanel header="Lịch sử thu">
+      <p-table 
+        [value]="rechargeHistories" 
+        responsiveLayout="stack" 
+        [breakpoint]="'960px'" 
+        [tableStyle]="{'min-width': '20rem'}">
+        <ng-template pTemplate="header" let-columns>
+            <tr>
+                <th>STT</th>
+                <th>Nội dung thu</th>
+                <th>Số tiền</th>
+                <th>Ngày thu</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item let-columns="columns">
+            <tr>
+                <td>
+                    <span class="p-column-title">STT</span>{{item.name}}
+                </td>
+                <td>
+                    <span class="p-column-title">Nội dung thu</span>{{item.price | currency:'USD'}}
+                </td>
+                <td>
+                    <span class="p-column-title">Số tiền</span>{{item.price | currency:'VND'}}
+                </td>
+                <td>
+                    <span class="p-column-title">Ngày thu</span>
+                    {{item.createdAt}}
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr><td colspan="4" class="w-full text-center">Không có dữ liệu</td></tr>
+        </ng-template>
+      </p-table>
+    </p-tabPanel>
+    <p-tabPanel header="Lịch sử chi">
+      <p-table 
+        [value]="withdrawHistories" 
+        responsiveLayout="stack" 
+        [breakpoint]="'500px'" 
+        [tableStyle]="{'min-width': '20rem'}">
+        <ng-template pTemplate="header" let-columns>
+            <tr>
+                <th>STT</th>
+                <th>Nội dung chi</th>
+                <th>Biên nhận</th>
+                <th>Số tiền</th>
+                <th>Ngày chi</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item let-columns="columns">
+            <tr>
+                <td>
+                    <span class="p-column-title">STT</span>{{item.name}}
+                </td>
+                <td>
+                    <span class="p-column-title">Nội dung thu</span><div class="line-clamp-2">{{item.content}}</div>
+                </td>
+                <td>
+                    <span class="p-column-title">Biên nhận</span><img [src]="item.files?.[0]"/>
+                </td>
+                <td>
+                    <span class="p-column-title">Số tiền</span>{{item.amount | currency:'VND'}}
+                </td>
+                <td>
+                    <span class="p-column-title">Ngày chi</span>
+                    {{item.createdAt}}
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr><td colspan="5" class="w-full text-center">Không có dữ liệu</td></tr>
+        </ng-template>
+      </p-table>
     </p-tabPanel>
   </p-tabView>
 </div>

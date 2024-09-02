@@ -2,18 +2,41 @@
   <div class="flex p-4 bg-white rounded-xl justify-between">
     <h3 class="font-bold text-xl leading-10">Điểm của bạn</h3>
     <div class="flex gap-2  items-center">
-      <span>2000</span><img class="w-12 h-12" src="assets/images/coin.webp"/>
+      <span class="text-base font-bold text-secondary-color">0</span><img class="w-12 h-12" src="assets/images/coin.webp"/>
     </div>
   </div>
   <div class="p-4 bg-white rounded-xl">
     <h3 class="font-bold text-xl">Sự kiện</h3>
+    <p-carousel 
+    [value]="events" 
+    [numVisible]="2" 
+    [numScroll]="2" 
+    [circular]="true" 
+    autoplayInterval="3000"
+    [responsiveOptions]="responsiveOptions">
+        <ng-template let-event pTemplate="item">
+            <div class="flex flex-col justify-between border-1 p-3" (click)="onClickViewDetail(event)">
+                <div class="aspect-video w-full rounded-xl overflow-clip mb-2">
+                  <img 
+                  [src]="event.thumbnail" 
+                  [alt]="event.name" 
+                  class="h-full w-full" />
+                </div>
+                <div class="font-xs font-bold text-center line-clamp-1">
+                    {{ event.name }}
+                </div>
+            </div>
+        </ng-template>
+    </p-carousel>
   </div>
 
-  <div class="p-4 bg-white rounded-xl">
+  <div class="flex flex-col gap-4 p-4 bg-white rounded-xl">
     <h3 class="font-bold text-xl">Đổi điểm lấy phụ kiện</h3>
+    <p class="text-md text-center">Chưa có dữ liệu</p>
   </div>
 
-  <div class="p-4 bg-white rounded-xl">
+  <div class="flex flex-col gap-4 p-4 bg-white rounded-xl">
     <h3 class="font-bold text-xl">Đổi điểm lấy vé xem phim</h3>
+    <p class="text-md text-center">Chưa có dữ liệu</p>
   </div>
 </div>

@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { CURRENT_USER_INIT } from '@app/constants/common.constant';
 import { environment } from '@app/environments/environment';
 import { ApiResponseValue } from '@app/models/api-response.model';
-import { UserInfoSearchResponse, UserLoginResponse, UserRequestBody } from '@app/models/user.model';
+import { UserInfoSearchResponse, UserInfoWithIdFriendResponse, UserLoginResponse, UserRequestBody, UserResponse } from '@app/models/user.model';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
@@ -38,7 +38,23 @@ export class UserService {
     return this.http.post<ApiResponseValue<{id: string; phone: string}>>(`${environment.apiUrl}/user/reset-password`, body);
   }
 
+  refreshToken(body: {refreshToken: string}) {
+    return this.http.post<ApiResponseValue<{accessToken: string}>>(`${environment.apiUrl}/user/refresh-token`, body);
+  }
+
   create(body: UserRequestBody): Observable<ApiResponseValue<UserLoginResponse>> {
     return this.http.post<ApiResponseValue<UserLoginResponse>>(`${environment.apiUrl}/user`, body);
+  }
+
+  addFriend(body: {id: string, idFriends: string[]}): Observable<ApiResponseValue<UserLoginResponse>> {
+    return this.http.put<ApiResponseValue<UserLoginResponse>>(`${environment.apiUrl}/user/friend/add`, body);
+  }
+
+  getUserById(id: string) {
+    return this.http.get<ApiResponseValue<UserInfoWithIdFriendResponse>>(`${environment.apiUrl}/user/${id}`);
+  }
+
+  getAllUser() {
+    return this.http.get<ApiResponseValue<UserInfoWithIdFriendResponse[]>>(`${environment.apiUrl}/user`);
   }
 }

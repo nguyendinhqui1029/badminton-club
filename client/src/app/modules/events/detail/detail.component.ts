@@ -1,18 +1,14 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { environment } from '@app/environments/environment';
-import { PostResponseValue } from '@app/models/post.model';
 import { PostService } from '@app/services/post.service';
-import { ButtonModule } from 'primeng/button';
 import { switchMap } from 'rxjs';
-import { ImageModule } from 'primeng/image';
-import { path } from '@app/constants/path.constant';
 
 @Component({
   selector: 'app-detail',
   standalone: true,
-  imports: [RouterLink, ButtonModule, ImageModule],
+  imports: [],
   templateUrl: './detail.component.html',
   styleUrl: './detail.component.scss'
 })
@@ -22,31 +18,40 @@ export class DetailComponent implements OnInit {
   private meta: Meta = inject(Meta);
   private postService: PostService = inject(PostService);
   private activatedRoute: ActivatedRoute = inject(ActivatedRoute);
-  
-  itemDetail =  signal<PostResponseValue | null>(null);
-  homePath = `/${path.HOME.ROOT}`;
   ngOnInit(): void {
     this.activatedRoute.params.pipe(switchMap((params) => this.postService.getPostById(params['id']))).subscribe((response) => {
       if (response.statusCode === 200) {
-        this.itemDetail.set(response.data);
-        this.title.setTitle('Chi tiết bài viết');
+        const item = response.data;
+        this.title.setTitle(item.content);
 
         this.meta.addTags([
           {
-            content: this.itemDetail()?.images[0] || '',
-            id: this.itemDetail()?.id || '',
+            content: item.content,
+            id: item.id || '',
+            name: 'twitter:card',
+            property: 'og:title',
+          },
+          {
+            content: item.content,
+            id: item.id || '',
+            name: 'twitter:card',
+            property: 'og:description',
+          },
+          {
+            content: item.images[0] || '',
+            id: item.id || '',
             name: 'twitter:card',
             property: 'og:image',
           },
           {
-            content: `${environment.domain}/detail/${this.itemDetail()?.id}`,
-            id: this.itemDetail()?.id || '',
+            content: `${environment.domain}/detail/${item.id}`,
+            id: item.id || '',
             name: 'twitter:card',
             property: 'og:url',
           },
           {
             content: 'website',
-            id: this.itemDetail()?.id || '',
+            id: item.id || '',
             name: 'twitter:card',
             property: 'og:type',
           }
@@ -54,7 +59,6 @@ export class DetailComponent implements OnInit {
       }
     })
   }
-
   //   <meta itemprop="name" content="Test website">
   // <meta itemprop="description" content="This is the website description. Nice eh?">
   // <meta itemprop="image" content="https://lorempixel.com/400/200/">

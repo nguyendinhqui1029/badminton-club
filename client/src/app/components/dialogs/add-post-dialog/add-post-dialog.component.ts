@@ -148,6 +148,7 @@ export class AddPostDialogComponent implements OnInit, OnDestroy {
       location: post?.tagLocation || ''
     });
   }
+  
   ngOnInit(): void {
     this.initFormData();
     this.userUnSubscription =  this.userService.currentUserLogin.subscribe((userResponse: UserLoginResponse)=>{

@@ -21,6 +21,7 @@ import { concatMap, EMPTY, Observable } from 'rxjs';
 })
 export class UploadFileComponent implements ControlValueAccessor {
  
+  maxLength = input<number>();
   isShowButtonAdd = input<boolean>(true);
   @ViewChild('fileUploadElement') fileUploadElement!: ElementRef;
 
@@ -84,7 +85,6 @@ export class UploadFileComponent implements ControlValueAccessor {
     for (let index = 0; index < files.length; index++) {
       formData.append('files', files[index]);
     }
-
     this.fileService.uploadFile(formData).subscribe((response) => {
       if (response.statusCode === 200) {
         this.imageList.update((value: string[]) => {

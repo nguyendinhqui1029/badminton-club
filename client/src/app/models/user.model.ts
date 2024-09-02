@@ -35,6 +35,21 @@ export interface UserResponse {
     updatedAt: Date;
 }
 
+export interface UserInfoWithIdFriendResponse {
+    id: string;
+    point: number;
+    email: string;
+    phone: string;
+    name: string;
+    role: string[];
+    avatar: string;
+    birthday: Date;
+    idFriends: string[];
+    status: 'BLOCK' | 'WAITING' | 'ON' | 'OFF';
+    createdAt: Date;
+    updatedAt: Date;
+}
+
 export interface UserLoginResponse {
     id: string;
     point: number;
@@ -44,6 +59,7 @@ export interface UserLoginResponse {
     role: string[];
     avatar: string;
     birthday: string;
+    idFriends: string[];
 }
 
 export interface UserRequestBody {

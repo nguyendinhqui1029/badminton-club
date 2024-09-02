@@ -49,7 +49,8 @@ export const CURRENT_USER_INIT = {
     name: '',
     role: [],
     avatar: '',
-    birthday: ''
+    birthday: '',
+    idFriends: []
 };
 
 export const INIT_POST_VALUE = {
@@ -80,3 +81,9 @@ export const paymentStatus = {
 }
 
 export const defaultAvatar = 'assets/images/default_avatar.webp';
+
+export const userRole = {
+    USER: 'user',
+    ADMIN: 'admin',
+    SUPPER_ADMIN: 'supperAdmin'
+}

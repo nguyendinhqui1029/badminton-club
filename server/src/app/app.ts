@@ -17,6 +17,8 @@ import emailRoutes from '../routes/emailRoutes';
 import locationRoutes from '../routes/locationRoutes';
 import qrCodeRoutes from '../routes/qrCodeRoutes';
 import pushNotificationRoutes from '../routes/pushNotificationRoutes';
+import commonRoutes from '../routes/commonRoutes';
+
  class App {
   public app: Application;
   public port: number;
@@ -58,6 +60,7 @@ import pushNotificationRoutes from '../routes/pushNotificationRoutes';
     this.app.use(`${root}/${ROUTER_PATH.LOCATION}`, locationRoutes);
     this.app.use(`${root}/${ROUTER_PATH.QR_CODE}`, qrCodeRoutes);
     this.app.use(`${root}/${ROUTER_PATH.NOTIFICATION}`, pushNotificationRoutes);
+    this.app.use(`${root}/${ROUTER_PATH.COMMON}`, commonRoutes);
     // Add more routes as needed
   }
 

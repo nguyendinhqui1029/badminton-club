@@ -9,6 +9,7 @@ router.get('/', userController.getAllUsers);
 router.get('/:id', userController.getUserById);
 router.post('/', userController.createUser);
 router.put('/:id', userController.updateUser);
+router.put('/friend/add', userController.addFriend);
 router.delete('/:id', userController.deleteUser);
 router.post('/login', userController.login);
 router.post('/logout', userController.logout);

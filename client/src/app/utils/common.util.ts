@@ -28,10 +28,10 @@ export function formatLargeNumber(num: number) {
 
   for (const unit of units) {
     if (num >= unit.value) {
-      return (num / unit.value).toFixed(2) + unit.symbol;
+      return (num / unit.value).toFixed(1) + unit.symbol;
     }
   }
-  return num?.toString() || 0;
+  return num?.toString() || '0';
 }
 
 export async function getUserLocation(callback: Function) {

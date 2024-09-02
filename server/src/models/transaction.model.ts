@@ -18,36 +18,31 @@ enum TransactionType {
 export interface Transaction extends Document {
   qrLink: string;       // Liên kết QR dưới dạng chuỗi
   idUser: string;       // Thông tin người dùng dưới dạng chuỗi
-  secretKey: string;    // Khóa bí mật dưới dạng chuỗi
-  totalAmount: number;  // Tổng số tiền dưới dạng số
-  amount: number;       // Số tiền liên quan dưới dạng số
+  amount: number; 
+  title: string;      // Số tiền liên quan dưới dạng số
   content: string;      // Nội dung dưới dạng chuỗi
   files: string[];      // Mảng các chuỗi chứa liên kết đến các tệp
   status: Status;       // Trạng thái, sử dụng enum để đảm bảo các giá trị hợp lệ
   type: TransactionType; // Loại giao dịch, sử dụng enum để đảm bảo các giá trị hợp lệ
+  createdBy: string;
 }
 
 // Định nghĩa schema cho Transaction
 const transactionSchema = new mongoose.Schema({
   qrLink: {
     type: String,
-    required: true
   },
   idUser: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User', // Tham chiếu đến model User nếu đây là một User trả lời
     required: true,
   },
-  secretKey: {
-    type: String,
-    required: true
-  },
-  totalAmount: {
-    type: Number,
-    required: true
-  },
   amount: {
     type: Number,
+    required: true
+  },
+  title: {
+    type: String,
     required: true
   },
   content: {
@@ -67,6 +62,11 @@ const transactionSchema = new mongoose.Schema({
     type: String,
     enum: Object.values(TransactionType), // Sử dụng enum để đảm bảo các giá trị hợp lệ
     required: true
+  },
+  createdBy:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User', // Tham chiếu đến model User nếu đây là một User trả lời
+    required: true,
   }
 }, {
   timestamps: true // Tự động thêm createdAt và updatedAt

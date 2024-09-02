@@ -1,4 +1,4 @@
-<header class="flex p-4 gap-4 items-center justify-between border-b-2 border-gray-color">
+<header class="absolute w-full bg-white  flex p-4 gap-4 items-center justify-between border-b-2 border-gray-color">
   <div class="flex gap-4">
     <span class="pi pi-arrow-left font-bold text-2xl cursor-pointer" (click)="onClickCloseDialog()"></span>
     <h4 class="font-bold text-xl">{{searchTitle()}}</h4>
@@ -7,6 +7,9 @@
   <p-button [label]="submitButtonLabel()" rounded (click)="onClickSubmit()" />
   }
 </header>
+
+<div class="flex gap-4 h-20">
+</div>
 
 <section class="p-4">
   <input class="w-full" type="text" pInputText rounded [placeholder]="searchPlaceholder()"

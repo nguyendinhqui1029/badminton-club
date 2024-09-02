@@ -10,6 +10,7 @@ import { ButtonModule } from 'primeng/button';
 import { path } from '@app/constants/path.constant';
 import { RouterLink } from '@angular/router';
 import { PushNotificationService } from '@app/services/push-notification.service';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-home',
@@ -21,6 +22,8 @@ import { PushNotificationService } from '@app/services/push-notification.service
 export class HomeComponent implements OnInit {
   private userService: UserService = inject(UserService);
   private postService: PostService = inject(PostService);
+  private title: Title = inject(Title);
+
   private pushNotificationService: PushNotificationService = inject(PushNotificationService);
 
   posts = signal<PostResponseValue[]>([]);
@@ -38,6 +41,7 @@ export class HomeComponent implements OnInit {
     });
   }
   ngOnInit(): void {
+    this.title.setTitle('Trang chủ');
     this.userService.currentUserLogin.subscribe((userInfo)=>{
       this.currentUserLogin.set(userInfo);
     })
@@ -46,13 +50,5 @@ export class HomeComponent implements OnInit {
 
   handleReFreshDataList() {
     this.getDataList();
-  }
-
-
-  sendNotification() {
-    console.log('click me work')
-    this.pushNotificationService.sendNotification().subscribe((response)=>{
-      console.log('click me work response',response )
-    });
   }
 }

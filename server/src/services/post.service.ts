@@ -10,8 +10,13 @@ class PostService {
     });
   }
 
+  public async getByName(name: string): Promise<Post[] | null> {
+    const regex = new RegExp(name, 'i'); // 'i' là tùy chọn để tìm kiếm không phân biệt chữ hoa chữ thường
+    return await PostModel.find({ content: { $regex: regex } });
+  }
+
   public async getById(id: string): Promise<Post | null> {
-    return await PostModel.findById(id).populate('createdBy','id name avatar').populate('idUserLike').populate('idComment').populate('tagFriends', 'name id');
+    return await PostModel.findById(id).populate('createdBy','id name avatar').populate('idUserLike', 'id name avatar').populate('idComment', 'id name avatar').populate('tagFriends', 'name id avatar');
   }
 
   public async create(Post: Post): Promise<Post> {

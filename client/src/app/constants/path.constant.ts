@@ -1,7 +1,7 @@
 export const path = {
     HOME: {
         ROOT: 'home',
-        DETAIL: 'detail/:id'
+        DETAIL: 'home/:id'
     },
     SETTINGS: {
         ROOT: 'settings'
@@ -10,7 +10,8 @@ export const path = {
         ROOT: 'attendance'
     },
     EVENTS: {
-        ROOT: 'events'
+        ROOT: 'events',
+         DETAIL: 'events/:id'
     },
     LOGIN: {
         ROOT: 'authentication',

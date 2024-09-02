@@ -1,4 +1,4 @@
-import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, inject, OnInit, Output, signal } from '@angular/core';
 import { PaymentService } from '@app/services/payment.service';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 
@@ -16,9 +16,12 @@ export class ScanQrDialogComponent implements OnInit{
   private paymentService:PaymentService = inject(PaymentService);
   
   paymentQrCodeBase64: string = '';
+  isLoading = signal<boolean>(true);
 
   ngOnInit(): void {
+    this.isLoading.set(true);
     this.paymentService.getPaymentQrCode('1223').subscribe((response)=>{
+      this.isLoading.set(false);
       if(response.statusCode !== 200) {
         return;
       }

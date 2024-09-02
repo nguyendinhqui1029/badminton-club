@@ -8,5 +8,11 @@
 </div>
 <section class="px-4 flex flex-col flex-1 items-center justify-center">
   <small>Mã thanh toán</small>
-  <img [src]="paymentQrCodeBase64" alt="Payment Qr Code"/>
+  @if(!isLoading()) {
+    <img [src]="paymentQrCodeBase64" alt="Payment Qr Code"/>
+  } @else {
+    <div class="flex flex-col justify-between items-center">
+      <img class="w-36 h-36" src="assets/images/loading.webp"/>
+    </div>
+  }
 </section>

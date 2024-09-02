@@ -1,0 +1,15 @@
+<app-search-container-group [isLoading]="isLoading()" searchTitle="Tìm kiếm" [initializeValue]="initializeValue()" [items]="items()"
+  (onCloseDialog)="onCloseDialog($event)" [isMultipleSelect]="false" (searchInputChange)="searchInputChange($event)">
+  <ng-template #contentRowTemplate let-data>
+    <div class="flex gap-2 items-center justify-between w-full">
+      <div  class="flex gap-3 items-center">
+        <p-avatar styleClass="w-12 h-12 border-2" size="large"
+        [image]="data.item?.avatar || defaultAvatar" shape="circle" />
+        <span class="text-base">{{data.item?.name}}</span>
+      </div>
+      @if(data.item?.type === 'USER') {
+        <p-button rounded [label]="friendsOfCurrentUser().includes(data.item?.id) ? 'Huỷ bạn' : 'Kết bạn'" (click)="onAddFriendClick(data.item?.id)"/>
+      }
+    </div>
+  </ng-template>
+</app-search-container-group>
