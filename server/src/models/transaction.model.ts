@@ -2,7 +2,6 @@ import mongoose, { Schema, Document } from 'mongoose';
 
 // Định nghĩa enum cho trạng thái
 enum Status {
-  OPEN = 'OPEN',
   PENDING = 'PENDING',
   DONE = 'DONE',
   LATE = 'LATE'
@@ -16,7 +15,6 @@ enum TransactionType {
 
 // Định nghĩa interface cho dữ liệu
 export interface Transaction extends Document {
-  qrLink: string;       // Liên kết QR dưới dạng chuỗi
   idUser: string;       // Thông tin người dùng dưới dạng chuỗi
   amount: number; 
   title: string;      // Số tiền liên quan dưới dạng số
@@ -29,9 +27,6 @@ export interface Transaction extends Document {
 
 // Định nghĩa schema cho Transaction
 const transactionSchema = new mongoose.Schema({
-  qrLink: {
-    type: String,
-  },
   idUser: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User', // Tham chiếu đến model User nếu đây là một User trả lời

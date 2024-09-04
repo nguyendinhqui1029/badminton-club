@@ -1,4 +1,4 @@
-<p-panel [toggleable]="true">
+<p-panel [toggleable]="true" [collapsed]="isCollapsed">
   <ng-template pTemplate="header">
     <div class="flex items-center justify-between w-full">
       <span class="flex flex-col font-bold">
@@ -7,7 +7,7 @@
         [class.bg-green-400]="paymentInfo().status === paymentStatus.DONE"
         [class.bg-secondary-color]="paymentInfo().status === paymentStatus.WAITING"
         [class.bg-red-color]="paymentInfo().status === paymentStatus.LATE"
-        class="text-white flex items-center justify-center max-w-fit px-2 py-1 rounded-xl">
+        class="mt-1 text-white flex items-center justify-center max-w-fit px-2 py-1 rounded-xl">
           {{displayStatus[paymentInfo().status]}}
         </small>
       </span>
@@ -23,7 +23,7 @@
   }
   <p class="flex justify-between">
     <span class="font-bold text-base">Id <i class="font-normal">#{{paymentInfo().id}}</i></span> 
-    <span class="font-bold text-base">Ngày <i class="font-normal">{{paymentInfo().createdAt}}</i></span>
+    <span class="font-bold text-base">Ngày <i class="font-normal">{{paymentInfo().createdAt | date: 'dd-MM-YYYY'}}</i></span>
   </p>
   <h3 class="font-bold text-base mt-4">Chi tiết</h3>
   <ul class="list-disc ml-5">

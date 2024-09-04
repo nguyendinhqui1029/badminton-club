@@ -1,3 +1,5 @@
+import { UserInfoSearch } from "./user.model";
+
 export interface PaymentDetail {
   name: string;
   amount: number;
@@ -12,14 +14,26 @@ export interface PaymentCard {
 }
 
 export interface PaymentResponseValue {
-  qrLink: string;       
-  idUser: string;       
-  secretKey: string;   
-  totalAmount: number;  
+  id: string;
+  user: UserInfoSearch[];      
+  title: string;  
   amount: number;       
   content: string;      
   files: string[];      
   status: string;       
   type:  'RECHARGE' | 'WITHDRAW';
   createdAt: string;
+  updatedAt: string;
+  createdBy: UserInfoSearch[];
+}
+
+export interface PaymentRequestBody {
+  idUser: string[];       
+  amount: number; 
+  title: string;     
+  content: string;      
+  files: string[];     
+  status: string;     
+  type: string;
+  createdBy: string;
 }

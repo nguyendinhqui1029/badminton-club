@@ -1,7 +1,7 @@
-import { CurrencyPipe, isPlatformBrowser } from '@angular/common';
+import { CurrencyPipe, DatePipe, isPlatformBrowser } from '@angular/common';
 import { Component, EventEmitter, inject, input, OnDestroy, Output, PLATFORM_ID } from '@angular/core';
 import { paymentStatus } from '@app/constants/common.constant';
-import { PaymentCard } from '@app/models/payment-card.model';
+import { PaymentCard } from '@app/models/payment.model';
 import { ButtonModule } from 'primeng/button';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { PanelModule } from 'primeng/panel';
@@ -11,7 +11,7 @@ import { ScanQrDialogComponent } from '@app/components/dialogs/scan-qr-dialog/sc
 @Component({
   selector: 'app-payment-card',
   standalone: true,
-  imports: [PanelModule, ButtonModule, CurrencyPipe],
+  imports: [PanelModule, ButtonModule, CurrencyPipe, DatePipe],
   templateUrl: './payment-card.component.html',
   styleUrl: './payment-card.component.scss',
   providers: [DialogService, DynamicDialogRef]
@@ -21,6 +21,7 @@ export class PaymentCardComponent implements OnDestroy {
 
   paymentInfo = input.required<PaymentCard>();
   isNotifyButton = input(false);
+  isCollapsed = input(true);
   isHiddenQrButton = input(false);
   paymentStatus = paymentStatus;
   displayStatus: Record<string, string> = {

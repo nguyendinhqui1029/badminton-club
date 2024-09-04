@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CarouselModule } from 'primeng/carousel';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
@@ -14,6 +14,11 @@ import { path } from '@app/constants/path.constant';
 })
 export class EventsComponent {
   private route: Router = inject(Router);
+  
+  public isEventLoading = signal<boolean>(true);
+  public isAccessoryRewardsLoading = signal<boolean>(true);
+  public isFilmTicketRewardLoading = signal<boolean>(true);
+
   responsiveOptions =  [
     { breakpoint: '480px', numVisible: 2, numScroll: 4 },
     { breakpoint: '350px', numVisible: 1, numScroll: 4 }];

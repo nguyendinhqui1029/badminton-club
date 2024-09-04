@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 
 @Component({
   selector: 'app-events',
@@ -8,5 +8,6 @@ import { Component } from '@angular/core';
   styleUrl: './events.component.scss'
 })
 export class EventsComponent {
+ 
 
 }

@@ -17,6 +17,11 @@ export const accountType  = {
     FIXED_PLAYER: 'Fixed_Player'
 }
 
+export const paymentType  = {
+    RECHARGE: 'RECHARGE',
+    WITHDRAW: 'WITHDRAW'
+}
+
 export const genderType  = {
     MALE: 'Male',
     FEMALE: 'Female'
@@ -75,9 +80,9 @@ export const INIT_POST_VALUE = {
 } as PostResponseValue;
 
 export const paymentStatus = {
-    WAITING: 'waiting',
-    DONE: 'done',
-    LATE: 'late'
+    WAITING: 'PENDING',
+    DONE: 'DONE',
+    LATE: 'LATE'
 }
 
 export const defaultAvatar = 'assets/images/default_avatar.webp';
