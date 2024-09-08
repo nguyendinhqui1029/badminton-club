@@ -6,7 +6,7 @@ class PostService {
   public async getAll(): Promise<Post[]> {
      const result = await PostModel.find().populate('createdBy','id name avatar').populate('idUserLike').populate('idComment').populate('tagFriends', 'name id');
      return result.sort((firstPost: Post, secondPost: Post) => {
-      return new Date(secondPost.updatedAt).getTime() - new Date(firstPost.updatedAt).getTime(); // Sắp xếp giảm dần
+      return new Date(secondPost.createdAt).getTime() - new Date(firstPost.createdAt).getTime(); // Sắp xếp giảm dần
     });
   }
 

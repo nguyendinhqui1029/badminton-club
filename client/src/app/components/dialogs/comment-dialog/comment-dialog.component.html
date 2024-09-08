@@ -1,0 +1,41 @@
+<header class="absolute bg-white w-full flex p-4 gap-4 items-center justify-between border-b-2 border-gray-color">
+  <div class="flex gap-4">
+    <span class="pi pi-arrow-left font-bold text-2xl cursor-pointer" (click)="onClickCloseDialog()"></span>
+    <h4 class="font-bold text-xl">Bình luận</h4>
+  </div>
+</header>
+<div class="h-16"></div>
+<section class="flex flex-col gap-4 bg-white w-full rounded-xl p-4">
+  <div class="flex gap-2 w-full items-start">
+    <p-avatar styleClass="w-10 h-10" size="large" [image]="titleGroup().avatar || defaultAvatar" shape="circle" />
+    <div class="flex gap-2 justify-between items-start w-full">
+      <div class="flex flex-col gap-1">
+        <div class="flex flex-wrap items-center" [innerHTML]="userStatusDisplay()">
+        </div>
+        <div class="flex gap-3">
+          <small>{{createdTime()}}</small>
+          <span [class]="scopeIcon()" class="text-sm"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="rounded-md bg-cover bg-no-repeat bg-center  w-full h-44 p-2 {{backgroundClass()}}">
+    <p class="line-clamp-5 text-xl font-medium">{{itemClone().content}}
+    </p>
+  </div>
+  @if(itemClone().images.length) {
+  <app-images-grid [images]="itemClone().images"></app-images-grid>
+  }
+</section>
+<hr>
+<div class="flex justify-between items-center p-4">
+  <h3 class="font-bold">Bình luận</h3>
+  <p>60 bình luận</p>
+</div>
+<div class="max-h-80 overflow-y-auto">
+  <app-comments [comments]="comments()"></app-comments>
+</div>
+<section>
+  chat
+</section>

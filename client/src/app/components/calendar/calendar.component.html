@@ -3,38 +3,57 @@
     <h3 class="text-xl font-bold">
       Badmintion Calendar
     </h3>
+    <div class="flex flex-col gap-1">
+      <div class="flex gap-2 items-center">
+        <span class="rounded-md w-10 h-full bg-red-500 "></span><span>Đi trễ</span>
+      </div>
+      <div class="flex gap-2 items-center">
+        <span class="rounded-md w-10 h-full bg-green-500"></span><span>Đi đúng giờ</span>
+      </div>
+      <div class="flex gap-2 items-center">
+        <span class="w-10 text-2xl text-center">🌟</span><span>Ngày hiện tại</span>
+      </div>
+      <div class="flex gap-2 items-center">
+        <span class="w-10 text-2xl text-center">🏸</span><span>Ngày đi đánh cầu</span>
+      </div>
+    </div>
     <div class="border-2 grid grid-cols-7 rounded-md overflow-clip">
-      <div class="border-2 h-14 box-border flex items-center justify-center text-center">Thứ 2</div>
-      <div class="border-2 h-14 box-border flex items-center justify-center text-center">Thứ 3</div>
-      <div class="border-2 h-14 box-border flex items-center justify-center text-center">Thứ 4</div>
-      <div class="border-2 h-14 box-border flex items-center justify-center text-center">Thứ 5</div>
-      <div class="border-2 h-14 box-border flex items-center justify-center text-center">Thứ 6</div>
-      <div class="border-2 h-14 box-border flex items-center justify-center text-center">Thứ 7</div>
-      <div class="border-2 h-14 box-border flex items-center justify-center text-center">Chủ nhật</div>
+      <div class="col-span-full border-2 p-2 flex items-center justify-between">
+        <p-dropdown class="min-w-28 w-fit" [options]="yearOptions" [(ngModel)]="year" optionLabel="label"
+          optionValue="value" placeholder="Năm" [ngModelOptions]="{standalone: true}" />
+        <div class="flex gap-5">
+          <span class="pi pi-chevron-left cursor-pointer font-bold text-xl" (click)="onChangeMonth(-1)"></span>
+          <span>{{selectedMonth}}</span>
+          <span class="pi pi-chevron-right cursor-pointer font-bold text-xl" (click)="onChangeMonth(1)"></span>
+        </div>
+      </div>
+      <div class="font-bold border-2 h-14 box-border flex items-center justify-center text-center">Chủ nhật</div>
+      <div class="font-bold border-2 h-14 box-border flex items-center justify-center text-center">Thứ 2</div>
+      <div class="font-bold border-2 h-14 box-border flex items-center justify-center text-center">Thứ 3</div>
+      <div class="font-bold border-2 h-14 box-border flex items-center justify-center text-center">Thứ 4</div>
+      <div class="font-bold border-2 h-14 box-border flex items-center justify-center text-center">Thứ 5</div>
+      <div class="font-bold border-2 h-14 box-border flex items-center justify-center text-center">Thứ 6</div>
+      <div class="font-bold border-2 h-14 box-border flex items-center justify-center text-center">Thứ 7</div>
 
+      @for(item of days(); track item.date) {
+      <div 
+        [class.cursor-pointer]="!item.isDisabled"
+        [class.cursor-not-allowed]="item.isDisabled"
+        [class.bg-red-500]="item.isLated"
+        [class.bg-green-500]="item.isOnTime"
+        class="min-h-16 border-2  box-border flex flex-col items-center p-1">
+        <div class="flex min-h-4 justify-between items-center w-full">
+          @if(item.isCurrentDay) {
+          <p class="text-base">🌟</p>
+          }
+          @if(item.isPlay) {
+          <p class="text-base">🏸</p>
+          }
+        </div>
 
-      <div class="border-2 h-16 cursor-pointer box-border flex items-center justify-center">1</div>
-      <div class="border-2 box-border flex items-center justify-center">1</div>
-      <div class="border-2 box-border flex items-center justify-center">1</div>
-      <div class="border-2 box-border flex items-center justify-center">1</div>
-      <div class="border-2 box-border flex items-center justify-center">1</div>
-      <div class="border-2 box-border flex items-center justify-center">1</div>
-      <div class="border-2 box-border flex items-center justify-center">1</div>
-      <div class="border-2 box-border flex items-center justify-center">1</div>
-      <div class="border-2 box-border flex items-center justify-center">1</div>
-      <div class="border-2 box-border flex items-center justify-center">1</div>
-      <div class="border-2 box-border flex items-center justify-center">1</div>
-      <div class="border-2 box-border flex items-center justify-center">1</div>
-      <div class="border-2 box-border flex items-center justify-center">1</div>
-      <div class="border-2 box-border flex items-center justify-center">1</div>
-      <div class="border-2 box-border flex items-center justify-center">1</div>
-      <div class="border-2 box-border flex items-center justify-center">1</div>
-      <div class="border-2 box-border flex items-center justify-center">1</div>
-      <div class="border-2 box-border flex items-center justify-center">1</div>
-      <div class="border-2 box-border flex items-center justify-center">1</div>
-      <div class="border-2 box-border flex items-center justify-center">1</div>
-      <div class="border-2 box-border flex items-center justify-center">1</div>
-
+        <span class="text-xs font-bold">{{item.day}}</span>
+      </div>
+      }
     </div>
   </header>
 </div>

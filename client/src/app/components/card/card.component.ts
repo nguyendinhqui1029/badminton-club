@@ -19,6 +19,7 @@ import { UserService } from '@app/services/user.service';
 import { environment } from '@app/environments/environment';
 import { path } from '@app/constants/path.constant';
 import { formatLargeNumber } from '@app/utils/common.util';
+import { CommentDialogComponent } from '@app/components/dialogs/comment-dialog/comment-dialog.component';
 
 
 interface UserStatus { avatar: string; userName: string; feeling?: {icon: string; value: string}; friends: string[];location: string;};
@@ -45,7 +46,8 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
   private userUnSubscription!: Subscription;
 
   dynamicDialogRef: DynamicDialogRef | undefined;
-  
+  dynamicCommentDialogRef: DynamicDialogRef | undefined;
+
   waitingLike = signal<boolean>(false);
   titleGroup = signal<UserStatus>({
     avatar: '',
@@ -303,11 +305,33 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
     if(!this.currentUser()?.id){
       return;
     }
+
+    this.dynamicCommentDialogRef = this.dialogService.open(CommentDialogComponent, {
+      showHeader: false,
+      width: '450px',
+      modal: true,
+      transitionOptions: '450ms',
+      appendTo: 'body',
+      data: {
+        id: this.itemClone().id
+      }
+    });
+
+    if(isPlatformBrowser(this.platformId) && window.matchMedia('(max-width: 500px)').matches) {
+      this.dialogService.getInstance(this.dynamicCommentDialogRef).maximize();
+    }
+    this.dynamicCommentDialogRef.onClose.pipe(take(1)).subscribe(()=>{
+      // TODO: set số lượng comment
+    })
   }
   ngOnDestroy() {
     if (this.dynamicDialogRef) {
         this.dynamicDialogRef.close();
     }
+
+    if (this.dynamicCommentDialogRef) {
+      this.dynamicCommentDialogRef.close();
+  }
 
     if(this.userUnSubscription) {
       this.userUnSubscription.unsubscribe();

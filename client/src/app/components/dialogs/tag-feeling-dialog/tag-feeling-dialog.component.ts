@@ -35,6 +35,7 @@ export class TagFeelingDialogComponent {
         ...item,
         children: item.children.filter((feeling: FeelingValue)=> feeling.name.toLocaleLowerCase().includes(keyword.toLocaleLowerCase()))
       })));
+      this.isLoading.set(false);
       return;
     }
     this.items.set(INITIALIZE_FEELING_DATA);

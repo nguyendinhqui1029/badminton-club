@@ -18,7 +18,7 @@ import locationRoutes from '../routes/locationRoutes';
 import qrCodeRoutes from '../routes/qrCodeRoutes';
 import pushNotificationRoutes from '../routes/pushNotificationRoutes';
 import commonRoutes from '../routes/commonRoutes';
-
+import {startCronJobs} from '../cron-jobs/cronJobs';
  class App {
   public app: Application;
   public port: number;
@@ -29,6 +29,7 @@ import commonRoutes from '../routes/commonRoutes';
     this.config();
     this.routes();
     this.connectToDatabase();
+    startCronJobs();
   }
 
   private config(): void {

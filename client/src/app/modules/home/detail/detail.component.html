@@ -1,10 +1,9 @@
 <div class="flex flex-col rounded-xl bg-white p-4 gap-5">
   <div [routerLink]="homePath" class="flex cursor-pointer items-center gap-2">
     <span  class="pi pi-arrow-left text-3xl"></span>
-    <span>Trở lại</span>
   </div>
   
-  <div class="rounded-xl p-4" class="{{itemDetail()?.background?.replace('==/==',' ')}}">
+  <div class="rounded-xl p-4 min-h-40 bg-cover bg-no-repeat bg-center" class="{{itemDetail()?.background?.replace('==/==',' ')}}">
     {{itemDetail()?.content}}
   </div>
   <div class="flex flex-wrap gap-2 box-border justify-evenly">

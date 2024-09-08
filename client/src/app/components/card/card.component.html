@@ -54,6 +54,7 @@
         <span class="min-w-fit font-bold text-sm">Yêu thích</span>
       </div>
       <div
+      (click)="onClickComment()"
       [class.cursor-pointer]="!disableButton()"
       [class.cursor-not-allowed]="disableButton()"
         class="flex max-h-11 gap-2 justify-center items-center p-2 w-2/4 max-w-36 border-2 rounded-3xl bg-gray-color hover:bg-gray-300">
