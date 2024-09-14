@@ -11,22 +11,22 @@ import { Observable } from 'rxjs';
 export class PostService {
     private http: HttpClient = inject(HttpClient);
     createPost(body: PostRequestBody): Observable<ApiResponseValue<PostResponseValue>> {
-        return this.http.post<ApiResponseValue<PostResponseValue>>(`${environment.apiUrl}/post`, body);
+        return this.http.post<ApiResponseValue<PostResponseValue>>(`${environment.apiUrl}/api/v1/post`, body);
     }
 
     updatePost(id:string,body: PostRequestBody): Observable<ApiResponseValue<PostResponseValue>> {
-        return this.http.put<ApiResponseValue<PostResponseValue>>(`${environment.apiUrl}/post/${id}`, body);
+        return this.http.put<ApiResponseValue<PostResponseValue>>(`${environment.apiUrl}/api/v1/post/${id}`, body);
     }
 
     getPostById(id:string): Observable<ApiResponseValue<PostResponseValue>> {
-        return this.http.get<ApiResponseValue<PostResponseValue>>(`${environment.apiUrl}/post/${id}`);
+        return this.http.get<ApiResponseValue<PostResponseValue>>(`${environment.apiUrl}/api/v1/post/${id}`);
     }
 
     getAllPost(): Observable<ApiResponseValue<PostResponseValue[]>> {
-        return this.http.get<ApiResponseValue<PostResponseValue[]>>(`${environment.apiUrl}/post`);
+        return this.http.get<ApiResponseValue<PostResponseValue[]>>(`${environment.apiUrl}/api/v1/post`);
     }
 
     deletePost(id: string): Observable<ApiResponseValue<PostResponseValue>> {
-        return this.http.delete<ApiResponseValue<PostResponseValue>>(`${environment.apiUrl}/post/${id}`);
+        return this.http.delete<ApiResponseValue<PostResponseValue>>(`${environment.apiUrl}/api/v1/post/${id}`);
     }
 }

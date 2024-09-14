@@ -11,15 +11,15 @@ import { Observable } from 'rxjs';
 export class PaymentService {
   private http: HttpClient = inject(HttpClient);
   getPaymentQrCode(id: string): Observable<ApiResponseValue<string>> {
-    return this.http.get<ApiResponseValue<string>>(`${environment.apiUrl}/qr-code/${id}`);
+    return this.http.get<ApiResponseValue<string>>(`${environment.apiUrl}/api/v1/qr-code/${id}`);
   }
 
   createMultipleTransaction(body: PaymentRequestBody): Observable<ApiResponseValue<PaymentResponseValue>> {
-    return this.http.post<ApiResponseValue<PaymentResponseValue>>(`${environment.apiUrl}/transaction/multiple`,body);
+    return this.http.post<ApiResponseValue<PaymentResponseValue>>(`${environment.apiUrl}/api/v1/transaction/multiple`,body);
   }
 
   getAllPayment(keyword: string, status: string): Observable<ApiResponseValue<PaymentResponseValue[]>> {
     const params = new HttpParams().set('keyword', keyword).set('status',status);
-    return this.http.get<ApiResponseValue<PaymentResponseValue[]>>(`${environment.apiUrl}/transaction`, {params});
+    return this.http.get<ApiResponseValue<PaymentResponseValue[]>>(`${environment.apiUrl}/api/v1/transaction`, {params});
   }
 }

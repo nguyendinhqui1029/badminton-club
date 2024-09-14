@@ -12,10 +12,10 @@ export class CommentService {
   private http: HttpClient = inject(HttpClient);
   getAllCommentByIdPost(id: string): Observable<ApiResponseValue<CommentResponseValue[]>> {
     const params = new HttpParams().set('id', id)
-    return this.http.get<ApiResponseValue<CommentResponseValue[]>>(`${environment.apiUrl}/comment`, {params});
+    return this.http.get<ApiResponseValue<CommentResponseValue[]>>(`${environment.apiUrl}/api/v1/comment`, {params});
   }
 
   createComment(body: CommentRequestBody) {
-    return this.http.post<ApiResponseValue<CommentResponseValue>>(`${environment.apiUrl}/comment`, body);
+    return this.http.post<ApiResponseValue<CommentResponseValue>>(`${environment.apiUrl}/api/v1/comment`, body);
   }
 }

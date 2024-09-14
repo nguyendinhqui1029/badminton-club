@@ -14,11 +14,11 @@ export class PushNotificationService {
   requestSubscription() {
     return this.swPush.requestSubscription({ serverPublicKey: environment.pushNotificationPublishKey }).then((subscription) => {
       console.log('Subscription', subscription);
-      this.http.post(`${environment.apiUrl}/notification/subscription`, subscription)
+      this.http.post(`${environment.apiUrl}/api/v1/notification/subscription`, subscription)
     });
   }
 
   sendNotification() {
-    return this.http.post(`${environment.apiUrl}/notification/send-notification`, {});
+    return this.http.post(`${environment.apiUrl}/api/v1/notification/send-notification`, {});
   }
 }

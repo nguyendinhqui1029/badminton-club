@@ -12,6 +12,6 @@ export class CommonService {
   private http: HttpClient = inject(HttpClient);
   searchByKeyword(keyword: string): Observable<ApiResponseValue<SearchByKeywordResponseValue[]>> {
     const params = new HttpParams().set('query', keyword);
-    return this.http.get<ApiResponseValue<SearchByKeywordResponseValue[]>>(`${environment.apiUrl}/common/search`, { params });
+    return this.http.get<ApiResponseValue<SearchByKeywordResponseValue[]>>(`${environment.apiUrl}/api/v1/common/search`, { params });
   }
 }

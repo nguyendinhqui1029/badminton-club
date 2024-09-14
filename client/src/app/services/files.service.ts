@@ -11,15 +11,15 @@ import { Observable } from 'rxjs';
 export class FileService {
     private http: HttpClient = inject(HttpClient);
     uploadFile(formDate: FormData): Observable<ApiResponseValue<FileModel[]>> {
-        return this.http.post<ApiResponseValue<FileModel[]>>(`${environment.apiUrl}/files`,formDate);
+        return this.http.post<ApiResponseValue<FileModel[]>>(`${environment.apiUrl}/api/v1/files`,formDate);
     }
 
     removeFile(fileNames: string[]): Observable<ApiResponseValue<number>> {
         const paramsHeader = new HttpParams().set('fileNames', JSON.stringify(fileNames));
-        return this.http.delete<ApiResponseValue<number>>(`${environment.apiUrl}/files`, {params: paramsHeader});
+        return this.http.delete<ApiResponseValue<number>>(`${environment.apiUrl}/api/v1/files`, {params: paramsHeader});
     }
 
     updateIsUsedFile(body: {fileNames: string[], isUse: boolean}): Observable<ApiResponseValue<number>> {
-        return this.http.put<ApiResponseValue<number>>(`${environment.apiUrl}/files`, body);
+        return this.http.put<ApiResponseValue<number>>(`${environment.apiUrl}/api/v1/files`, body);
     }
 }

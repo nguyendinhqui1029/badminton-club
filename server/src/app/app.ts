@@ -19,19 +19,51 @@ import qrCodeRoutes from '../routes/qrCodeRoutes';
 import pushNotificationRoutes from '../routes/pushNotificationRoutes';
 import commonRoutes from '../routes/commonRoutes';
 import {startCronJobs} from '../cron-jobs/cronJobs';
+import http from 'http'; // Import http
+import { Server as SocketIOServer, Socket } from 'socket.io';
+import { Post } from '@/models/post.model';
  class App {
   public app: Application;
   public port: number;
+  public server: http.Server; // Add server property
+  public io: SocketIOServer; // Add io property
 
   constructor(port: number) {
     this.app = express();
     this.port = port;
+    this.server = http.createServer(this.app); // Initialize HTTP server
+    this.io = new SocketIOServer(this.server);
     this.config();
     this.routes();
     this.connectToDatabase();
+    this.socketIOConfig();
     startCronJobs();
   }
 
+  private socketIOConfig(): void {
+    this.io.on('connection', (socket: Socket) => {
+      console.log('A user connected');
+      
+      // Handle custom events from clients
+      socket.on('like', (data: Post) => {
+        console.log('Has user like')
+        // Broadcast the message to all connected clients
+        this.io.emit('update-like-post', data);
+      });
+
+      // Handle comment
+      socket.on('comment', (data: Post) => {
+        console.log('Has user comment')
+        // Broadcast the message to all connected clients
+        this.io.emit('update-comment-post', data);
+      });
+
+      // Handle disconnection
+      socket.on('disconnect', () => {
+        console.log('User disconnected');
+      });
+    });
+  }
   private config(): void {
     this.app.use(helmet());
     this.app.use(helmet.frameguard({ action: 'deny' }));
@@ -83,7 +115,7 @@ import {startCronJobs} from '../cron-jobs/cronJobs';
   }
 
   public start(): void {
-    this.app.listen(this.port, () => {
+    this.server.listen(this.port, () => {
       console.log(`Server is running on http://localhost:${this.port}`);
     });
   }

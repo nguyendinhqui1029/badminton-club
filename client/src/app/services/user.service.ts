@@ -23,38 +23,38 @@ export class UserService {
 
   searchUserByKeyword(id: string, keyword: string): Observable<ApiResponseValue<UserInfoSearchResponse[]>> {
     const params = new HttpParams().set('keyword', keyword);
-    return this.http.get<ApiResponseValue<UserInfoSearchResponse[]>>(`${environment.apiUrl}/user/search/${id}`, { params });
+    return this.http.get<ApiResponseValue<UserInfoSearchResponse[]>>(`${environment.apiUrl}/api/v1/user/search/${id}`, { params });
   }
 
   login(body: { phone: string, password: string, isRememberMe: boolean }): Observable<ApiResponseValue<{ accessToken: string, refreshToken: string }>> {
-    return this.http.post<ApiResponseValue<{ accessToken: string; refreshToken: string }>>(`${environment.apiUrl}/user/login`, body);
+    return this.http.post<ApiResponseValue<{ accessToken: string; refreshToken: string }>>(`${environment.apiUrl}/api/v1/user/login`, body);
   }
 
   logout() {
-    return this.http.post<ApiResponseValue<{ message: string; }>>(`${environment.apiUrl}/user/logout`, {});
+    return this.http.post<ApiResponseValue<{ message: string; }>>(`${environment.apiUrl}/api/v1/user/logout`, {});
   }
 
   resetPassword(body: {code: string; email: string; password: string}) {
-    return this.http.post<ApiResponseValue<{id: string; phone: string}>>(`${environment.apiUrl}/user/reset-password`, body);
+    return this.http.post<ApiResponseValue<{id: string; phone: string}>>(`${environment.apiUrl}/api/v1/user/reset-password`, body);
   }
 
   refreshToken(body: {refreshToken: string}) {
-    return this.http.post<ApiResponseValue<{accessToken: string}>>(`${environment.apiUrl}/user/refresh-token`, body);
+    return this.http.post<ApiResponseValue<{accessToken: string}>>(`${environment.apiUrl}/api/v1/user/refresh-token`, body);
   }
 
   create(body: UserRequestBody): Observable<ApiResponseValue<UserLoginResponse>> {
-    return this.http.post<ApiResponseValue<UserLoginResponse>>(`${environment.apiUrl}/user`, body);
+    return this.http.post<ApiResponseValue<UserLoginResponse>>(`${environment.apiUrl}/api/v1/user`, body);
   }
 
   addFriend(body: {id: string, idFriends: string[]}): Observable<ApiResponseValue<UserLoginResponse>> {
-    return this.http.put<ApiResponseValue<UserLoginResponse>>(`${environment.apiUrl}/user/friend/add`, body);
+    return this.http.put<ApiResponseValue<UserLoginResponse>>(`${environment.apiUrl}/api/v1/user/friend/add`, body);
   }
 
   getUserById(id: string) {
-    return this.http.get<ApiResponseValue<UserInfoWithIdFriendResponse>>(`${environment.apiUrl}/user/${id}`);
+    return this.http.get<ApiResponseValue<UserInfoWithIdFriendResponse>>(`${environment.apiUrl}/api/v1/user/${id}`);
   }
 
   getAllUser() {
-    return this.http.get<ApiResponseValue<UserInfoWithIdFriendResponse[]>>(`${environment.apiUrl}/user`);
+    return this.http.get<ApiResponseValue<UserInfoWithIdFriendResponse[]>>(`${environment.apiUrl}/api/v1/user`);
   }
 }

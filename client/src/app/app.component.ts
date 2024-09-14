@@ -5,8 +5,6 @@ import { UserService } from '@app/services/user.service';
 import { getUserInfoFromToken } from '@app/utils/auth.util';
 import { localStorageKey } from '@app/constants/common.constant';
 import { MessageService } from 'primeng/api';
-import { environment } from './environments/environment';
-import { HttpClient } from '@angular/common/http';
 import { SwPush, SwUpdate } from '@angular/service-worker';
 import { PushNotificationService } from '@app/services/push-notification.service';
 
@@ -20,7 +18,6 @@ import { PushNotificationService } from '@app/services/push-notification.service
 })
 export class AppComponent {
   private userService: UserService = inject(UserService);
-  private http: HttpClient = inject(HttpClient);
   private swUpdate: SwUpdate = inject(SwUpdate);
   private swPush: SwPush = inject(SwPush);
   private pushNotificationService: PushNotificationService = inject(PushNotificationService);
@@ -33,18 +30,6 @@ export class AppComponent {
       const currentUserLogin = getUserInfoFromToken(localStorage.getItem(localStorageKey.ACCESS_TOKEN));
       this.userService.updateData(currentUserLogin);
     });
-    // New
-    // if(this.swUpdate.isEnabled) {
-    //   setInterval(()=>{
-    //     this.swUpdate.checkForUpdate();
-    //   }, 6*60*60*1000);
-
-    //   this.swUpdate.versionUpdates.subscribe(()=>{
-    //     if(confirm('Load new version')) {
-    //       window.location.reload();
-    //     }
-    //   });
-    // }
     if(!this.swUpdate.isEnabled) {
       console.log('Service worker is not enabled.');
       return;

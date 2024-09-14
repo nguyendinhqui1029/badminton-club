@@ -31,7 +31,7 @@
 <hr>
 <div class="flex border-b-2 justify-between items-center p-4">
   <h3 class="font-bold">Bình luận</h3>
-  <p> {{countComment}} bình luận</p>
+  <p> {{countComment()}} bình luận</p>
 </div>
 <div class="max-h-80 overflow-y-auto">
   <app-comments [comments]="comments()" (eventReply)="handleReplyComment($event)"></app-comments>
@@ -42,6 +42,6 @@
     [idPost]="idPost()"
     [idUser]="currentUserId()"
     [idComment]="replyForCommentId()"
-    (eventSubmitSuccess)="loadCommentList()"
+    (eventSubmitSuccess)="onCommentAdded()"
       ></app-enter-comment>
 </section>

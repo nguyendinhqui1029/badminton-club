@@ -1,4 +1,4 @@
-import { Component, computed, EventEmitter, inject, input, OnChanges, OnDestroy, OnInit, Output, PLATFORM_ID, signal, SimpleChanges } from '@angular/core';
+import { afterNextRender, Component, computed, EventEmitter, inject, input, OnChanges, OnDestroy, OnInit, Output, PLATFORM_ID, signal, SimpleChanges } from '@angular/core';
 import { AvatarModule } from 'primeng/avatar';
 import { AvatarGroupModule } from 'primeng/avatargroup';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
@@ -20,9 +20,10 @@ import { environment } from '@app/environments/environment';
 import { path } from '@app/constants/path.constant';
 import { formatLargeNumber } from '@app/utils/common.util';
 import { CommentDialogComponent } from '@app/components/dialogs/comment-dialog/comment-dialog.component';
+import { SocketService } from '@app/services/socket.service';
 
 
-interface UserStatus { avatar: string; userName: string; feeling?: {icon: string; value: string}; friends: string[];location: string;};
+interface UserStatus { avatar: string; userName: string; feeling?: { icon: string; value: string }; friends: string[]; location: string; };
 
 @Component({
   selector: 'app-card',
@@ -35,7 +36,7 @@ interface UserStatus { avatar: string; userName: string; feeling?: {icon: string
 export class CardComponent implements OnDestroy, OnInit, OnChanges {
   item = input.required<PostResponseValue>();
   @Output() refreshDataListEvent = new EventEmitter();
-
+  private socketService: SocketService = inject(SocketService);
   private userService: UserService = inject(UserService);
   private postService: PostService = inject(PostService);
   private confirmationService: ConfirmationService = inject(ConfirmationService);
@@ -60,12 +61,12 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
     location: ''
   });
   backgroundClass = signal<string>('');
-  currentUser= signal<UserLoginResponse>(CURRENT_USER_INIT);
+  currentUser = signal<UserLoginResponse>(CURRENT_USER_INIT);
   itemClone = signal<PostResponseValue>(INIT_POST_VALUE);
 
 
-  isLiked = computed(()=> this.itemClone().idUserLike.find((item)=>item?.id === this.currentUser().id))
-  scopeIcon = computed(()=> {
+  isLiked = computed(() => this.itemClone().idUserLike.find((item) => item?.id === this.currentUser().id))
+  scopeIcon = computed(() => {
     const scopeIcon = {
       [scopePost.EVERYONE]: 'pi pi-users',
       [scopePost.FRIENDS]: 'pi pi-user',
@@ -73,26 +74,26 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
     }
     return scopeIcon[this.itemClone().scope] || 'pi pi-users';
   });
-  createdTime = computed(()=>getTimeDifference(new Date(this.itemClone().createdAt)));
-  userLikeAvatar = computed(()=> {
-    if(this.itemClone().idUserLike.length > 5){
-      return [...this.itemClone().idUserLike.splice(0,5), {avatar: `+${this.itemClone().idUserLike.length}`, name:''}]
+  createdTime = computed(() => getTimeDifference(new Date(this.itemClone().createdAt)));
+  userLikeAvatar = computed(() => {
+    if (this.itemClone().idUserLike.length > 5) {
+      return [...this.itemClone().idUserLike.splice(0, 5), { avatar: `+${this.itemClone().idUserLike.length}`, name: '' }]
     }
     return this.itemClone().idUserLike;
   });
-  userStatusDisplay = computed(()=> {
+  userStatusDisplay = computed(() => {
     return this.generateUserStatus();
   });
-  hasPermission = computed(()=> this.currentUser()?.id === this.itemClone().createdBy?.id);
+  hasPermission = computed(() => this.currentUser()?.id === this.itemClone().createdBy?.id);
   actionsPost: MenuItem[] | undefined;
   actionsSharePost: MenuItem[] | undefined;
-  linkPostDetail = computed(()=>`/${path.HOME.DETAIL.replace(':id', this.itemClone()?.id || '' )}`);
-  countComment = computed(()=>formatLargeNumber(this.itemClone()?.countComment));
-  disableButton = computed(()=> !this.currentUser().id);
+  linkPostDetail = computed(() => `/${path.HOME.DETAIL.replace(':id', this.itemClone()?.id || '')}`);
+  countComment = computed(() => formatLargeNumber(this.itemClone()?.countComment));
+  disableButton = computed(() => !this.currentUser().id);
   defaultAvatar = defaultAvatar;
-  
+
   ngOnChanges(changes: SimpleChanges): void {
-    if(changes['item']?.currentValue) {
+    if (changes['item']?.currentValue) {
       this.itemClone.set(changes['item']?.currentValue);
       const post = changes['item']?.currentValue;
       const feelingAfterSplit = (post?.feelingIcon || '==/==').split('==/==');
@@ -103,7 +104,7 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
           value: feelingAfterSplit[0] || '',
           icon: feelingAfterSplit[1] || ''
         },
-        friends: (post?.tagFriends || []).map((tagFriends: UserInfoSearch)=>tagFriends.name),
+        friends: (post?.tagFriends || []).map((tagFriends: UserInfoSearch) => tagFriends.name),
         location: post?.tagLocation || ''
       })
       this.generateUserStatus();
@@ -112,31 +113,30 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
 
   generateUserStatus() {
     let status = '';
-    if(this.titleGroup()?.userName) {
+    if (this.titleGroup()?.userName) {
       status += `<h4 class="font-bold text-lg leading-6">${this.titleGroup()?.userName}</h4>`;
     }
 
-    if(this.titleGroup()?.feeling?.icon && this.titleGroup()?.feeling?.value) {
-       status += `&nbsp;đang cảm thấy&nbsp; <strong> ${this.titleGroup()?.feeling?.value} </strong> &nbsp;${this.titleGroup()?.feeling?.icon}`;
-       if(!this.titleGroup()?.location && !this.titleGroup()?.friends?.length) {
+    if (this.titleGroup()?.feeling?.icon && this.titleGroup()?.feeling?.value) {
+      status += `&nbsp;đang cảm thấy&nbsp; <strong> ${this.titleGroup()?.feeling?.value} </strong> &nbsp;${this.titleGroup()?.feeling?.icon}`;
+      if (!this.titleGroup()?.location && !this.titleGroup()?.friends?.length) {
         return `${status}.`;
       }
     }
 
-    if(this.titleGroup()?.friends?.length) {
+    if (this.titleGroup()?.friends?.length) {
       status += `&nbsp;cùng với&nbsp;<strong> 
-            ${
-              this.titleGroup()?.friends?.length < 2 
-              ? this.titleGroup()?.friends[0]
-              : this.titleGroup()?.friends?.length == 2 
-              ? `${this.titleGroup()?.friends[0]}, ${this.titleGroup()?.friends[1]}`
-              : `${this.titleGroup()?.friends[0]}, ${this.titleGroup()?.friends[1]}</strong>&nbsp;và&nbsp;<strong>${this.titleGroup()?.friends.length - 2}</strong>&nbsp;người khác`
-            }`;
-      if(!this.titleGroup()?.location) {
+            ${this.titleGroup()?.friends?.length < 2
+          ? this.titleGroup()?.friends[0]
+          : this.titleGroup()?.friends?.length == 2
+            ? `${this.titleGroup()?.friends[0]}, ${this.titleGroup()?.friends[1]}`
+            : `${this.titleGroup()?.friends[0]}, ${this.titleGroup()?.friends[1]}</strong>&nbsp;và&nbsp;<strong>${this.titleGroup()?.friends.length - 2}</strong>&nbsp;người khác`
+        }`;
+      if (!this.titleGroup()?.location) {
         return `${status}.`;
       }
     }
-    if(this.titleGroup()?.location) {
+    if (this.titleGroup()?.location) {
       status += `&nbsp;tại&nbsp;<strong> ${this.titleGroup()?.location}.</strong>`;
       return status;
     }
@@ -144,67 +144,77 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-   this.userUnSubscription =  this.userService.currentUserLogin.subscribe((value: UserLoginResponse)=>{
+    this.socketService.onPostComment().subscribe(value=>{
+      if(value === this.itemClone().id) {
+        this.itemClone.update((value)=>({...value, countComment: value.countComment + 1}));
+      }
+    })
+    this.socketService.onPostLike().subscribe(value => {
+      if(value.id === this.itemClone().id) {
+        this.itemClone.update(()=>value);
+      }
+    });
+    this.userUnSubscription = this.userService.currentUserLogin.subscribe((value: UserLoginResponse) => {
       this.currentUser.set(value);
     });
     this.actionsPost = [
       {
-          label: 'Tính năng',
-          items: [
-              {
-                  label: 'Cập nhật',
-                  icon: 'text-2xl pi pi-pen-to-square',
-                  command: () => {
-                    this.onClickOpenEditPost();
-                  }
-              },
-              {
-                  label: 'Xoá',
-                  icon: 'text-2xl pi pi-upload',
-                  command: () => {
-                    this.onDeletePost();
-                  }
-              }
-          ]
+        label: 'Tính năng',
+        items: [
+          {
+            label: 'Cập nhật',
+            icon: 'text-2xl pi pi-pen-to-square',
+            command: () => {
+              this.onClickOpenEditPost();
+            }
+          },
+          {
+            label: 'Xoá',
+            icon: 'text-2xl pi pi-upload',
+            command: () => {
+              this.onDeletePost();
+            }
+          }
+        ]
       }];
     this.actionsSharePost = [
-        {
-            label: 'Chia sẻ',
-            items: [
-                {
-                    label: 'Facebook',
-                    icon: 'pi pi-facebook',
-                    iconClass: 'text-4xl text-blue-600',
-                    command: () => {
-                      this.shareToSocial(socialType.FACEBOOK);
-                    }
-                },
-                {
-                  label: 'Twitter',
-                  icon: 'pi pi-twitter',
-                  iconClass: 'flex items-center justify-center w-9 h-9 rounded-full bg-black text-white',
-                  command: () => {
-                    this.shareToSocial(socialType.TWITTER);
-                  }
-                },
-                {
-                    label: 'Zalo',
-                    icon: 'zalo-icon',
-                    command: () => {
-                      this.shareToSocial(socialType.ZALO);
-                    }
-                },
-                {
-                  label: 'Linkedin',
-                  icon: 'pi pi-linkedin',
-                  iconClass: 'text-3xl text-blue-500',
-                  command: () => {
-                    this.shareToSocial(socialType.LINKEDIN);
-                  }
-              }
-                
-            ]
-        }];
+      {
+        label: 'Chia sẻ',
+        items: [
+          {
+            label: 'Facebook',
+            icon: 'pi pi-facebook',
+            iconClass: 'text-4xl text-blue-600',
+            command: () => {
+              this.shareToSocial(socialType.FACEBOOK);
+            }
+          },
+          {
+            label: 'Twitter',
+            icon: 'pi pi-twitter',
+            iconClass: 'flex items-center justify-center w-9 h-9 rounded-full bg-black text-white',
+            command: () => {
+              this.shareToSocial(socialType.TWITTER);
+            }
+          },
+          {
+            label: 'Zalo',
+            icon: 'zalo-icon',
+            command: () => {
+              this.shareToSocial(socialType.ZALO);
+            }
+          },
+          {
+            label: 'Linkedin',
+            icon: 'pi pi-linkedin',
+            iconClass: 'text-3xl text-blue-500',
+            command: () => {
+              this.shareToSocial(socialType.LINKEDIN);
+            }
+          }
+
+        ]
+      }];
     this.backgroundClass.set(this.itemClone().background.replace('==/==', ' '));
   }
 
@@ -213,27 +223,27 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
       message: 'Bạn có chắc chắn muốn xoá bài này không?',
       header: 'Xác nhận',
       icon: 'pi pi-exclamation-triangle',
-      acceptIcon:"none",
-      rejectIcon:"none",
-      rejectButtonStyleClass:"p-button-text",
+      acceptIcon: "none",
+      rejectIcon: "none",
+      rejectButtonStyleClass: "p-button-text",
       accept: () => {
-       this.postService.deletePost(this.itemClone().id || '').subscribe((response)=>{
-        if(response.statusCode !== 200) {
-          this.messageService.add({ severity: 'danger', summary: 'Thông báo xoá', detail: 'Bài viết chưa được xoá. Vui lòng thử lại.' })
-          return;
-        }
-        this.refreshDataListEvent.emit();
-        this.messageService.add({ severity: 'success', summary: 'Xác nhận', detail: 'Xoá thành công.' });
-       });
+        this.postService.deletePost(this.itemClone().id || '').subscribe((response) => {
+          if (response.statusCode !== 200) {
+            this.messageService.add({ severity: 'danger', summary: 'Thông báo xoá', detail: 'Bài viết chưa được xoá. Vui lòng thử lại.' })
+            return;
+          }
+          this.refreshDataListEvent.emit();
+          this.messageService.add({ severity: 'success', summary: 'Xác nhận', detail: 'Xoá thành công.' });
+        });
       },
       reject: () => {
         return
       }
-  });
+    });
   }
 
   onClickOpenEditPost() {
-    if(this.currentUser().id !== this.itemClone().createdBy?.id){
+    if (this.currentUser().id !== this.itemClone().createdBy?.id) {
       return;
     }
     this.dynamicDialogRef = this.dialogService.open(AddPostDialogComponent, {
@@ -247,10 +257,10 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
       }
     });
 
-    if(isPlatformBrowser(this.platformId) && window.matchMedia('(max-width: 500px)').matches) {
+    if (isPlatformBrowser(this.platformId) && window.matchMedia('(max-width: 500px)').matches) {
       this.dialogService.getInstance(this.dynamicDialogRef).maximize();
     }
-    this.dynamicDialogRef.onClose.pipe(take(1)).subscribe(()=>this.refreshDataListEvent.emit())
+    this.dynamicDialogRef.onClose.pipe(take(1)).subscribe(() => this.refreshDataListEvent.emit())
   }
 
   shareToSocial(type: string) {
@@ -266,43 +276,44 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
   }
 
   onClickLike() {
-    if(this.waitingLike() || this.disableButton()){
+    if (this.waitingLike() || this.disableButton()) {
       return;
     }
     this.waitingLike.set(true);
-    const index = this.itemClone().idUserLike.findIndex((item)=>item?.id === this.currentUser().id);
+    const index = this.itemClone().idUserLike.findIndex((item) => item?.id === this.currentUser().id);
     const userLikeClone = [...this.itemClone().idUserLike];
-    if(index === -1) {
+    if (index === -1) {
       userLikeClone.unshift(this.currentUser())
     } else {
       userLikeClone.splice(index, 1);
     }
-    const body: PostRequestBody={
+    const body: PostRequestBody = {
       id: this.itemClone()?.id || '',
       images: this.itemClone()?.images || [],
       background: this.itemClone()?.background || '',
       content: this.itemClone()?.content || '',
       hashTag: this.itemClone()?.hashTag || [],
-      idUserLike: (userLikeClone||[]).map((item)=>item.id),
-      countComment:  this.itemClone()?.countComment ||  0,
-      shareLink:  (this.itemClone()?.shareLink||[]).map((item)=>item.id),
-      tagFriends: (this.itemClone()?.tagFriends||[]).map((item)=>item.id),
+      idUserLike: (userLikeClone || []).map((item) => item.id),
+      countComment: this.itemClone()?.countComment || 0,
+      shareLink: (this.itemClone()?.shareLink || []).map((item) => item.id),
+      tagFriends: (this.itemClone()?.tagFriends || []).map((item) => item.id),
       tagLocation: this.itemClone()?.tagLocation || '',
       feelingIcon: this.itemClone()?.feelingIcon || '',
       createdBy: this.itemClone()?.createdBy?.id,
       scope: this.itemClone().scope
-  };
-    this.postService.updatePost(this.itemClone().id || '', body).subscribe((response)=>{
+    };
+    this.postService.updatePost(this.itemClone().id || '', body).subscribe((response) => {
       this.waitingLike.set(false);
-      if(response.statusCode !== 200) {
+      if (response.statusCode !== 200) {
         return;
       }
       this.itemClone.set(response.data);
+      this.socketService.sendPostLike(this.itemClone());
     });
   }
 
   onClickComment() {
-    if(!this.currentUser()?.id){
+    if (!this.currentUser()?.id) {
       return;
     }
 
@@ -317,23 +328,23 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
       }
     });
 
-    if(isPlatformBrowser(this.platformId) && window.matchMedia('(max-width: 500px)').matches) {
+    if (isPlatformBrowser(this.platformId) && window.matchMedia('(max-width: 500px)').matches) {
       this.dialogService.getInstance(this.dynamicCommentDialogRef).maximize();
     }
-    this.dynamicCommentDialogRef.onClose.pipe(take(1)).subscribe((countComment: number)=>{
-      this.itemClone.update(value=>({...value, countComment})) ;
+    this.dynamicCommentDialogRef.onClose.pipe(take(1)).subscribe((countComment: number) => {
+      this.itemClone.update(value => ({ ...value, countComment }));
     })
   }
   ngOnDestroy() {
     if (this.dynamicDialogRef) {
-        this.dynamicDialogRef.close();
+      this.dynamicDialogRef.close();
     }
 
     if (this.dynamicCommentDialogRef) {
       this.dynamicCommentDialogRef.close();
-  }
+    }
 
-    if(this.userUnSubscription) {
+    if (this.userUnSubscription) {
       this.userUnSubscription.unsubscribe();
     }
   }

@@ -14,6 +14,6 @@ export class LocationService {
         const params = new HttpParams().set('keyword', requestParams.keyword)
         .set('latitude', requestParams.latitude || 0 )
         .set('longitude', requestParams.longitude || 0);
-        return this.http.get<ApiResponseValue<LocationResponseValue[]>>(`${environment.apiUrl}/location/nearby`,{params });
+        return this.http.get<ApiResponseValue<LocationResponseValue[]>>(`${environment.apiUrl}/api/v1/location/nearby`,{params });
     }
 }

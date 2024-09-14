@@ -9,6 +9,7 @@ import { PostResponseValue } from '@app/models/post.model';
 import { UserLoginResponse } from '@app/models/user.model';
 import { CommentService } from '@app/services/comment.service';
 import { PostService } from '@app/services/post.service';
+import { SocketService } from '@app/services/socket.service';
 import { UserService } from '@app/services/user.service';
 import { formatLargeNumber } from '@app/utils/common.util';
 import { getTimeDifference } from '@app/utils/date.util';
@@ -34,6 +35,7 @@ interface UserStatus { avatar: string; userName: string; feeling?: { id: string;
 })
 export class CommentDialogComponent implements OnInit {
   private postService: PostService = inject(PostService);
+  private socketService: SocketService = inject(SocketService);
   private userService: UserService = inject(UserService);
   private dialogConfig: DynamicDialogConfig = inject(DynamicDialogConfig);
   private dynamicDialogRef: DynamicDialogRef = inject(DynamicDialogRef);
@@ -107,11 +109,12 @@ export class CommentDialogComponent implements OnInit {
     return status;
   }
   onClickCloseDialog() {
-    this.dynamicDialogRef.close(this.countComment);
+    this.dynamicDialogRef.close(this.countComment());
   }
   handleReplyComment(comment: CommentItem) {
     this.replyForComment.set(comment);
   }
+  
   getChildrenByParentId(id: string, flatComments: CommentResponseValue[]) {
     const children = flatComments.filter(item => item.idRootComment?.id === id).map((item) => ({
       user: {
@@ -149,7 +152,7 @@ export class CommentDialogComponent implements OnInit {
       if (response.statusCode !== 200) {
         return;
       }
-      this.commentNumber.set(response.data.length || 0);
+      this.commentNumber.update(()=>response.data.length || 0);
       const commentItems = response.data.filter(item => !item.idRootComment).map((item) => ({
         user: {
           id: item.idUser.id,
@@ -162,7 +165,7 @@ export class CommentDialogComponent implements OnInit {
         createdAt: item.createdAt,
         children: []
       }));
-      this.comments.set(this.convertToNestedComments(commentItems, response.data));
+      this.comments.update(()=>this.convertToNestedComments(commentItems, response.data));
     });
   }
 
@@ -170,7 +173,16 @@ export class CommentDialogComponent implements OnInit {
     this.getAllCommentByIdPost(this.idPost());
   }
 
+  onCommentAdded() {
+    this.socketService.sendPostComment(this.idPost())
+  }
+
   ngOnInit(): void {
+    this.socketService.onPostComment().subscribe((value: string)=>{
+      if(value === this.idPost()) {
+        this.loadCommentList();
+      }
+    })
     const idPost = this.dialogConfig.data['id'] || null;
     this.getAllCommentByIdPost(idPost);
     this.currentUser.set(this.userService.currentUserLogin.getValue());
