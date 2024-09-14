@@ -1,0 +1,14 @@
+<div class="main-container">
+  @defer {
+  <div
+    class="editor-container editor-container_classic-editor editor-container_include-style editor-container_include-block-toolbar"
+    #editorContainerElement>
+    <div class="editor-container__editor">
+      <div #editorElement>
+        <ckeditor (change)="dataEditorChange($event)" (blur)="handleOnTouched()" [editor]="Editor"
+          [disabled]="isDisabled" [data]="value" [config]="configClone()" *ngIf="isLayoutReady" />
+      </div>
+    </div>
+  </div>
+  }
+</div>

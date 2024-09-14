@@ -87,7 +87,7 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
   actionsPost: MenuItem[] | undefined;
   actionsSharePost: MenuItem[] | undefined;
   linkPostDetail = computed(()=>`/${path.HOME.DETAIL.replace(':id', this.itemClone()?.id || '' )}`);
-  countComment = computed(()=>formatLargeNumber(this.itemClone().idComment?.length));
+  countComment = computed(()=>formatLargeNumber(this.itemClone()?.countComment));
   disableButton = computed(()=> !this.currentUser().id);
   defaultAvatar = defaultAvatar;
   
@@ -284,7 +284,7 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
       content: this.itemClone()?.content || '',
       hashTag: this.itemClone()?.hashTag || [],
       idUserLike: (userLikeClone||[]).map((item)=>item.id),
-      idComment:  (this.itemClone()?.idComment||[]).map((item)=>item.id),
+      countComment:  this.itemClone()?.countComment ||  0,
       shareLink:  (this.itemClone()?.shareLink||[]).map((item)=>item.id),
       tagFriends: (this.itemClone()?.tagFriends||[]).map((item)=>item.id),
       tagLocation: this.itemClone()?.tagLocation || '',
@@ -320,8 +320,8 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
     if(isPlatformBrowser(this.platformId) && window.matchMedia('(max-width: 500px)').matches) {
       this.dialogService.getInstance(this.dynamicCommentDialogRef).maximize();
     }
-    this.dynamicCommentDialogRef.onClose.pipe(take(1)).subscribe(()=>{
-      // TODO: set số lượng comment
+    this.dynamicCommentDialogRef.onClose.pipe(take(1)).subscribe((countComment: number)=>{
+      this.itemClone.update(value=>({...value, countComment})) ;
     })
   }
   ngOnDestroy() {

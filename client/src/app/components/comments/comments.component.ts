@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, EventEmitter, input, Output } from '@angular/core';
 import { CommentItem } from '@app/models/comment.model';
 import { CommentContentComponent } from '@app/components/comment-content/comment-content.component';
 
@@ -11,8 +11,9 @@ import { CommentContentComponent } from '@app/components/comment-content/comment
 })
 export class CommentsComponent {
   comments = input.required<CommentItem[]>();
+  @Output() eventReply = new EventEmitter<CommentItem>();
 
   handleEventReply(value: CommentItem) {
-    console.log(value);
+    this.eventReply.emit(value);
   }
 }

@@ -8,8 +8,5 @@
   <div class="flex gap-4">
     <span class="font-medium">{{createdTime()}}</span>
     <span (click)="onClickReply()" class="font-medium cursor-pointer">Phản hồi</span>
-    @if(comment().children.length) {
-      <span (click)="onClickSeeMore()" class="font-medium cursor-pointer">{{comment().children.length}} bình luận</span>
-    }
   </div>
 </div>

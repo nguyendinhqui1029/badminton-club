@@ -8,3 +8,23 @@ export interface CommentItem {
   createdAt: string;
   children: CommentItem[];
 }
+
+export interface CommentRequestBody {
+  content: string;
+  status: string;
+  idRootComment: string | null;
+  idUser: string;
+  images: string[];
+  idPost: string;
+}
+
+export interface CommentResponseValue {
+  id: string;
+  content: string;
+  status: string;
+  idRootComment: {id: string} | null;
+  createdAt: string;
+  idUser: UserInfoSearch;
+  images: string[];
+  idPost: string;
+}

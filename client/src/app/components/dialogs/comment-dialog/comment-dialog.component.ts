@@ -1,16 +1,21 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommentsComponent } from '@app/components/comments/comments.component';
+import { EnterCommentComponent } from '@app/components/enter-comment/enter-comment.component';
 import { ImagesGridComponent } from '@app/components/images-grid/images-grid.component';
-import { defaultAvatar, INIT_POST_VALUE, scopePost } from '@app/constants/common.constant';
-import { CommentItem } from '@app/models/comment.model';
+import { CURRENT_USER_INIT, defaultAvatar, INIT_POST_VALUE, scopePost } from '@app/constants/common.constant';
+import { CommentItem, CommentResponseValue } from '@app/models/comment.model';
 import { PostResponseValue } from '@app/models/post.model';
+import { UserLoginResponse } from '@app/models/user.model';
+import { CommentService } from '@app/services/comment.service';
 import { PostService } from '@app/services/post.service';
+import { UserService } from '@app/services/user.service';
+import { formatLargeNumber } from '@app/utils/common.util';
 import { getTimeDifference } from '@app/utils/date.util';
 import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
-interface UserStatus { avatar: string; userName: string; feeling?: {id: string; icon: string; value: string}; friends: string[];location: string;};
+interface UserStatus { avatar: string; userName: string; feeling?: { id: string; icon: string; value: string }; friends: string[]; location: string; };
 
 
 @Component({
@@ -18,68 +23,23 @@ interface UserStatus { avatar: string; userName: string; feeling?: {id: string; 
   standalone: true,
   imports: [ReactiveFormsModule,
     FormsModule,
-    ButtonModule, 
+    ButtonModule,
     AvatarModule,
     ImagesGridComponent,
-    CommentsComponent
-   ],
+    CommentsComponent,
+    EnterCommentComponent
+  ],
   templateUrl: './comment-dialog.component.html',
   styleUrl: './comment-dialog.component.scss'
 })
 export class CommentDialogComponent implements OnInit {
   private postService: PostService = inject(PostService);
+  private userService: UserService = inject(UserService);
   private dialogConfig: DynamicDialogConfig = inject(DynamicDialogConfig);
   private dynamicDialogRef: DynamicDialogRef = inject(DynamicDialogRef);
+  private commentService: CommentService = inject(CommentService);
+
   defaultAvatar = defaultAvatar;
-
-  comments = signal<CommentItem[]>([{
-    user: {
-      id: '1',
-      name: 'Ng',
-      avatar: ''
-    },
-    id: '12',
-    content: 'Test',
-    createdAt: '2024-08-10',
-    children: [{
-      user: {
-        id: '1',
-        name: 'Ng',
-        avatar: ''
-      },
-      id: '12',
-      content: 'Test',
-      createdAt: '2024-08-10',
-      children: [{
-        user: {
-          id: '1',
-          name: 'Ng',
-          avatar: ''
-        },
-        id: '12',
-        content: 'Test',
-        createdAt: '2024-08-10',
-        children: [{
-          user: {
-            id: '1',
-            name: 'Ng',
-            avatar: ''
-          },
-          id: '12',
-          content: 'Test',
-          createdAt: '2024-08-10',
-          children: []
-        }]
-      }]
-    }]
-  }]) ;
-  backgroundClass = signal<string>('');
-  itemClone = signal<PostResponseValue>(INIT_POST_VALUE);
-
-  createdTime = computed(()=>getTimeDifference(new Date(this.itemClone().createdAt)));
-  userStatusDisplay = computed(()=> {
-    return this.generateUserStatus();
-  });
   titleGroup = signal<UserStatus>({
     avatar: '',
     userName: '',
@@ -91,7 +51,23 @@ export class CommentDialogComponent implements OnInit {
     friends: [],
     location: ''
   });
-  scopeIcon = computed(()=> {
+  commentNumber = signal<number>(0);
+  comments = signal<CommentItem[]>([]);
+  backgroundClass = signal<string>('');
+  itemClone = signal<PostResponseValue>(INIT_POST_VALUE);
+  currentUser = signal<UserLoginResponse>(CURRENT_USER_INIT);
+  replyForComment = signal<CommentItem | null>(null);
+  createdTime = computed(() => getTimeDifference(new Date(this.itemClone().createdAt)));
+  placeholder = computed(() => this.replyForComment() ? `Trả lời bình luận của ${this.replyForComment()?.user.name}` : 'Nhập bình luận');
+  currentUserId = computed(() => this.currentUser().id);
+  idPost = computed(() => this.itemClone().id || '');
+  replyForCommentId = computed(() => this.replyForComment()?.id || '');
+  userStatusDisplay = computed(() => {
+    return this.generateUserStatus();
+  });
+  countComment = computed(()=>formatLargeNumber(this.commentNumber()));
+
+  scopeIcon = computed(() => {
     const scopeIcon = {
       [scopePost.EVERYONE]: 'pi pi-users',
       [scopePost.FRIENDS]: 'pi pi-user',
@@ -101,44 +77,107 @@ export class CommentDialogComponent implements OnInit {
   });
   generateUserStatus() {
     let status = '';
-    if(this.titleGroup()?.userName) {
+    if (this.titleGroup()?.userName) {
       status += `<h4 class="font-bold text-lg leading-6">${this.titleGroup()?.userName}</h4>`;
     }
 
-    if(this.titleGroup()?.feeling?.icon && this.titleGroup()?.feeling?.value) {
-       status += `&nbsp;đang cảm thấy&nbsp; <strong> ${this.titleGroup()?.feeling?.value} </strong> &nbsp;${this.titleGroup()?.feeling?.icon}`;
-       if(!this.titleGroup()?.location && !this.titleGroup()?.friends?.length) {
+    if (this.titleGroup()?.feeling?.icon && this.titleGroup()?.feeling?.value) {
+      status += `&nbsp;đang cảm thấy&nbsp; <strong> ${this.titleGroup()?.feeling?.value} </strong> &nbsp;${this.titleGroup()?.feeling?.icon}`;
+      if (!this.titleGroup()?.location && !this.titleGroup()?.friends?.length) {
         return `${status}.`;
       }
     }
 
-    if(this.titleGroup()?.friends?.length) {
+    if (this.titleGroup()?.friends?.length) {
       status += `&nbsp;cùng với&nbsp;<strong> 
-            ${
-              this.titleGroup()?.friends?.length < 2 
-              ? this.titleGroup()?.friends[0]
-              : this.titleGroup()?.friends?.length == 2 
-              ? `${this.titleGroup()?.friends[0]}, ${this.titleGroup()?.friends[1]}`
-              : `${this.titleGroup()?.friends[0]}, ${this.titleGroup()?.friends[1]}</strong>&nbsp;và&nbsp;<strong>${this.titleGroup()?.friends.length - 2}</strong>&nbsp;người khác`
-            }`;
-      if(!this.titleGroup()?.location) {
+            ${this.titleGroup()?.friends?.length < 2
+          ? this.titleGroup()?.friends[0]
+          : this.titleGroup()?.friends?.length == 2
+            ? `${this.titleGroup()?.friends[0]}, ${this.titleGroup()?.friends[1]}`
+            : `${this.titleGroup()?.friends[0]}, ${this.titleGroup()?.friends[1]}</strong>&nbsp;và&nbsp;<strong>${this.titleGroup()?.friends.length - 2}</strong>&nbsp;người khác`
+        }`;
+      if (!this.titleGroup()?.location) {
         return `${status}.`;
       }
     }
-    if(this.titleGroup()?.location) {
+    if (this.titleGroup()?.location) {
       status += `&nbsp;tại&nbsp;<strong> ${this.titleGroup()?.location}.</strong>`;
       return status;
     }
     return status;
   }
   onClickCloseDialog() {
-    this.dynamicDialogRef.close();
+    this.dynamicDialogRef.close(this.countComment);
   }
+  handleReplyComment(comment: CommentItem) {
+    this.replyForComment.set(comment);
+  }
+  getChildrenByParentId(id: string, flatComments: CommentResponseValue[]) {
+    const children = flatComments.filter(item => item.idRootComment?.id === id).map((item) => ({
+      user: {
+        id: item.idUser.id,
+        name: item.idUser.name,
+        avatar: item.idUser.avatar
+      },
+      id: item.id,
+      content: item.content,
+      status: item.status,
+      createdAt: item.createdAt,
+      children: []
+    }));
+    if (!children.length) {
+      return [];
+    }
+    return children;
+  }
+
+  convertToNestedComments(parentItems: CommentItem[], flatComments: CommentResponseValue[]): CommentItem[] {
+    // Map để lưu trữ tất cả các bình luận
+    parentItems.forEach((item) => {
+      const children = this.getChildrenByParentId(item.id, flatComments);
+      if (children.length) {
+        this.convertToNestedComments(children, flatComments);
+      }
+      item.children = children;
+    });
+
+    return parentItems;
+  }
+
+  getAllCommentByIdPost(idPost: string) {
+    this.commentService.getAllCommentByIdPost(idPost).subscribe(response => {
+      if (response.statusCode !== 200) {
+        return;
+      }
+      this.commentNumber.set(response.data.length || 0);
+      const commentItems = response.data.filter(item => !item.idRootComment).map((item) => ({
+        user: {
+          id: item.idUser.id,
+          name: item.idUser.name,
+          avatar: item.idUser.avatar
+        },
+        id: item.id,
+        content: item.content,
+        status: item.status,
+        createdAt: item.createdAt,
+        children: []
+      }));
+      this.comments.set(this.convertToNestedComments(commentItems, response.data));
+    });
+  }
+
+  loadCommentList() {
+    this.getAllCommentByIdPost(this.idPost());
+  }
+
   ngOnInit(): void {
     const idPost = this.dialogConfig.data['id'] || null;
-    if(idPost) {
-      this.postService.getPostById(idPost).subscribe((response)=>{
-        if(response.statusCode !== 200){
+    this.getAllCommentByIdPost(idPost);
+    this.currentUser.set(this.userService.currentUserLogin.getValue());
+
+    if (idPost) {
+      this.postService.getPostById(idPost).subscribe((response) => {
+        if (response.statusCode !== 200) {
           return;
         }
         this.itemClone.set(response.data);
@@ -152,7 +191,7 @@ export class CommentDialogComponent implements OnInit {
             value: feelingAfterSplit[1] || '',
             icon: feelingAfterSplit[2] || ''
           },
-          friends: (this.itemClone()?.tagFriends || []).map((item)=>item.name),
+          friends: (this.itemClone()?.tagFriends || []).map((item) => item.name),
           location: this.itemClone()?.tagLocation || ''
         });
       })

@@ -7,7 +7,7 @@ export interface Post extends Document {
   background: string;
   content: string;
   idUserLike: string[];
-  idComment: string[];
+  countComment: number;
   shareLink: string[];
   hashTag: string[];
   createdAt: string;
@@ -39,11 +39,10 @@ const postSchema = new mongoose.Schema({
     ref: 'User', // Tham chiếu đến model User
     default: []
   }],
-  idComment: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Comment', // Tham chiếu đến model User
-    default: []
-  }],
+  countComment: {
+    type: Number,
+    default: 0
+  },
   tagFriends: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User', // Tham chiếu đến model User

@@ -13,8 +13,8 @@ export class UserService {
   private http: HttpClient = inject(HttpClient);
   private currentUserLoginSubject = new BehaviorSubject<UserLoginResponse>(CURRENT_USER_INIT);
 
-  get currentUserLogin() {
-    return this.currentUserLoginSubject.asObservable();
+  get currentUserLogin():BehaviorSubject<UserLoginResponse> {
+    return this.currentUserLoginSubject;
   }
 
   updateData(value: UserLoginResponse) {

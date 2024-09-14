@@ -29,13 +29,19 @@
   }
 </section>
 <hr>
-<div class="flex justify-between items-center p-4">
+<div class="flex border-b-2 justify-between items-center p-4">
   <h3 class="font-bold">Bình luận</h3>
-  <p>60 bình luận</p>
+  <p> {{countComment}} bình luận</p>
 </div>
 <div class="max-h-80 overflow-y-auto">
-  <app-comments [comments]="comments()"></app-comments>
+  <app-comments [comments]="comments()" (eventReply)="handleReplyComment($event)"></app-comments>
 </div>
 <section>
-  chat
+  <app-enter-comment 
+    [placeholder]="placeholder()"
+    [idPost]="idPost()"
+    [idUser]="currentUserId()"
+    [idComment]="replyForCommentId()"
+    (eventSubmitSuccess)="loadCommentList()"
+      ></app-enter-comment>
 </section>

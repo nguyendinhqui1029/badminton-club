@@ -2,6 +2,7 @@ import mongoose, { Schema, Document } from 'mongoose';
 import { getUTCDate } from '../utils/date.util';
 
 export interface SearchUserResponse {
+  _id: mongoose.Schema.Types.ObjectId;
   name: string;
   avatar: string;
 }

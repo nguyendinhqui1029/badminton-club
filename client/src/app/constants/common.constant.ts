@@ -63,7 +63,7 @@ export const INIT_POST_VALUE = {
     background: 'bg-gray-color-20==/==placeholder:text-black-100 text-black',
     content: '',
     idUserLike: [],
-    idComment: [],
+    countComment: 0,
     shareLink: [],
     hashTag: [],
     createdAt: '',

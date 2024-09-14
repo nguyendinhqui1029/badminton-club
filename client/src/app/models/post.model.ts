@@ -11,7 +11,7 @@ export interface PostRequestBody {
     feelingIcon: string;
     createdBy: string;
     idUserLike?: string[];
-    idComment?: string[];
+    countComment?: number;
     shareLink?: string[];
     scope: 'Everyone' | 'Only_Me' | 'Friends';
 }
@@ -21,7 +21,7 @@ export interface PostResponseValue {
     background: string;
     content: string;
     idUserLike: UserInfoSearch[];
-    idComment: UserInfoSearch[];
+    countComment: number;
     shareLink: UserInfoSearch[];
     hashTag: string[];
     createdAt: string;
