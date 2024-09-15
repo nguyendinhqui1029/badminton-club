@@ -1,13 +1,12 @@
 import { Attendance } from "@app/models/attendance.model";
 
 export interface DateInfo {
-  date: string;
-  day: string;
-  month: string;
-  year: string;
+  day: number;
+  month: number;
+  year: number;
   isCurrentDay: boolean;
   attendances: Attendance[];
-  dayOfWeek: number;
+  dayOfWeek: string;
   isPlay: boolean;
   isLated: boolean;
   isDisabled: boolean;

@@ -45,7 +45,7 @@
         <input formControlName="confirmPassword" class="w-full" id="re-password" type="password" pInputText />
       </app-label-wrapper>
 
-      <app-label-wrapper [isTouched]="!!registerForm.get('terms')?.touched" [errorsControl]="registerForm.get('terms')?.errors" idLabel="terms" label="'">
+      <app-label-wrapper [isTouched]="!!registerForm.get('terms')?.touched" [errorsControl]="registerForm.get('terms')?.errors" idLabel="terms" label="">
         <div class="flex items-start gap-2 mt-4">
           <p-checkbox 
             formControlName="terms" [binary]="true" inputId="terms" />

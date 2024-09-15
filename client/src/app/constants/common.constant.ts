@@ -22,6 +22,12 @@ export const paymentType  = {
     WITHDRAW: 'WITHDRAW'
 }
 
+export const activeAccountType  = {
+    OFF: 'OFF',
+    ON: 'ON'
+}
+
+
 export const genderType  = {
     MALE: 'Male',
     FEMALE: 'Female'

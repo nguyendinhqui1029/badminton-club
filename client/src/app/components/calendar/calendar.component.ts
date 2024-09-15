@@ -20,6 +20,7 @@ export class CalendarComponent implements OnInit {
     this.generateYears(this.selectedYear);
     this.days.set(this.generateCalendar(this.selectedMonth, this.selectedYear));
   }
+
   onChangeMonth(month: number) {
     this.selectedMonth = this.selectedMonth + month;
     if(this.selectedMonth >= 11) {
@@ -38,22 +39,23 @@ export class CalendarComponent implements OnInit {
   }
   checkCurrentDate(day: number, month: number, year: number) {
     const now = new Date();
-    return now.getDay() === +day && now.getMonth() === +month && now.getFullYear() === +year;
+    return now.getDate() === +day && now.getMonth() + 1 === +month && now.getFullYear() === +year;
   }
 
+  getDay(date: Date) {
+    const dayOfWeek = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+    return dayOfWeek[date.getDay()];
+  }
   generateCalendar(month: number, year: number) {
     const tempDays: DateInfo[] = [];
     const firstDay = new Date(year, month, 1).getDay();
-    const lastDate = new Date(year, month + 1, 0).getDate();
     const lastDateOfMonth = new Date(year, month - 1, 0).getDate();
-    const dayOfWeekList = ['Thứ 6','Thứ 7','Chủ nhật','Thứ 2','Thứ 3','Thứ 4','Thứ 5'];
-    for (let i = firstDay - 1; i >= 0; i--) {
+    for (let i = 0; i < firstDay; i++) {
       tempDays.push({
-        date: `${(lastDateOfMonth - i)}-${this.selectedMonth}-${this.selectedYear}`,
-        day: (lastDateOfMonth - i).toString(),
-        month: this.selectedMonth.toString(),
-        year: this.selectedYear.toString(),
-        dayOfWeek: 0,
+        day: (lastDateOfMonth - firstDay + i),
+        month: this.selectedMonth,
+        year: this.selectedYear,
+        dayOfWeek: this.getDay(new Date(`${this.selectedYear}-${this.selectedMonth}-${(lastDateOfMonth - firstDay + i)}`)),
         isCurrentDay: this.checkCurrentDate(lastDateOfMonth - i, this.selectedMonth, this.selectedYear),
         attendances:[],
         isPlay: false,
@@ -62,13 +64,14 @@ export class CalendarComponent implements OnInit {
         isDisabled: true
       });
     }
+
+    const lastDate = new Date(year, month + 1, 0).getDate();
     for (let day = 1; day <= lastDate; day++) {
       tempDays.push({
-        date: `${day}-${this.selectedMonth}-${this.selectedYear}`,
-        day: day.toString(),
-        month: this.selectedMonth.toString() + 1,
-        year: this.selectedYear.toString(),
-        dayOfWeek: 0,
+        day: day,
+        month: this.selectedMonth,
+        year: this.selectedYear,
+        dayOfWeek: this.getDay(new Date(`${this.selectedYear}-${this.selectedMonth + 1}-${day}`)),
         isCurrentDay: this.checkCurrentDate(day, this.selectedMonth, this.selectedYear),
         attendances:[],
         isPlay: true,
@@ -80,12 +83,11 @@ export class CalendarComponent implements OnInit {
     const maxDay= 35 - tempDays.length;
     for (let day = 1; day <= maxDay; day++) {
       tempDays.push({
-        date: `${day}-${this.selectedMonth}-${this.selectedYear}`,
-        day: day.toString(),
-        month: this.selectedMonth.toString() + 2,
-        year: this.selectedYear.toString(),
-        dayOfWeek: 0,
-        isCurrentDay: this.checkCurrentDate(day, this.selectedMonth, this.selectedYear),
+        day: day,
+        month: this.selectedMonth + 2,
+        year: this.selectedYear,
+        dayOfWeek: this.getDay(new Date(`${this.selectedYear}-${this.selectedMonth + 2}-${day}`)),
+        isCurrentDay: this.checkCurrentDate(day, this.selectedMonth + 2, this.selectedYear),
         attendances:[],
         isPlay: false,
         isLated: false,

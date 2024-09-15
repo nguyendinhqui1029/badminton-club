@@ -1,6 +1,29 @@
 <div class="bg-white w-full rounded-xl border-b-2">
-  <div class="flex max-w-6xl justify-between px-4 py-2">
+  <div class="flex max-w-screen-2xl justify-between px-4 py-2">
     <app-logo></app-logo>
+    <nav class="hidden flex justify-between px-4 py-2 items-center md:flex md:w-full max-w-xl">
+      <span [routerLink]="link.HOME.ROOT" routerLinkActive="border-b-2 border-secondary-color"
+        class="pi pi-home text-3xl cursor-pointer"></span>
+      <a [routerLink]="link.ATTENDANCE.ROOT" routerLinkActive="border-b-2 border-secondary-color"
+      class="pi pi-calendar-clock text-3xl cursor-pointer"></a>
+      <span [routerLink]="link.PAYMENT.ROOT" routerLinkActive="border-b-2 border-secondary-color"
+        class="pi pi-money-bill text-3xl cursor-pointer"></span>
+      <span [routerLink]="link.EVENTS.ROOT" routerLinkActive="border-b-2 border-secondary-color"
+        class="pi pi-gift text-3xl cursor-pointer"></span>
+      <span [routerLink]="link.NOTIFY.ROOT" routerLinkActive="border-b-2 border-secondary-color"
+        class="relative pi pi-bell text-3xl cursor-pointer">
+        @if(countNotifyUnread()) {
+          <span class="flex items-center justify-center absolute left-3 bottom-4 w-7 aspect-square bg-secondary-color text-white font-bold text-xs rounded-full ">{{countNotifyUnread() | formatLargeNumber}}</span>
+        }
+      </span>
+        @if(currentUser().id) {
+          <span (click)="onLogoutClick()"
+          class="pi pi-sign-out text-3xl cursor-pointer"></span>
+        } @else {
+          <span [routerLink]="link.LOGIN.ROOT" routerLinkActive="border-b-2 border-secondary-color"
+          class="pi pi-sign-in text-3xl cursor-pointer"></span>
+        }
+    </nav>
     <div class="flex gap-4 items-center">
       <span class="pi pi-search text-3xl cursor-pointer" (click)="handleOpenDialogSearch()"></span>
       @if(currentUser().id) {
@@ -8,7 +31,7 @@
       }
     </div>
   </div>
-  <nav class="flex max-w-6xl justify-between px-4 py-2 items-center">
+  <nav class="flex max-w-6xl justify-between px-4 py-2 items-center md:hidden">
     <span [routerLink]="link.HOME.ROOT" routerLinkActive="border-b-2 border-secondary-color"
       class="pi pi-home text-3xl cursor-pointer"></span>
     <a [routerLink]="link.ATTENDANCE.ROOT" routerLinkActive="border-b-2 border-secondary-color"

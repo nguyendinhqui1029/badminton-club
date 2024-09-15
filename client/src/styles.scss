@@ -14,8 +14,35 @@ p-avatar {
     @apply bg-secondary-color;
 }
 .p-panel-toggleable {
-    @apply border-2 rounded-xl overflow-hidden;
+    @apply border-2 rounded-xl;
 }
+
+.p-panel-toggleable:not(.p-panel-expanded)> .p-panel-header  {
+    @apply rounded-xl;
+}
+
+.p-panel-toggleable > .p-panel-header  {
+    @apply rounded-t-xl rounded-b-none;
+}
+
+.p-datepicker-month {
+    @apply px-3 py-1 bg-blue-500 text-white rounded-3xl;
+}
+
+.p-datepicker-year {
+    @apply px-3 py-1 bg-blue-500 text-white rounded-3xl;
+}
+.p-datepicker {
+    @apply rounded-xl;
+}
+
+.p-datepicker-title {
+    @apply flex gap-2;
+}
+.p-panel-content {
+    @apply rounded-b-xl;
+}
+
 .p-highlight .p-tabview-nav-link {
     @apply text-secondary-color;
 }

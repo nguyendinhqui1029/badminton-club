@@ -15,7 +15,7 @@ export interface Settings extends Document {
   checkInLocationLongitude: string;
   checkInLocationLatitude: string;
   checkInRadian: string;
-  requiredCheckInTime: RequiredCheckInTime; // Thiết lập thời gian bắt đầu check in
+  requiredCheckInTime: RequiredCheckInTime[]; // Thiết lập thời gian bắt đầu check in
   earlyAttendanceReward: number; // Được thưởng khi đi sớm
   tenMinuteLateFee: number; // Đóng phạt khi đi trễ 10 phút
   twentyMinuteLateFee: number; // Đóng phạt khi đi trễ 20 phút
@@ -58,10 +58,10 @@ const settingsSchema = new Schema({
     type: String,
     required: true, // Yêu cầu trường này là bắt buộc
   },
-  requiredCheckInTime: {
+  requiredCheckInTime: [{
    type: RequiredCheckInTimeSchema,
    required: true
-  },
+  }],
   earlyAttendanceReward: {
     type: Number,
     required: true, // Yêu cầu trường này là bắt buộc

@@ -21,8 +21,7 @@ import { concatMap, EMPTY, Observable } from 'rxjs';
 })
 export class UploadFileComponent implements ControlValueAccessor {
  
-  maxLength = input<number>();
-  isShowButtonAdd = input<boolean>(true);
+  maxLength = input<number>(10);
   @ViewChild('fileUploadElement') fileUploadElement!: ElementRef;
 
   private fileService: FileService = inject(FileService);

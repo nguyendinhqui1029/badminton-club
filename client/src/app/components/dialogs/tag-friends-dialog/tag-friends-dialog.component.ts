@@ -34,7 +34,7 @@ export class TagFriendsDialogComponent implements OnInit, OnDestroy {
   getFriendsOfUser(keyword: string) {
     this.isLoading.set(true);
     this.userService.searchUserByKeyword(this.currentUserId(), keyword).subscribe((response)=>{
-      this.isLoading.set(true);
+      this.isLoading.set(false);
       if(response.statusCode !== 200) {
         this.items.set([]);
         return;

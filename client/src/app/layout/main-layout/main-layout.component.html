@@ -1,7 +1,9 @@
-<div class="flex gap-4 justify-center max-w-6xl mx-auto">
-  <div class="flex flex-col max-w-xl min-w-80 w-full gap-1">
-    <app-navigation class="fixed min-w-80 max-w-xl w-full z-10"></app-navigation>
-    <div class="h-28"></div>
+<div class="flex flex-col items-center justify-center max-w-screen-2xl w-xl mx-auto md:w-full">
+  <nav class="relative flex flex-col w-full items-center">
+    <app-navigation class="fixed max-w-xl w-full z-10 mx-auto md:max-w-screen-2xl"></app-navigation>
+  </nav>
+  <div class="flex flex-col max-w-xl min-w-80 w-full gap-1 ">
+    <div class="h-28 md:h-20"></div>
     <router-outlet />
   </div>
   <!-- <div class="flex flex-col hidden lg:flex">
