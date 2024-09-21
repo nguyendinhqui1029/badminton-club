@@ -1,12 +1,8 @@
 import SettingsModel, { Settings } from "../models/settings.model";
 
 class SettingsService {
-  public async getAll(): Promise<Settings[]> {
-    return await SettingsModel.find();
-  }
-
-  public async getById(id: string): Promise<Settings | null> {
-    return await SettingsModel.findById(id);
+  public async getSetting(): Promise<Settings | null> {
+    return await SettingsModel.findOne();
   }
 
   public async create(settings: Settings): Promise<Settings>  {
@@ -14,7 +10,7 @@ class SettingsService {
   }
 
   public async update(id: string, settings: Settings): Promise<Settings | null> {
-    return await SettingsModel.findByIdAndUpdate(id, settings, { new: true });
+    return await SettingsModel.findByIdAndUpdate(id, {$set: settings}, { new: true });
   }
 
   public async delete(id: string): Promise<Settings | null> {

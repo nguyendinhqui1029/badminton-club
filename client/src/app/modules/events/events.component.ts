@@ -1,27 +1,31 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CarouselModule } from 'primeng/carousel';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
 import { EventRequestBody } from '@app/models/event.model';
 import { Router } from '@angular/router';
 import { path } from '@app/constants/path.constant';
+import { LoadingComponent } from '@app/components/loading/loading.component';
+import { UserService } from '@app/services/user.service';
 @Component({
   selector: 'app-events',
   standalone: true,
-  imports: [CarouselModule, ButtonModule, TagModule],
+  imports: [CarouselModule, ButtonModule, TagModule, LoadingComponent],
   templateUrl: './events.component.html',
   styleUrl: './events.component.scss'
 })
-export class EventsComponent {
+export class EventsComponent implements OnInit {
   private route: Router = inject(Router);
-  
-  public isEventLoading = signal<boolean>(true);
-  public isAccessoryRewardsLoading = signal<boolean>(true);
-  public isFilmTicketRewardLoading = signal<boolean>(true);
+  private userService: UserService = inject(UserService);
+  public point = signal<number>(0);
+
+  public isEventLoading = signal<boolean>(false);
+  public isAccessoryRewardsLoading = signal<boolean>(false);
+  public isFilmTicketRewardLoading = signal<boolean>(false);
 
   responsiveOptions =  [
-    { breakpoint: '480px', numVisible: 2, numScroll: 4 },
-    { breakpoint: '350px', numVisible: 1, numScroll: 4 }];
+    { breakpoint: '480px', numVisible: 2, numScroll: 1 },
+    { breakpoint: '350px', numVisible: 1, numScroll: 1 }];
   events: EventRequestBody[] = [
     {
       id: '12',
@@ -56,6 +60,15 @@ export class EventsComponent {
       status: 'ON'
     }
   ];
+
+  ngOnInit(): void {
+    this.userService.getUserById(this.userService.currentUserLogin.getValue().id).subscribe(response=>{
+      if(response.statusCode !== 200) {
+        return;
+      }
+      this.point.update(()=>response.data.point);
+    })
+  }
 
   onClickViewDetail(event:EventRequestBody) {
     this.route.navigate([`/${path.EVENTS.DETAIL.replace(':id', event.id)}`]);

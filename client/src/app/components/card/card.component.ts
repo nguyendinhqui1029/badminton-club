@@ -229,7 +229,7 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
       accept: () => {
         this.postService.deletePost(this.itemClone().id || '').subscribe((response) => {
           if (response.statusCode !== 200) {
-            this.messageService.add({ severity: 'danger', summary: 'Thông báo xoá', detail: 'Bài viết chưa được xoá. Vui lòng thử lại.' })
+            this.messageService.add({ severity: 'error', summary: 'Thông báo xoá', detail: 'Bài viết chưa được xoá. Vui lòng thử lại.' })
             return;
           }
           this.refreshDataListEvent.emit();

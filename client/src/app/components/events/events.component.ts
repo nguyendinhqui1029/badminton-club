@@ -1,4 +1,5 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { UserService } from '@app/services/user.service';
 
 @Component({
   selector: 'app-events',
@@ -8,6 +9,5 @@ import { Component, signal } from '@angular/core';
   styleUrl: './events.component.scss'
 })
 export class EventsComponent {
- 
 
 }

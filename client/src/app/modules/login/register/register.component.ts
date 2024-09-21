@@ -106,7 +106,7 @@ export class RegisterComponent implements OnInit {
         this.router.navigate([this.login])
         return;
       }
-      this.messageService.add({ severity: 'danger', summary: 'Thông báo', detail: 'Tạo tài khoản thất bại vui lòng kiểm tra lại.' });
+      this.messageService.add({ severity: 'error', summary: 'Thông báo', detail: 'Tạo tài khoản thất bại vui lòng kiểm tra lại.' });
     });
   }
 

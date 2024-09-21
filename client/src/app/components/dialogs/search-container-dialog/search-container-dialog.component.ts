@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, ContentChild, EventEmitter, input, OnChanges, OnDestroy, OnInit, Output, signal, SimpleChanges, TemplateRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { LoadingComponent } from '@app/components/loading/loading.component';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 import { InputTextModule } from 'primeng/inputtext';
@@ -8,7 +9,7 @@ import { debounceTime, Subject, Subscription } from 'rxjs';
 @Component({
   selector: 'app-search-container-dialog',
   standalone: true,
-  imports: [CommonModule, FormsModule, ButtonModule, CheckboxModule, InputTextModule],
+  imports: [CommonModule, FormsModule, ButtonModule, CheckboxModule, InputTextModule, LoadingComponent],
   templateUrl: './search-container-dialog.component.html',
   styleUrl: './search-container-dialog.component.scss'
 })

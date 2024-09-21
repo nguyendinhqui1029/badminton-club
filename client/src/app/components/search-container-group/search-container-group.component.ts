@@ -6,11 +6,12 @@ import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 import { InputTextModule } from 'primeng/inputtext';
 import { debounceTime, Subject, Subscription } from 'rxjs';
+import { LoadingComponent } from '@app/components/loading/loading.component';
 
 @Component({
   selector: 'app-search-container-group',
   standalone: true,
-  imports: [CommonModule, FormsModule, ButtonModule, CheckboxModule, InputTextModule],
+  imports: [CommonModule, FormsModule, ButtonModule, CheckboxModule, InputTextModule, LoadingComponent],
   templateUrl: './search-container-group.component.html',
   styleUrl: './search-container-group.component.scss'
 })

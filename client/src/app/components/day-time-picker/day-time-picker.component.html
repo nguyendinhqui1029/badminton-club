@@ -1,0 +1,29 @@
+<div class="flex flex-col rounded-xl border-2" [formGroup]="formGroup">
+  <div class="flex items-center p-4 bg-gray-100">
+    <div class="w-32 font-bold text-base text-left">Thứ</div>
+    <div class="w-full font-bold text-base text-center">Thời gian</div>
+  </div>
+
+  @for(item of days; track item; let index=$index; let last=$last;) {
+    <div class="flex items-center px-4 py-2" [class.border-b-2]="!last" formArrayName="items">
+      <div class="w-32 font-bold text-base text-left">{{item.label}}</div>
+      <div #parent class="flex w-full items-center gap-2"  [formGroupName]="index">
+        <p-calendar 
+            inputStyleClass="text-center"
+            [appendTo]="parent"
+            [timeOnly]="true"
+            formControlName="startTime"
+            dateFormat="hh:mm"
+            />
+            ~
+          <p-calendar 
+            inputStyleClass="text-center"
+            [appendTo]="parent"
+            [timeOnly]="true"
+            formControlName="endTime" 
+            dateFormat="hh:mm"
+            />
+      </div>
+    </div>
+  }
+</div>

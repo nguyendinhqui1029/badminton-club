@@ -7,197 +7,187 @@
         </span>
       </div>
     </ng-template>
-      <form>
-        <div class="flex flex-col gap-4">
-          <app-label-wrapper idLabel="point" label="Điểm" [isRequired]="true">
-            <input class="w-full" id="point" type="text" pInputText  disabled/>
-          </app-label-wrapper>
-          <app-label-wrapper idLabel="email" label="Email" [isRequired]="true">
-            <input class="w-full" id="email" type="text" pInputText  disabled/>
-          </app-label-wrapper>
-          <app-label-wrapper idLabel="phone" label="Số điện thoại" [isRequired]="true">
-            <input class="w-full" id="phone" type="text" pInputText  disabled/>
-          </app-label-wrapper>
-          <app-label-wrapper idLabel="name" label="Họ tên" [isRequired]="true">
-            <input class="w-full" id="name" type="text" pInputText/>
-          </app-label-wrapper>
-          <app-label-wrapper idLabel="gender" label="Giới tính" [isRequired]="true">
-            <p-dropdown inputId="gender" [options]="genderOptions()" optionLabel="label"
-              optionValue="value" placeholder="Chọn giới tính" />
-          </app-label-wrapper>
-          <app-label-wrapper idLabel="accountType" label="Loại tài khoản" [isRequired]="true">
-            <p-dropdown inputId="accountType" [options]="accountTypeOptions()"
-              optionLabel="label" optionValue="value" placeholder="Chọn loại tài khoản" />
-            <p-confirmDialog styleClass="w-11/12 md:w-fit" />
-          </app-label-wrapper>
-          <app-label-wrapper idLabel="status" label="Trạng thái tài khoản" [isRequired]="true">
-            <p-dropdown inputId="status" [options]="statusOptions()" optionLabel="label"
-              optionValue="value" placeholder="Chọn trạng thái tài khoản" />
-          </app-label-wrapper>
-          <app-label-wrapper idLabel="birthday" label="Ngày sinh" [isRequired]="true">
-            <p-calendar styleClass="w-full" inputId="birthday" />
-          </app-label-wrapper>
-          <app-label-wrapper idLabel="files" label="Ảnh đại diện">
-            <app-upload-file #fileUploadRef [maxLength]="1"></app-upload-file>
-          </app-label-wrapper>
-          <div class="flex justify-end"><p-button label="lưu" styleClass="w-20" rounded/></div>
+    @if(!isShowLoadingUserSettingForm()) {
+      <form class="flex flex-col gap-4" [formGroup]="userSettingForm">
+        <app-label-wrapper idLabel="point" label="Điểm" [isRequired]="true">
+          <input class="w-full" formControlName="point" id="point" type="text" pInputText />
+        </app-label-wrapper>
+        <app-label-wrapper idLabel="email" label="Email" [isRequired]="true">
+          <input class="w-full" formControlName="email" id="email" type="text" pInputText />
+        </app-label-wrapper>
+        <app-label-wrapper idLabel="phone" label="Số điện thoại" [isRequired]="true">
+          <input class="w-full" formControlName="phone" id="phone" type="text" pInputText />
+        </app-label-wrapper>
+        <app-label-wrapper idLabel="name" label="Họ tên" [isRequired]="true">
+          <input class="w-full" formControlName="name" id="name" type="text" pInputText />
+        </app-label-wrapper>
+        <app-label-wrapper idLabel="gender" label="Giới tính" [isRequired]="true">
+          <p-dropdown inputId="gender" formControlName="gender" [options]="genderOptions()" optionLabel="label"
+            optionValue="value" placeholder="Chọn giới tính" />
+        </app-label-wrapper>
+        <app-label-wrapper idLabel="accountType" label="Loại tài khoản" [isRequired]="true">
+          <p-dropdown inputId="accountType" formControlName="accountType" [options]="accountTypeOptions()"
+            optionLabel="label" optionValue="value" placeholder="Chọn loại tài khoản" />
+          <p-confirmDialog styleClass="w-11/12 md:w-fit" />
+        </app-label-wrapper>
+        <app-label-wrapper idLabel="status" label="Trạng thái tài khoản" [isRequired]="true">
+          <p-dropdown inputId="status" formControlName="status" [options]="statusOptions()" optionLabel="label"
+            optionValue="value" placeholder="Chọn trạng thái tài khoản" />
+        </app-label-wrapper>
+        <app-label-wrapper idLabel="birthday" label="Ngày sinh" [isRequired]="true">
+          <p-calendar dateFormat="dd-mm-yy" formControlName="birthday" styleClass="w-full" inputId="birthday" />
+        </app-label-wrapper>
+        <app-label-wrapper idLabel="files" label="Ảnh đại diện">
+          <app-upload-file #fileUploadRef formControlName="avatar" [maxLength]="1"></app-upload-file>
+        </app-label-wrapper>
+        <div class="flex justify-end"><p-button label="Lưu" styleClass="w-20" rounded (click)="handleSaveUserSetting()" />
         </div>
       </form>
+    } @else {
+      <app-loading/>
+    }
   </p-panel>
   @if(isAdmin() || isSuperAdmin()) {
-    <p-panel [toggleable]="true" [collapsed]="true">
-      <ng-template pTemplate="header">
-        <div class="flex items-center justify-between w-full">
-          <span class="flex flex-col font-bold">
-            Cài đặt địa điểm checkin 
-          </span>
-        </div>
-      </ng-template>
-      <form>
-        <div class="flex flex-col gap-4">
-          <app-label-wrapper idLabel="longitude" label="Kinh độ" [isRequired]="true">
-            <input class="w-full" id="longitude" type="text" pInputText/>
-          </app-label-wrapper>
-          <app-label-wrapper idLabel="latitude" label="Vĩ độ" [isRequired]="true">
-            <input class="w-full" id="latitude" type="text" pInputText />
-          </app-label-wrapper>
-          <app-label-wrapper idLabel="radian" label="Bán kính" [isRequired]="true">
-            <input class="w-full" id="radian" type="text" pInputText/>
-          </app-label-wrapper>
-          <app-label-wrapper idLabel="checkInDate" label="Thời gian chơi" [isRequired]="true">
-            <p-calendar  [showTime]="true" styleClass="w-full" inputId="checkInDate" />
-          </app-label-wrapper>
-          <div class="flex justify-end"><p-button label="lưu" styleClass="w-20" rounded/></div>
-        </div>
+  <p-panel [toggleable]="true" [collapsed]="true">
+    <ng-template pTemplate="header">
+      <div class="flex items-center justify-between w-full">
+        <span class="flex flex-col font-bold">
+          Cài đặt địa điểm checkin
+        </span>
+      </div>
+    </ng-template>
+    @if(!isShowLoadingCheckInInfoForm()) {
+      <form class="flex flex-col gap-4" [formGroup]="checkInInfoForm">
+        <app-label-wrapper idLabel="longitude" label="Kinh độ" [isRequired]="true">
+          <input class="w-full" formControlName="longitude" id="longitude" type="text" pInputText />
+        </app-label-wrapper>
+        <app-label-wrapper idLabel="latitude" label="Vĩ độ" [isRequired]="true">
+          <input class="w-full" formControlName="latitude" id="latitude" type="text" pInputText />
+        </app-label-wrapper>
+        <app-label-wrapper idLabel="radian" label="Bán kính" [isRequired]="true">
+          <input class="w-full" formControlName="radian"  id="radian" type="text" pInputText />
+        </app-label-wrapper>
+        <app-label-wrapper idLabel="checkInDate" label="Thời gian chơi" [isRequired]="true">
+          <app-day-time-picker formControlName="checkInDate"></app-day-time-picker>
+        </app-label-wrapper>
+        <div class="flex justify-end"><p-button label="Lưu" styleClass="w-20" rounded (click)="handleSaveCheckInInfo()"/></div>
+    </form>
+    } @else {
+      <app-loading/>
+    }
+  </p-panel>
+
+  <p-panel [toggleable]="true" [collapsed]="true">
+    <ng-template pTemplate="header">
+      <div class="flex items-center justify-between w-full">
+        <span class="flex flex-col font-bold">
+          Cài đặt thưởng và phạt
+        </span>
+      </div>
+    </ng-template>
+    @if(!isShowLoadingCheckInInfoForm()) {
+      <form class="flex flex-col gap-4" [formGroup]="feeForm">
+        <app-label-wrapper idLabel="earlyAttendanceReward" label="Thưởng đi sớm">
+          <input class="w-full" formControlName="earlyAttendanceReward" id="earlyAttendanceReward" type="text" pInputText />
+        </app-label-wrapper>
+        <app-label-wrapper idLabel="tenMinuteLateFee" label="Phạt đi trễ 10 phút">
+          <input class="w-full" formControlName="tenMinuteLateFee" id="tenMinuteLateFee" type="text" pInputText />
+        </app-label-wrapper>
+        <app-label-wrapper idLabel="twentyMinuteLateFee" label="Phạt đi trễ 20 phút">
+          <input class="w-full" formControlName="twentyMinuteLateFee" id="twentyMinuteLateFee" type="text" pInputText />
+        </app-label-wrapper>
+        <app-label-wrapper idLabel="absenceFee" label="Phạt vắng mặt">
+          <input class="w-full" formControlName="absenceFee" id="absenceFee" type="text" pInputText />
+        </app-label-wrapper>
+        <app-label-wrapper idLabel="latePaymentFee" label="Phạt đóng tiền trễ">
+          <input class="w-full" formControlName="latePaymentFee" id="latePaymentFee" type="text" pInputText />
+        </app-label-wrapper>
+        <div class="flex justify-end"><p-button label="Lưu" styleClass="w-20" rounded (click)="handleSaveFeeForm()"/></div>
       </form>
-    </p-panel>
+    } @else {
+      <app-loading/>
+    }
     
-    <p-panel [toggleable]="true" [collapsed]="true">
-      <ng-template pTemplate="header">
-        <div class="flex items-center justify-between w-full">
-          <span class="flex flex-col font-bold">
-            Cài đặt thưởng và phạt  
-          </span>
-        </div>
-      </ng-template>
-      <form>
-        <div class="flex flex-col gap-4">
-          <app-label-wrapper idLabel="earlyAttendanceReward" label="Thưởng đi sớm" [isRequired]="true">
-            <input class="w-full" id="earlyAttendanceReward" type="text" pInputText/>
-          </app-label-wrapper>
-          <app-label-wrapper idLabel="tenMinuteLateFee" label="Phạt đi trễ 10 phút" [isRequired]="true">
-            <input class="w-full" id="tenMinuteLateFee" type="text" pInputText />
-          </app-label-wrapper>
-          <app-label-wrapper idLabel="twentyMinuteLateFee" label="Phạt đi trễ 20 phút" [isRequired]="true">
-            <input class="w-full" id="twentyMinuteLateFee" type="text" pInputText/>
-          </app-label-wrapper>
-          <app-label-wrapper idLabel="absenceFee" label="Phạt vắng mặt" [isRequired]="true">
-            <p-calendar  [showTime]="true" styleClass="w-full" inputId="absenceFee" />
-          </app-label-wrapper>
-          <app-label-wrapper idLabel="latePaymentFee" label="Phạt đóng tiền trễ" [isRequired]="true">
-            <p-calendar  [showTime]="true" styleClass="w-full" inputId="latePaymentFee" />
-          </app-label-wrapper>
-          <div class="flex justify-end"><p-button label="lưu" styleClass="w-20" rounded/></div>
-        </div>
-      </form>
-    </p-panel>
+  </p-panel>
   }
   @if(isSuperAdmin()) {
-    <p-panel [toggleable]="true" [collapsed]="true">
-      <ng-template pTemplate="header">
-        <div class="flex items-center justify-between w-full">
-          <span class="flex flex-col font-bold">
-            Cấp quyền tài khoản 
-          </span>
-        </div>
-      </ng-template>
-      <form>
-        <div class="flex flex-col gap-4">
-          <app-label-wrapper idLabel="userRole" label="Tài khoản user" [isRequired]="true">
-            <p-multiSelect 
-                inputId="userRole"
-                [options]="[]" 
-                placeholder="Chọn tài khoản" 
-                optionLabel="label"
-                optionValue="value">
-                    <ng-template let-value pTemplate="selectedItems">
-                      @for(option of value; track option) {
-                        <div class="inline-flex align-items-center gap-2 px-1">
-                          <img 
-                              src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png" 
-                              style="width: 18px" />
-                          <div>{{ option.name }},</div>
-                      </div>
-                      }
-                    </ng-template>
-                    <ng-template let-country pTemplate="item">
-                        <div class="flex align-items-center gap-2">
-                            <img 
-                                src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png" 
-                                style="width: 18px" />
-                            <div>{{ country.name }}</div>
-                        </div>
-                    </ng-template>
-            </p-multiSelect>
-          </app-label-wrapper>
-          <app-label-wrapper idLabel="adminRole" label="Tài khoản admin" [isRequired]="true">
-            <p-multiSelect 
-                inputId="adminRole"
-                [options]="[]" 
-                placeholder="Chọn tài khoản" 
-                optionLabel="label"
-                optionValue="value">
-                    <ng-template let-value pTemplate="selectedItems">
-                      @for(option of value; track option) {
-                        <div class="inline-flex align-items-center gap-2 px-1">
-                          <img 
-                              src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png" 
-                              style="width: 18px" />
-                          <div>{{ option.name }},</div>
-                      </div>
-                      }
-                    </ng-template>
-                    <ng-template let-country pTemplate="item">
-                        <div class="flex align-items-center gap-2">
-                            <img 
-                                src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png" 
-                                style="width: 18px" />
-                            <div>{{ country.name }}</div>
-                        </div>
-                    </ng-template>
-            </p-multiSelect>
-          </app-label-wrapper>
-          <app-label-wrapper idLabel="superAdminRole" label="Tài khoản super admin" [isRequired]="true">
-            <p-multiSelect 
-                inputId="superAdminRole"
-                [options]="[]" 
-                placeholder="Chọn tài khoản" 
-                optionLabel="label"
-                optionValue="value">
-                    <ng-template let-value pTemplate="selectedItems">
-                      @for(option of value; track option) {
-                        <div class="inline-flex align-items-center gap-2 px-1">
-                          <img 
-                              src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png" 
-                              style="width: 18px" />
-                          <div>{{ option.name }},</div>
-                      </div>
-                      }
-                    </ng-template>
-                    <ng-template let-country pTemplate="item">
-                        <div class="flex align-items-center gap-2">
-                            <img 
-                                src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png" 
-                                style="width: 18px" />
-                            <div>{{ country.name }}</div>
-                        </div>
-                    </ng-template>
-            </p-multiSelect>
-          </app-label-wrapper>
-          <div class="flex justify-end"><p-button label="lưu" styleClass="w-20" rounded/></div>
-        </div>
-      </form>
-    </p-panel>
+  <p-panel [toggleable]="true" [collapsed]="true">
+    <ng-template pTemplate="header">
+      <div class="flex items-center justify-between w-full">
+        <span class="flex flex-col font-bold">
+          Cấp quyền tài khoản
+        </span>
+      </div>
+    </ng-template>
+    <form>
+      <div class="flex flex-col gap-4">
+        <app-label-wrapper idLabel="userRole" label="Tài khoản user" [isRequired]="true">
+          <p-multiSelect inputId="userRole" [options]="[]" placeholder="Chọn tài khoản" optionLabel="label"
+            optionValue="value">
+            <ng-template let-value pTemplate="selectedItems">
+              @for(option of value; track option) {
+              <div class="inline-flex align-items-center gap-2 px-1">
+                <img src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png"
+                  style="width: 18px" />
+                <div>{{ option.name }},</div>
+              </div>
+              }
+            </ng-template>
+            <ng-template let-country pTemplate="item">
+              <div class="flex align-items-center gap-2">
+                <img src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png"
+                  style="width: 18px" />
+                <div>{{ country.name }}</div>
+              </div>
+            </ng-template>
+          </p-multiSelect>
+        </app-label-wrapper>
+        <app-label-wrapper idLabel="adminRole" label="Tài khoản admin" [isRequired]="true">
+          <p-multiSelect inputId="adminRole" [options]="[]" placeholder="Chọn tài khoản" optionLabel="label"
+            optionValue="value">
+            <ng-template let-value pTemplate="selectedItems">
+              @for(option of value; track option) {
+              <div class="inline-flex align-items-center gap-2 px-1">
+                <img src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png"
+                  style="width: 18px" />
+                <div>{{ option.name }},</div>
+              </div>
+              }
+            </ng-template>
+            <ng-template let-country pTemplate="item">
+              <div class="flex align-items-center gap-2">
+                <img src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png"
+                  style="width: 18px" />
+                <div>{{ country.name }}</div>
+              </div>
+            </ng-template>
+          </p-multiSelect>
+        </app-label-wrapper>
+        <app-label-wrapper idLabel="superAdminRole" label="Tài khoản super admin" [isRequired]="true">
+          <p-multiSelect inputId="superAdminRole" [options]="[]" placeholder="Chọn tài khoản" optionLabel="label"
+            optionValue="value">
+            <ng-template let-value pTemplate="selectedItems">
+              @for(option of value; track option) {
+              <div class="inline-flex align-items-center gap-2 px-1">
+                <img src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png"
+                  style="width: 18px" />
+                <div>{{ option.name }},</div>
+              </div>
+              }
+            </ng-template>
+            <ng-template let-country pTemplate="item">
+              <div class="flex align-items-center gap-2">
+                <img src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png"
+                  style="width: 18px" />
+                <div>{{ country.name }}</div>
+              </div>
+            </ng-template>
+          </p-multiSelect>
+        </app-label-wrapper>
+        <div class="flex justify-end"><p-button label="Lưu" styleClass="w-20" rounded /></div>
+      </div>
+    </form>
+  </p-panel>
   }
   <p-panel [toggleable]="true" [collapsed]="true">
     <ng-template pTemplate="header">
@@ -208,5 +198,5 @@
       </div>
     </ng-template>
     <app-terms-content></app-terms-content>
-</p-panel>
+  </p-panel>
 </div>

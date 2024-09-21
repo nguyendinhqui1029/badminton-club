@@ -2,21 +2,20 @@
   <div class="flex p-4 bg-white rounded-xl justify-between">
     <h3 class="font-bold text-xl leading-10">Điểm của bạn</h3>
     <div class="flex gap-2  items-center">
-      <span class="text-base font-bold text-secondary-color">0</span><img class="w-12 h-12" src="assets/images/coin.webp"/>
+      <span class="text-base font-bold text-secondary-color">{{point()}}</span><img class="w-12 h-12" src="assets/images/coin.webp"/>
     </div>
   </div>
   <div class="p-4 bg-white rounded-xl">
     <h3 class="font-bold text-xl">Sự kiện</h3>
+  
     @if(isEventLoading()) {
-      <div class="flex flex-col justify-between items-center">
-        <img class="w-36 h-36" src="assets/images/loading.webp"/>
-      </div>
+      <app-loading/>
     } @else {
       <p-carousel 
       [value]="events" 
       [numVisible]="2" 
-      [numScroll]="2" 
-      [circular]="true" 
+      [numScroll]="1" 
+      [circular]="false" 
       autoplayInterval="3000"
       [responsiveOptions]="responsiveOptions">
           <ng-template let-event pTemplate="item">
@@ -40,9 +39,7 @@
   <div class="flex flex-col gap-4 p-4 bg-white rounded-xl">
     <h3 class="font-bold text-xl">Đổi điểm lấy phụ kiện</h3>
     @if(isAccessoryRewardsLoading()) {
-      <div class="flex flex-col justify-between items-center">
-        <img class="w-36 h-36" src="assets/images/loading.webp"/>
-      </div>
+      <app-loading/>
     } @else {
       <p class="text-md text-center">Chưa có dữ liệu</p>
     }
@@ -51,9 +48,7 @@
   <div class="flex flex-col gap-4 p-4 bg-white rounded-xl">
     <h3 class="font-bold text-xl">Đổi điểm lấy vé xem phim</h3>
     @if(isFilmTicketRewardLoading()) {
-      <div class="flex flex-col justify-between items-center">
-        <img class="w-36 h-36" src="assets/images/loading.webp"/>
-      </div>
+      <app-loading/>
     } @else {
       <p class="text-md text-center">Chưa có dữ liệu</p>
     }

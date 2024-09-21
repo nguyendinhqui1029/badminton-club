@@ -1,11 +1,12 @@
 import { Component, EventEmitter, inject, OnInit, Output, signal } from '@angular/core';
+import { LoadingComponent } from '@app/components/loading/loading.component';
 import { PaymentService } from '@app/services/payment.service';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 
 @Component({
   selector: 'app-scan-qr-dialog',
   standalone: true,
-  imports: [],
+  imports: [LoadingComponent],
   templateUrl: './scan-qr-dialog.component.html',
   styleUrl: './scan-qr-dialog.component.scss'
 })

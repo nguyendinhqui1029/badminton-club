@@ -30,7 +30,7 @@ export interface UserResponse {
     avatar: string;
     birthday: Date;
     idFriends: UserInfoSearch[];
-    status: 'BLOCK' | 'WAITING' | 'ON' | 'OFF';
+    status: 'ON' | 'OFF';
     createdAt: Date;
     updatedAt: Date;
 }
@@ -45,9 +45,11 @@ export interface UserInfoWithIdFriendResponse {
     avatar: string;
     birthday: Date;
     idFriends: string[];
-    status: 'BLOCK' | 'WAITING' | 'ON' | 'OFF';
+    status: 'ON' | 'OFF';
     createdAt: Date;
     updatedAt: Date;
+    accountType: string;
+    gender: string;
 }
 
 export interface UserLoginResponse {
@@ -60,6 +62,9 @@ export interface UserLoginResponse {
     avatar: string;
     birthday: string;
     idFriends: string[];
+    gender: string;
+    accountType: string;
+    status: string;
 }
 
 export interface UserRequestBody {
@@ -69,7 +74,7 @@ export interface UserRequestBody {
     name: string;
     password:string;
     birthday: Date;
-    status: 'BLOCK' | 'WAITING' | 'ON' | 'OFF';
+    status: 'ON' | 'OFF';
     gender: typeof genderType;
     accountType: typeof accountType;
 }

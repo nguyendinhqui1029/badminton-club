@@ -201,7 +201,7 @@ export class AddPostDialogComponent implements OnInit, OnDestroy {
     if(this.postFormGroup.valid) {
       (this.idPost ? this.postService.updatePost(this.idPost,this.initRequestBody()) : this.postService.createPost(this.initRequestBody())).subscribe((response)=>{
         if(response.statusCode !== 200) {
-          this.messageService.add({ severity: 'danger', summary: 'Thông báo', detail: 'Có lỗi xảy ra trong quá trình tạo. Vui lòng tạo lại.' })
+          this.messageService.add({ severity: 'error', summary: 'Thông báo', detail: 'Có lỗi xảy ra trong quá trình tạo. Vui lòng tạo lại.' })
           return;
         }
         this.fileUploadRef.requestChangeStatusFile(()=>{

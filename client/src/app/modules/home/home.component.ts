@@ -11,11 +11,12 @@ import { path } from '@app/constants/path.constant';
 import { RouterLink } from '@angular/router';
 import { PushNotificationService } from '@app/services/push-notification.service';
 import { Title } from '@angular/platform-browser';
+import { LoadingComponent } from '@app/components/loading/loading.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterLink, ButtonModule, CreatePostComponent, CardComponent],
+  imports: [RouterLink, ButtonModule, CreatePostComponent, CardComponent, LoadingComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })

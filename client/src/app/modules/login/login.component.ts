@@ -35,6 +35,10 @@ export class LoginComponent implements OnInit {
 
   constructor() {
     afterNextRender(() => {
+      if(this.userService.currentUserLogin.getValue().id) {
+        this.router.navigate([path.HOME.ROOT]);
+        return;
+      }
       const phone = localStorage.getItem(localStorageKey.PHONE);
       const password = localStorage.getItem(localStorageKey.PASSWORD);
       const isRememberMeBoolean = localStorage.getItem(localStorageKey.IS_REMEMBER_ME) === 'true' && phone !== '' && password !== '';

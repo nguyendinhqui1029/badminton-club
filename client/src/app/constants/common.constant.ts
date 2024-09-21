@@ -1,4 +1,5 @@
 import { PostResponseValue } from "@app/models/post.model"
+import { UserLoginResponse } from "@app/models/user.model"
 
 export const scopePost = {
     EVERYONE: 'Everyone',
@@ -52,7 +53,7 @@ export const socialType = {
     LINKEDIN: 'Linkedin'
 }
 
-export const CURRENT_USER_INIT = {
+export const CURRENT_USER_INIT: UserLoginResponse = {
     id: '',
     point: 0,
     email: '',
@@ -61,7 +62,10 @@ export const CURRENT_USER_INIT = {
     role: [],
     avatar: '',
     birthday: '',
-    idFriends: []
+    idFriends: [],
+    accountType: accountType.FIXED_PLAYER,
+    gender: genderType.MALE,
+    status: '',
 };
 
 export const INIT_POST_VALUE = {

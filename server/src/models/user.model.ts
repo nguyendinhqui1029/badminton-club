@@ -17,7 +17,7 @@ export interface User extends Document {
   avatar: string;
   birthday: Date;
   idFriends: string[];
-  status: 'BLOCK' | 'WAITING' | 'ON' | 'OFF';
+  status: 'ON' | 'OFF';
   gender: 'Male' | 'Female',
   accountType: 'Casual_Player' | 'Fixed_Player',
   createdAt: Date;

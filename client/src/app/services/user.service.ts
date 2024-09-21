@@ -57,4 +57,8 @@ export class UserService {
   getAllUser() {
     return this.http.get<ApiResponseValue<UserInfoWithIdFriendResponse[]>>(`${environment.apiUrl}/api/v1/user`);
   }
+
+  updateUser(body: UserRequestBody): Observable<ApiResponseValue<UserLoginResponse>> {
+    return this.http.put<ApiResponseValue<UserLoginResponse>>(`${environment.apiUrl}/api/v1/user/${body.id}`, body);
+  }
 }
