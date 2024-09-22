@@ -149,7 +149,6 @@ export class PaymentComponent implements OnInit {
         this.paymentItemSearch.set([]);
         return;
       }
-      console.log(response.data)
       this.paymentItemSearch.set(response.data.map(item => ({
         createdAt: item.createdAt || '',
         id: item.id || '',

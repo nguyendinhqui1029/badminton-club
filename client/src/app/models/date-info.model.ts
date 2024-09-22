@@ -7,6 +7,7 @@ export interface DateInfo {
   isCurrentDay: boolean;
   attendances: Attendance[];
   dayOfWeek: string;
+  isOff: boolean,
   isPlay: boolean;
   isLated: boolean;
   isDisabled: boolean;

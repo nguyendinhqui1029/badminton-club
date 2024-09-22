@@ -23,4 +23,5 @@ export interface SettingsResponseValue {
   twentyMinuteLateFee: string;
   absenceFee: string;
   latePaymentFee: string;
+  updatedAt: string;
 }

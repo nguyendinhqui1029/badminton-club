@@ -45,11 +45,11 @@ const commentSchema = new mongoose.Schema({
     trim: true
   }],
   createdAt: {
-    type: String,
+    type: Date,
     default: getUTCDate(new Date())
   },
   updatedAt: {
-    type: String,
+    type: Date,
     default: getUTCDate(new Date())
   }
 });

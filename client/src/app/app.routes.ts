@@ -38,10 +38,6 @@ export const routes: Routes = [
       {
         path: path.PAYMENT.ROOT, loadChildren: () => import('./modules/payment/payment.routes').then(module => module.paymentRoutes),
         canActivate: [AuthGuard]
-      },
-      {
-        path: path.SHOP.ROOT, loadChildren: () => import('./modules/shop/shop.routes').then(module => module.shopRoutes),
-        canActivate: [AuthGuard]
       }
     ]
   },

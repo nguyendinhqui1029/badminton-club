@@ -4,6 +4,8 @@ import express from 'express';
 const router = express.Router();
 const attendanceController = new AttendanceController();
 
+router.get('/by-user', attendanceController.getAllByIdUser);
+router.get('/by-created-date', attendanceController.getAllByCreatedDate);
 router.get('/', attendanceController.getAll);
 router.get('/:id', attendanceController.getById);
 router.post('/', attendanceController.create);

@@ -4,10 +4,10 @@ import { getUTCDate } from '../utils/date.util';
 // Define interface for TypeScript type-checking
 export interface Attendance extends Document {
   amount: number;
-  isUser: string;
+  idUser: string;
   checkIn: string;
   checkout: string;
-  status: 'LATE' | 'ON_TIME' | 'OFF';
+  status: 'LATE' | 'ON_TIME' | 'OFF' | 'DONE' | 'WAITING' | 'EARLY';
   createdAt: Date;
   updatedAt: Date;
 }
@@ -17,9 +17,10 @@ const attendanceSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
-  isUser: {
-    type: String,
-    required: true
+  idUser: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User', // Tham chiếu đến model User nếu đây là một User trả lời
+    required: true,
   },
   checkIn: {
     type: String, // Sử dụng kiểu String cho thời gian, có thể chuyển đổi sau
@@ -36,11 +37,11 @@ const attendanceSchema = new mongoose.Schema({
     default: 'ON_TIME'
   },
   createdAt: {
-    type: String,
+    type: Date,
     default: getUTCDate(new Date())
   },
   updatedAt: {
-    type: String,
+    type: Date,
     default: getUTCDate(new Date())
   }
 });

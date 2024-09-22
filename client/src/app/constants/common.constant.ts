@@ -7,29 +7,29 @@ export const scopePost = {
     FRIENDS: 'Friends'
 }
 
-export const imageOrientation  = {
+export const imageOrientation = {
     LANDSCAPE: 'landscape',
     PORTRAIT: 'portrait',
     SQUARE: 'square'
 }
 
-export const accountType  = {
+export const accountType = {
     CASUAL_PLAYER: 'Casual_Player',
     FIXED_PLAYER: 'Fixed_Player'
 }
 
-export const paymentType  = {
+export const paymentType = {
     RECHARGE: 'RECHARGE',
     WITHDRAW: 'WITHDRAW'
 }
 
-export const activeAccountType  = {
+export const activeAccountType = {
     OFF: 'OFF',
     ON: 'ON'
 }
 
 
-export const genderType  = {
+export const genderType = {
     MALE: 'Male',
     FEMALE: 'Female'
 }
@@ -102,3 +102,14 @@ export const userRole = {
     ADMIN: 'admin',
     SUPPER_ADMIN: 'supperAdmin'
 }
+
+export const attendanceStatus = {
+    LATE: 'LATE',
+    ON_TIME: 'ON_TIME',
+    OFF: 'OFF',
+    DONE: 'DONE',
+    WAITING: 'WAITING',
+    EARLY: 'EARLY'
+}
+
+export const dayOfWeek = ['CN','T2', 'T3', 'T4', 'T5', 'T6', 'T7'];

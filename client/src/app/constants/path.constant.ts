@@ -24,9 +24,6 @@ export const path = {
     PAYMENT: {
         ROOT: 'payment'
     },
-    SHOP: {
-        ROOT: 'shop'
-    },
     NOT_FOUND: '**',
     NO_PERMISSION: 'no-permission',
     FEATURE_COMING_SOON: 'feature-coming-soon'

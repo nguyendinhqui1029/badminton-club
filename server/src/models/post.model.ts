@@ -76,11 +76,11 @@ const postSchema = new mongoose.Schema({
     required: true
   },
   createdAt: {
-    type: String,
+    type: Date,
     default: getUTCDate(new Date())
   },
   updatedAt: {
-    type: String,
+    type: Date,
     default: getUTCDate(new Date())
   }
 });
