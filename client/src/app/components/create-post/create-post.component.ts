@@ -19,7 +19,7 @@ import { UserService } from '@app/services/user.service';
 })
 export class CreatePostComponent implements OnInit, OnDestroy {
 
-  @Output() refreshDataListEvent = new EventEmitter();
+  @Output() eventDialogCreatePostClose = new EventEmitter();
 
   private dialogService: DialogService = inject(DialogService);
   private userService: UserService = inject(UserService);
@@ -48,7 +48,7 @@ export class CreatePostComponent implements OnInit, OnDestroy {
     if (isPlatformBrowser(this.platformId) && window.matchMedia('(max-width: 500px)').matches) {
       this.dialogService.getInstance(this.dynamicDialogRef).maximize();
     }
-    this.dynamicDialogRef.onClose.pipe(take(1)).subscribe(() => this.refreshDataListEvent.emit())
+    this.dynamicDialogRef.onClose.pipe(take(1)).subscribe(() => this.eventDialogCreatePostClose.emit())
   }
 
   ngOnDestroy() {

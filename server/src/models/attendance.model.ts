@@ -2,17 +2,20 @@ import mongoose, { Schema, Document } from 'mongoose';
 import { getUTCDate } from '../utils/date.util';
 
 // Define interface for TypeScript type-checking
-export interface Attendance extends Document {
+export interface Attendance {
+  _id?: mongoose.Types.ObjectId,
   amount: number;
-  idUser: string;
-  checkIn: string;
-  checkout: string;
-  status: 'LATE' | 'ON_TIME' | 'OFF' | 'DONE' | 'WAITING' | 'EARLY';
-  createdAt: Date;
-  updatedAt: Date;
+  idUser: mongoose.Schema.Types.ObjectId;
+  checkIn: Date | null;
+  checkout: Date | null;
+  participationDate: Date | null;
+  status?: 'LATE' | 'ON_TIME' | 'OFF' | 'DONE' | 'WAITING' | 'EARLY';
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 const attendanceSchema = new mongoose.Schema({
+  _id: { type: mongoose.Types.ObjectId, default: () => new mongoose.Types.ObjectId() },
   amount: {
     type: Number,
     required: true
@@ -23,18 +26,18 @@ const attendanceSchema = new mongoose.Schema({
     required: true,
   },
   checkIn: {
-    type: String, // Sử dụng kiểu String cho thời gian, có thể chuyển đổi sau
-    required: true
+    type: Date,
   },
   checkout: {
-    type: String, // Sử dụng kiểu String cho thời gian, có thể chuyển đổi sau
-    required: true
+    type: Date,
+  },
+  participationDate: {
+    type: Date,
   },
   status: {
     type: String,
-    enum: ['LATE', 'ON_TIME', 'OFF'],
-    required: true,
-    default: 'ON_TIME'
+    enum: ['LATE' , 'ON_TIME' , 'OFF' , 'DONE' , 'WAITING' , 'EARLY'],
+    default: 'WAITING'
   },
   createdAt: {
     type: Date,

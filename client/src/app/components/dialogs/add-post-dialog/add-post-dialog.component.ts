@@ -23,6 +23,7 @@ import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { TagFeelingDialogComponent } from '@app/components/dialogs/tag-feeling-dialog/tag-feeling-dialog.component';
 import { DataSearchGroup } from '@app/models/search-group.model';
+import { SocketService } from '@app/services/socket.service';
 
 interface UserStatus { avatar: string; userName: string; feeling?: {id: string; icon: string; value: string}; friends: string[];location: string;};
 @Component({
@@ -54,6 +55,7 @@ export class AddPostDialogComponent implements OnInit, OnDestroy {
   private formBuilder: FormBuilder = inject(FormBuilder);
   private postService: PostService = inject(PostService);
   private userService: UserService = inject(UserService);
+  private socketService: SocketService = inject(SocketService);
   private messageService: MessageService = inject(MessageService);
 
   private userUnSubscription!: Subscription;
@@ -205,8 +207,9 @@ export class AddPostDialogComponent implements OnInit, OnDestroy {
           return;
         }
         this.fileUploadRef.requestChangeStatusFile(()=>{
+          this.socketService.sendNotificationPostCreate();
+          this.messageService.add({severity: 'success', summary: 'Thông báo', detail: 'Bài viết được tạo thành công!' });
           this.dynamicDialogRef.close();
-          this.messageService.add({severity: 'success', summary: 'Thông báo', detail: 'Bài viết được tạo thành công!' })
         })
       });
     }

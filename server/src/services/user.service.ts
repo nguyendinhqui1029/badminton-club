@@ -5,6 +5,7 @@ import env from '../config/env';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import mongoose from "mongoose";
 import EmailService from "./email.service";
+import { userStatus } from "../constants/common.constants";
 
 class UserService {
   public async searchAllUsers(idUser: string, keyword: string): Promise<any[]> {
@@ -66,8 +67,8 @@ class UserService {
     return await UserModel.find({ name: { $regex: regex } }).sort({ name: 1 });
   }
   
-  public async getAllUsers(): Promise<User[]> {
-    const users = await UserModel.find({status: 'ON'},'point name email phone avatar birthday gender createdAt');
+  public async getAllUsers(status?: string): Promise<User[]> {
+    const users = await UserModel.find({status: status}, '_id point name email phone avatar birthday gender accountType status createdAt');
     return users;
   }
 

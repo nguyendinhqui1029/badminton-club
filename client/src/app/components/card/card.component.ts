@@ -233,6 +233,7 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
             return;
           }
           this.refreshDataListEvent.emit();
+          this.socketService.sendDeletePost(this.itemClone().id!);
           this.messageService.add({ severity: 'success', summary: 'Xác nhận', detail: 'Xoá thành công.' });
         });
       },

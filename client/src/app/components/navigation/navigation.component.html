@@ -43,7 +43,7 @@
     <span [routerLink]="link.NOTIFY.ROOT" routerLinkActive="border-b-2 border-secondary-color"
       class="relative pi pi-bell text-3xl cursor-pointer">
       @if(countNotifyUnread()) {
-        <span class="flex items-center justify-center absolute left-3 bottom-4 w-7 aspect-square bg-secondary-color text-white font-bold text-xs rounded-full ">{{countNotifyUnread() | formatLargeNumber}}</span>
+        <span class="flex items-center justify-center absolute left-3 bottom-4 min-w-6 w-fit aspect-square bg-secondary-color text-white font-bold text-xs rounded-full ">{{countNotifyUnread() | formatLargeNumber}}</span>
       }
     </span>
       @if(currentUser().id) {

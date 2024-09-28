@@ -26,7 +26,7 @@ export default class CommonController {
         result.push(...userResult.map((item)=>({
           type: 'USER',
           name: item.name,
-          id: item.id,
+          id: item._id,
           avatar: item.avatar})));
       }
       if(postResult?.length) {

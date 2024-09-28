@@ -11,6 +11,7 @@ import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { isPlatformBrowser } from '@angular/common';
 import { SearchDialogComponent } from '@app/components/dialogs/search-dialog/search-dialog.component';
 import { LogoComponent } from '@app/components/logo/logo.component';
+import { NotificationService } from '@app/services/notification.service';
 
 @Component({
   selector: 'app-navigation',
@@ -26,6 +27,7 @@ export class NavigationComponent implements OnInit, OnDestroy {
   private userUnSubscription!: Subscription;
   private route: Router = inject(Router);
   private userService: UserService = inject(UserService);
+  private notificationService: NotificationService = inject(NotificationService);
   private dynamicSearchDialogRef: DynamicDialogRef = inject(DynamicDialogRef);
   private dialogService: DialogService = inject(DialogService);
   private platformId: Object = inject(PLATFORM_ID);
@@ -35,9 +37,11 @@ export class NavigationComponent implements OnInit, OnDestroy {
   countNotifyUnread = signal<number>(0);
 
   ngOnInit(): void {
+    this.countNotifyUnread.set(this.notificationService.getCountNewNotification.getValue());
     this.userUnSubscription = this.userService.currentUserLogin.subscribe((value: UserLoginResponse) => {
       this.currentUser.set(value);
     })
+    this.notificationService.getCountNewNotification.subscribe(value=>this.countNotifyUnread.set(value));
   }
 
   onLogoutClick() {

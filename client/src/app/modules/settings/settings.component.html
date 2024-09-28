@@ -67,7 +67,7 @@
         <app-label-wrapper idLabel="radian" label="Bán kính" [isRequired]="true">
           <input class="w-full" formControlName="radian"  id="radian" type="text" pInputText />
         </app-label-wrapper>
-        <app-label-wrapper idLabel="checkInDate" label="Thời gian chơi" [isRequired]="true">
+        <app-label-wrapper idLabel="checkInDate" label="Thời gian điểm danh">
           <app-day-time-picker formControlName="checkInDate"></app-day-time-picker>
         </app-label-wrapper>
         <div class="flex justify-end"><p-button label="Lưu" styleClass="w-20" rounded (click)="handleSaveCheckInInfo()"/></div>

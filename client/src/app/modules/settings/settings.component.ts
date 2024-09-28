@@ -109,7 +109,7 @@ export class SettingsComponent implements OnInit {
         longitude: [this.setting?.checkInLocationLongitude || '', ValidatorService.fieldRequired('Kinh độ không được để trống.')],
         latitude: [this.setting?.checkInLocationLatitude || '', ValidatorService.fieldRequired('Vĩ độ không được để trống.')],
         radian: [this.setting?.checkInRadian || '', ValidatorService.fieldRequired('Bán kính không được để trống.')],
-        checkInDate: [checkInDate || [], ValidatorService.fieldRequired('Họ tên không được để trống.')]
+        checkInDate: [checkInDate || [], ValidatorService.fieldRequired('Thời gian điểm danh không được để trống.')]
       });
       this.feeForm = this.formBuilder.group({
         earlyAttendanceReward: [this.setting?.earlyAttendanceReward || 0],
@@ -139,7 +139,7 @@ export class SettingsComponent implements OnInit {
         checkInLocationLongitude: this.checkInInfoForm.getRawValue().longitude,
         checkInLocationLatitude: this.checkInInfoForm.getRawValue().latitude,
         checkInRadian: this.checkInInfoForm.getRawValue().radian,
-        requiredCheckInTime: this.checkInInfoForm.getRawValue().checkInDate.items.filter((item:DayTimePicker)=>item.startTime && item.endTime)
+        requiredCheckInTime: this.checkInInfoForm.getRawValue().checkInDate.filter((item:DayTimePicker)=>item.startTime && item.endTime)
       };
       (this.setting?.id ?
         this.settingsService.updateSetting(this.setting.id, body)

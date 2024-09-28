@@ -1,5 +1,17 @@
 import cron from 'node-cron';
 
+export const taskInitAttendance = (schedule: string, callback: Function) => {
+  return cron.schedule(schedule, () => {
+    callback();
+  });
+}
+
+export const taskCheckAttendance = (schedule: string, callback: Function) => {
+  return cron.schedule(schedule, () => {
+    callback();
+  });
+}
+
 export const startCronJobs = () => {
   // Nhắc nhở chơi cầu lông thứ 2 hàng tuần
   const notifyPlayBadminton = () => {

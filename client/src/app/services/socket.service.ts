@@ -67,4 +67,41 @@ export class SocketService {
       };
     });
   }
+
+  sendDeletePost(idPost: string) {
+    this.socket.emit('delete-post', idPost);
+  }
+
+  onPostDelete() {
+    return new Observable<string>(observer => {
+      if (this.isBrowser) {
+        this.socket.on('has-post-delete', (id: string) => {
+          observer.next(id);
+        });
+      }
+      
+      return () => {
+        this.socket.off('has-post-delete');
+      };
+    });
+  }
+
+
+  sendNotificationPostCreate() {
+    this.socket.emit('create-post-notify');
+  }
+
+  onNotification() {
+    return new Observable<void>(observer => {
+      if (this.isBrowser) {
+        this.socket.on('has-new-notification', () => {
+          observer.next();
+        });
+      }
+      
+      return () => {
+        this.socket.off('has-new-notification');
+      };
+    });
+  }
 }

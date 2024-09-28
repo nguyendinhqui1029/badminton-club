@@ -14,6 +14,7 @@ export const ROUTER_PATH = {
     EMAIL: 'email',
     LOCATION: 'location',
     QR_CODE: 'qr-code',
+    PUSH_NOTIFICATION: 'push-notification',
     NOTIFICATION: 'notification',
     COMMON: 'common'
 }
@@ -21,4 +22,9 @@ export const ROUTER_PATH = {
 export const accountType  = {
     CASUAL_PLAYER: 'Casual_Player',
     FIXED_PLAYER: 'Fixed_Player'
+}
+
+export const userStatus = {
+    ON: 'ON',
+    OFF: 'OFF'
 }

@@ -1,7 +1,7 @@
 @if(!isLoading()) {
   <section class="w-full flex flex-col gap-2">
     @if(currentUserLogin().id) {
-      <app-create-post (refreshDataListEvent)="handleReFreshDataList()"></app-create-post>
+      <app-create-post (eventDialogCreatePostClose)="handleReFreshDataList()"></app-create-post>
     } @else {
       <div class="flex rounded-xl bg-white w-full p-4">
         <p class="text-center">

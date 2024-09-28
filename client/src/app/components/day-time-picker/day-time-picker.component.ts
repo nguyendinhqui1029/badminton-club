@@ -43,7 +43,7 @@ export class DayTimePickerComponent implements ControlValueAccessor, OnInit {
       (this.formGroup.get('items') as FormArray).push(this.formBuilder.group({dayOfWeek: item.value, startTime: '', endTime:  ''}));
     });
     this.formGroup.valueChanges.subscribe(value=>{
-      this.onChange?.(value);
+      this.onChange?.(value.items);
       this.onTouched?.();
     })
   }

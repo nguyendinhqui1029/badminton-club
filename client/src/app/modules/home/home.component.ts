@@ -9,9 +9,9 @@ import { CURRENT_USER_INIT } from '@app/constants/common.constant';
 import { ButtonModule } from 'primeng/button';
 import { path } from '@app/constants/path.constant';
 import { RouterLink } from '@angular/router';
-import { PushNotificationService } from '@app/services/push-notification.service';
 import { Title } from '@angular/platform-browser';
 import { LoadingComponent } from '@app/components/loading/loading.component';
+import { SocketService } from '@app/services/socket.service';
 
 @Component({
   selector: 'app-home',
@@ -23,9 +23,9 @@ import { LoadingComponent } from '@app/components/loading/loading.component';
 export class HomeComponent implements OnInit {
   private userService: UserService = inject(UserService);
   private postService: PostService = inject(PostService);
-  private title: Title = inject(Title);
+  private socketService: SocketService = inject(SocketService);
 
-  private pushNotificationService: PushNotificationService = inject(PushNotificationService);
+  private title: Title = inject(Title);
 
   posts = signal<PostResponseValue[]>([]);
   currentUserLogin = signal<UserLoginResponse>(CURRENT_USER_INIT);
@@ -46,10 +46,21 @@ export class HomeComponent implements OnInit {
     this.userService.currentUserLogin.subscribe((userInfo)=>{
       this.currentUserLogin.set(userInfo);
     })
+    this.socketService.onPostDelete().subscribe((idPost: string) => {
+      this.posts.update(value  => {
+        const index = value.findIndex(item=>item.id === idPost);
+        if(index === -1) return value;
+     
+        value.splice(index,1);
+        return value;
+      });
+    });
     this.getDataList();
   }
 
   handleReFreshDataList() {
-    this.getDataList();
+    setTimeout(() => {
+      this.getDataList();
+    }, 1000);
   }
 }

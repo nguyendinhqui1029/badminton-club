@@ -7,7 +7,8 @@ export interface SearchUserResponse {
   avatar: string;
 }
 // Define interface for TypeScript type-checking
-export interface User extends Document {
+export interface User {
+  _id?: mongoose.Schema.Types.ObjectId;
   point: number;
   email: string;
   phone: string;
@@ -26,6 +27,7 @@ export interface User extends Document {
 
 // Define Mongoose schema for User model
 const userSchema: Schema = new Schema({
+  _id: { type: mongoose.Types.ObjectId, default: () => new mongoose.Types.ObjectId() },
   point: {
     type: Number,
     default: 0
@@ -83,8 +85,8 @@ const userSchema: Schema = new Schema({
   }],
   status: {
     type: String,
-    enum: ['BLOCK', 'WAITING', 'ON', 'OFF'],
-    default: 'WAITING'
+    enum: ['ON', 'OFF'],
+    default: 'ON'
   },
   createdAt: {
     type: String,

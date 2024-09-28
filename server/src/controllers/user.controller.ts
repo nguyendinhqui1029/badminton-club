@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import UserService from '../services/user.service';
+import { userStatus } from '../constants/common.constants';
 
 class UserController {
   private userService: UserService;
@@ -32,7 +33,8 @@ class UserController {
 
   public getAllUsers = async (req: Request, res: Response): Promise<void> => {
     try {
-      const users = await this.userService.getAllUsers();
+      const status = req.query['status']?.toString() || userStatus.ON;
+      const users = await this.userService.getAllUsers(status);
       res.status(200).json({
         statusCode: 200,
         statusText: 'Get user is successful.',
