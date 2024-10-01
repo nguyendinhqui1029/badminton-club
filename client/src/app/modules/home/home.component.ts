@@ -11,7 +11,7 @@ import { path } from '@app/constants/path.constant';
 import { RouterLink } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { LoadingComponent } from '@app/components/loading/loading.component';
-import { SocketService } from '@app/services/socket.service';
+import { PostSocketService } from '@app/services/sockets/post-socket.service';
 
 @Component({
   selector: 'app-home',
@@ -23,7 +23,7 @@ import { SocketService } from '@app/services/socket.service';
 export class HomeComponent implements OnInit {
   private userService: UserService = inject(UserService);
   private postService: PostService = inject(PostService);
-  private socketService: SocketService = inject(SocketService);
+  private postSocketService: PostSocketService = inject(PostSocketService);
 
   private title: Title = inject(Title);
 
@@ -33,7 +33,7 @@ export class HomeComponent implements OnInit {
   isLoading = signal<boolean>(true);
 
   getDataList() {
-    this.postService.getAllPost().subscribe((response)=>{
+    this.postService.getAllPost(this.currentUserLogin().id).subscribe((response)=>{
       if(response.statusCode !== 200) {
         return;
       }
@@ -46,7 +46,7 @@ export class HomeComponent implements OnInit {
     this.userService.currentUserLogin.subscribe((userInfo)=>{
       this.currentUserLogin.set(userInfo);
     })
-    this.socketService.onPostDelete().subscribe((idPost: string) => {
+    this.postSocketService.onPostDelete().subscribe((idPost: string) => {
       this.posts.update(value  => {
         const index = value.findIndex(item=>item.id === idPost);
         if(index === -1) return value;
@@ -55,12 +55,19 @@ export class HomeComponent implements OnInit {
         return value;
       });
     });
+    this.postSocketService.onPostChange().subscribe(post=>{
+      this.posts.update(value  => {
+        const index = value.findIndex(item=>item.id === post.id);
+        if(index === -1) {
+          value.unshift(post);
+          return value;
+        }
+     
+        value[index]=post;
+        return value;
+      });
+    });
+    
     this.getDataList();
-  }
-
-  handleReFreshDataList() {
-    setTimeout(() => {
-      this.getDataList();
-    }, 1000);
   }
 }

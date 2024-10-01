@@ -1,7 +1,7 @@
 @if(!isLoading()) {
   <section class="w-full flex flex-col gap-2">
     @if(currentUserLogin().id) {
-      <app-create-post (eventDialogCreatePostClose)="handleReFreshDataList()"></app-create-post>
+      <app-create-post></app-create-post>
     } @else {
       <div class="flex rounded-xl bg-white w-full p-4">
         <p class="text-center">
@@ -15,7 +15,7 @@
       </div>
     }
     @for(item of posts(); track item) {
-    <app-card [item]="item" (refreshDataListEvent)="handleReFreshDataList()"></app-card>
+    <app-card [item]="item"></app-card>
     }
   </section>
 } @else {

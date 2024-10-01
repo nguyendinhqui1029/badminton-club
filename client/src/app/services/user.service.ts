@@ -46,8 +46,16 @@ export class UserService {
     return this.http.post<ApiResponseValue<UserLoginResponse>>(`${environment.apiUrl}/api/v1/user`, body);
   }
 
-  addFriend(body: {id: string, idFriends: string[]}): Observable<ApiResponseValue<UserLoginResponse>> {
+  addFriend(body: {id: string, idFriend?: string, idFriendWaiting?: string}): Observable<ApiResponseValue<UserLoginResponse>> {
     return this.http.put<ApiResponseValue<UserLoginResponse>>(`${environment.apiUrl}/api/v1/user/friend/add`, body);
+  }
+
+  unFriend(body: {id: string, idFriend: string}): Observable<ApiResponseValue<UserLoginResponse>> {
+    return this.http.put<ApiResponseValue<UserLoginResponse>>(`${environment.apiUrl}/api/v1/user/friend/remove`, body);
+  }
+
+  denyFriend(body: {id: string, idFriend: string}): Observable<ApiResponseValue<UserLoginResponse>> {
+    return this.http.put<ApiResponseValue<UserLoginResponse>>(`${environment.apiUrl}/api/v1/user/friend/deny`, body);
   }
 
   getUserById(id: string) {

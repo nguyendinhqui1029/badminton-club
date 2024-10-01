@@ -7,22 +7,27 @@ import { SearchUserResponse } from './user.model';
 export interface Notification {
   _id?: mongoose.Types.ObjectId;
   read: mongoose.Types.ObjectId[];
+  title: string;
   content: string;
   fromUser: mongoose.Types.ObjectId | null | SearchUserResponse,
   navigateToDetailUrl: string;
   to: mongoose.Types.ObjectId[];
-  status: 'DONE' | 'IN_PROCESS',
+  status: 'DONE' | 'IN_PROCESS' | 'DENIED',
   createdAt: Date;
+  type: string;
 }
 
 export interface NotificationToUserResponse {
   _id?: mongoose.Types.ObjectId;
+  title: string;
   content: string;
   fromUser: SearchUserResponse | null,
   navigateToDetailUrl: string;
   read: mongoose.Types.ObjectId[];
   isRead: boolean;
   createdAt: Date;
+  type: string;
+  to: mongoose.Types.ObjectId[];
 }
 
 export interface FetchNotificationToUserRequestParams {
@@ -30,6 +35,7 @@ export interface FetchNotificationToUserRequestParams {
   limit: number;
   page: number;
   status: string;
+  type?: string;
 }
 
 const notificationSchema = new mongoose.Schema({
@@ -43,13 +49,19 @@ const notificationSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User', // Tham chiếu đến model User nếu đây là một User trả lờ
   },
-  content: {
+  title: {
     type: String,
     required: true
   },
-  navigateToDetailUrl: {
+  type: {
     type: String,
     required: true
+  },
+  content: {
+    type: String
+  },
+  navigateToDetailUrl: {
+    type: String,
   },
   to: [{
     type: mongoose.Schema.Types.ObjectId,
@@ -58,16 +70,16 @@ const notificationSchema = new mongoose.Schema({
   }],
   status: {
     type: String,
-    enum: ['DONE' , 'IN_PROCESS'],
+    enum: ['DONE' , 'IN_PROCESS', 'DENIED'],
     default: 'IN_PROCESS'
   },
   createdAt: {
     type: Date,
-    default: getUTCDate(new Date())
+    default: new Date(getUTCDate(new Date()))
   },
   updatedAt: {
     type: Date,
-    default: getUTCDate(new Date())
+    default: new Date(getUTCDate(new Date()))
   }
 });
 // Cập nhật thời gian cập nhật mỗi khi tài liệu được lưu

@@ -1,26 +1,29 @@
 import mongoose from 'mongoose';
 import { Request, Response } from 'express';
 import NotificationService from '../services/notification.service';
+import UserService from '../services/user.service';
 
 export default class NotificationController {
   private notificationService: NotificationService;
-
+  private userService: UserService;
   constructor() {
     this.notificationService = new NotificationService();
+    this.userService = new UserService();
   }
 
-  public getAllNotificationToUser = async (req: Request, res: Response): Promise<void> => {
+  public getAllNotificationFromUser = async (req: Request, res: Response): Promise<void> => {
     try {
       const params = {
         idUser: req.query['idUser']?.toString() || '',
         limit: Number(req.query['limit']?.toString()),
         page: Number(req.query['page']?.toString()),
-        status: req.query['status']?.toString() || 'IN_PROCESS'
+        status: req.query['status']?.toString() || '',
+        type: req.query['type']?.toString() || ''
       };
-      const notificationResult = await this.notificationService.getNotificationToUser(params);
+      const notificationResult = await this.notificationService.getNotificationFromUser(params);
       res.status(200).json({
         statusCode: 200,
-        statusText: 'Get Notification is successful.',
+        statusText: 'Get AllNotificationFromUser is successful.',
         totalCount: 0,
         page: 0,
         data: notificationResult 
@@ -28,7 +31,34 @@ export default class NotificationController {
     } catch (error: any) {
       res.status(200).json({
         statusCode: 500,
-        statusText: 'Get notificationResult is fail.',
+        statusText: 'Get AllNotificationFromUser is fail.',
+        totalCount: 0,
+        page: 0,
+        data: error.message
+      });
+    }
+  };
+
+  public getAllNotificationToUser = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const params = {
+        idUser: req.query['idUser']?.toString() || '',
+        limit: Number(req.query['limit']?.toString()),
+        page: Number(req.query['page']?.toString()),
+        status: req.query['status']?.toString() || ''
+      };
+      const notificationResult = await this.notificationService.getNotificationToUser(params);
+      res.status(200).json({
+        statusCode: 200,
+        statusText: 'Get AllNotificationToUser is successful.',
+        totalCount: 0,
+        page: 0,
+        data: notificationResult 
+      });
+    } catch (error: any) {
+      res.status(200).json({
+        statusCode: 500,
+        statusText: 'Get AllNotificationToUser is fail.',
         totalCount: 0,
         page: 0,
         data: error.message
@@ -38,7 +68,19 @@ export default class NotificationController {
 
   public create = async (req: Request, res: Response): Promise<void> => {
     try {
-      const notification = await this.notificationService.create(req.body);
+      let isAllUser = !req.body['to'];
+      let to = req.body['to'] || [];
+      if(isAllUser) {
+        const users = await this.userService.getAllUsers();
+        users.forEach(item=>{
+          const userId = item._id || '';
+          const fromUser = req.body['fromUser'].toString() || '';
+          if( userId.toString() !== fromUser) {
+            to.push(item?._id );
+          }
+        });    
+      }
+      const notification = await this.notificationService.create({...req.body, to});
       res.status(200).json({
         statusCode: 200,
         statusText: 'create is successful.',

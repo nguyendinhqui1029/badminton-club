@@ -1,15 +1,20 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { SearchContainerGroupComponent } from '@app/components/search-container-group/search-container-group.component';
-import { CURRENT_USER_INIT, defaultAvatar } from '@app/constants/common.constant';
+import { CURRENT_USER_INIT, defaultAvatar, notificationStatus, notificationType } from '@app/constants/common.constant';
 import { path } from '@app/constants/path.constant';
+import { SearchByKeywordResponseValue } from '@app/models/common.model';
+import { NotificationResponseValue } from '@app/models/notify.model';
 import { DataSearchGroup } from '@app/models/search-group.model';
 import { UserLoginResponse } from '@app/models/user.model';
 import { CommonService } from '@app/services/common.service';
+import { NotificationService } from '@app/services/notification.service';
+import { NotificationSocketService } from '@app/services/sockets/notification-socket.service';
 import { UserService } from '@app/services/user.service';
 import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
+import { forkJoin } from 'rxjs';
 
 interface DataSearchMapping {
   type: 'POST' | 'EVENT' | 'USER';
@@ -30,6 +35,8 @@ export class SearchDialogComponent implements OnInit {
   private commonService: CommonService = inject(CommonService);
   private dynamicDialogRef: DynamicDialogRef = inject(DynamicDialogRef);
   private userService: UserService = inject(UserService);
+  private notificationSocketService: NotificationSocketService = inject(NotificationSocketService);
+  private notificationService: NotificationService = inject(NotificationService);
   private route: Router = inject(Router);
 
   isLoading = signal<boolean>(false);
@@ -37,8 +44,10 @@ export class SearchDialogComponent implements OnInit {
   initializeValue = signal<string[]>([]);
   defaultAvatar = defaultAvatar;
   currentUser = signal<UserLoginResponse>(CURRENT_USER_INIT);
-  friendsOfCurrentUser=signal<string[]>([])
+  friendsOfCurrentUser = signal<string[]>([]);
+  addFriendsWaitingAgree = signal<string[]>([]);
 
+  
   onCloseDialog(value: DataSearchGroup<DataSearchMapping>[]) {
     if(value.length && value[0].children[0].type === 'USER') {
       return;
@@ -52,28 +61,49 @@ export class SearchDialogComponent implements OnInit {
     this.dynamicDialogRef.close(value);
   }
 
+  initDataSearch() {
+   
+  }
+  getFriendsOfUser() {
+    this.userService.getUserById(this.currentUser().id).subscribe((response)=>{
+      this.friendsOfCurrentUser.set(response.data.idFriends || []); 
+      this.addFriendsWaitingAgree.set(response.data.idWaitingConfirmAddFriends || []);
+    });
+  }
   ngOnInit(): void {
     this.userService.currentUserLogin.subscribe((userInfo)=>{
       this.currentUser.set(userInfo);
     });
-    this.userService.getUserById(this.currentUser().id).subscribe((response)=>{
-      this.friendsOfCurrentUser.set(response.data.idFriends); 
-    });
+    this.getFriendsOfUser();
+    this.notificationSocketService.onNotification().subscribe(()=>{
+      this.getFriendsOfUser();
+    });  
+  }
+  onUnFriendClick(id: string) {
+    this.userService.unFriend({
+      id: this.currentUser().id,
+      idFriend: id
+    }).subscribe(()=>{
+      this.getFriendsOfUser();
+      this.notificationSocketService.sendNotification([id]);
+    })
   }
 
   onAddFriendClick(id: string) {
-    const tempList = [...this.friendsOfCurrentUser()];
-    const index = tempList.findIndex((item)=> item === id);
-    if(index !== -1) {
-      tempList.splice(index, 1); 
-    }else {
-      tempList.push(id);
-    }
-    this.userService.addFriend({id: this.currentUser().id, idFriends: tempList}).subscribe((response)=>{
-      if(response.statusCode !== 200) {
-        return;
-      }
-      this.friendsOfCurrentUser.set(response.data.idFriends);
+    forkJoin([this.notificationService.createNotification({
+      read: [],
+      title: `${this.currentUser().name} đã gửi lời mời kết bạn đến bạn.`,
+      content: '',
+      fromUser: this.currentUser().id,
+      navigateToDetailUrl: '',
+      to: [id],
+      type: notificationType.ADD_FRIEND,
+    }), this.userService.addFriend({
+      id: this.currentUser().id,
+      idFriendWaiting: id
+    })]).subscribe(()=>{
+      this.notificationSocketService.sendNotification([id]);
+      this.getFriendsOfUser();
     });
   }
 
@@ -81,23 +111,38 @@ export class SearchDialogComponent implements OnInit {
     this.isLoading.set(true);
     this.commonService.searchByKeyword(value).subscribe((response)=>{
       this.isLoading.set(false);
-      if(response.statusCode !== 200) {
+      if(response.statusCode !== 200 || !response.data.length) {
         this.items.set([]);
         return;
       }
-      if(!response.data.length) {
-        this.items.set([]);
-      }
       const result = [];
-      const userData = response.data.filter((item)=>item.type === 'USER' && item.id !== this.currentUser().id);
+      const userData: SearchByKeywordResponseValue[] = [];
+      const eventData: SearchByKeywordResponseValue[] = [];
+      const postData: SearchByKeywordResponseValue[] = [];
+      response.data.forEach((item)=>{
+        if(item.type === 'USER' && item.id !== this.currentUser().id) {
+          userData.push(item);
+        }
+        if(item.type === 'EVENT') {
+          eventData.push(item);
+        }
+        if(item.type === 'POST') {
+          postData.push(item);
+        }
+      });
       if(userData.length) {
         result.push({ 
           id: 'ACCOUNT', 
           groupName: 'Tài khoản',
-          children: userData
+          children: userData.map(item=>({
+            type: item.type,
+            name: item.name,
+            id: item.id,
+            avatar: item.avatar
+          })),
+          
         });
       }
-      const eventData = response.data.filter((item)=>item.type === 'EVENT');
       if(eventData.length) {
         result.push({ 
           id: 'EVENT', 
@@ -105,7 +150,6 @@ export class SearchDialogComponent implements OnInit {
           children: eventData
         });
       }
-      const postData = response.data.filter((item)=>item.type === 'POST');
       if(postData.length) {
         result.push({ 
           id: 'POST', 

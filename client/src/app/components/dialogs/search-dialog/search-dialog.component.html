@@ -7,8 +7,11 @@
         [image]="data.item?.avatar || defaultAvatar" shape="circle" />
         <span class="text-base">{{data.item?.name}}</span>
       </div>
-      @if(data.item?.type === 'USER') {
-        <p-button rounded [label]="friendsOfCurrentUser().includes(data.item?.id) ? 'Huỷ bạn' : 'Kết bạn'" (click)="onAddFriendClick(data.item?.id)"/>
+      @if(data.item?.type === 'USER' && friendsOfCurrentUser().includes(data.item.id)) {
+        <p-button outlined rounded label="Huỷ kết bạn" (click)="onUnFriendClick(data.item?.id)"/>
+      }
+      @if(data.item?.type === 'USER' && !friendsOfCurrentUser().includes(data.item.id)) {
+        <p-button [disabled]="addFriendsWaitingAgree().includes(data.item.id)" rounded label="{{addFriendsWaitingAgree().includes(data.item.id) ? 'Đã gửi': 'Kết bạn'}}" (click)="onAddFriendClick(data.item?.id)"/>
       }
     </div>
   </ng-template>

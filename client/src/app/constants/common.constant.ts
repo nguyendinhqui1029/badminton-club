@@ -113,3 +113,14 @@ export const attendanceStatus = {
 }
 
 export const dayOfWeek = ['CN','T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+
+export const notificationType = {
+    POST: 'POST',
+    ADD_FRIEND: 'ADD_FRIEND'
+}
+
+export const notificationStatus = {
+    DONE: 'DONE' ,
+     IN_PROCESS: 'IN_PROCESS' ,
+     DENIED: 'DENIED'
+}

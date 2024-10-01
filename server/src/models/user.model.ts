@@ -18,6 +18,7 @@ export interface User {
   avatar: string;
   birthday: Date;
   idFriends: string[];
+  idWaitingConfirmAddFriends: string[];
   status: 'ON' | 'OFF';
   gender: 'Male' | 'Female',
   accountType: 'Casual_Player' | 'Fixed_Player',
@@ -83,17 +84,22 @@ const userSchema: Schema = new Schema({
     ref: 'user',
     default: []
   }],
+  idWaitingConfirmAddFriends: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'user',
+    default: []
+  }],
   status: {
     type: String,
     enum: ['ON', 'OFF'],
     default: 'ON'
   },
   createdAt: {
-    type: String,
+    type: Date,
     default: getUTCDate(new Date())
   },
   updatedAt: {
-    type: String,
+    type: Date,
     default: getUTCDate(new Date())
   }
 });

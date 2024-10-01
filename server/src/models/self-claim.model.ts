@@ -9,8 +9,8 @@ export interface SelfClaim extends Document {
   idUserAccept: string[];
   idUserReject: string[];
   status: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 // Định nghĩa schema cho SelfClaim

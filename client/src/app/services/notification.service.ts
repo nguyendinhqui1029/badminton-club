@@ -20,9 +20,15 @@ export class NotificationService {
     this.countNewNotification.next(value);
   }
 
+  getAllNotificationFromUser(requestParams: NotificationRequestParams): Observable<ApiResponseValue<NotificationResponseValue[]>> {
+    const params = new HttpParams().set('idUser',requestParams.idUser).set('limit',requestParams.limit).set('page',requestParams.page).set('type',requestParams.type || '');
+    return this.http.get<ApiResponseValue<NotificationResponseValue[]>>(`${environment.apiUrl}/api/v1/notification/from`, {params});
+
+  }
+
   getAllNotificationToUser(requestParams: NotificationRequestParams): Observable<ApiResponseValue<NotificationResponseValue[]>> {
     const params = new HttpParams().set('idUser',requestParams.idUser).set('limit',requestParams.limit).set('page',requestParams.page);
-    return this.http.get<ApiResponseValue<NotificationResponseValue[]>>(`${environment.apiUrl}/api/v1/notification`, {params});
+    return this.http.get<ApiResponseValue<NotificationResponseValue[]>>(`${environment.apiUrl}/api/v1/notification/to`, {params});
 
   }
 

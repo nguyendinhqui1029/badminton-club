@@ -30,6 +30,7 @@ export interface UserResponse {
     avatar: string;
     birthday: Date;
     idFriends: UserInfoSearch[];
+    idWaitingConfirmAddFriends: UserInfoSearch[];
     status: 'ON' | 'OFF';
     createdAt: Date;
     updatedAt: Date;
@@ -45,6 +46,7 @@ export interface UserInfoWithIdFriendResponse {
     avatar: string;
     birthday: Date;
     idFriends: string[];
+    idWaitingConfirmAddFriends: string[];
     status: 'ON' | 'OFF';
     createdAt: Date;
     updatedAt: Date;

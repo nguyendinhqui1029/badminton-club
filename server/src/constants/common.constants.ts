@@ -28,3 +28,14 @@ export const userStatus = {
     ON: 'ON',
     OFF: 'OFF'
 }
+
+export const notificationType = {
+    POST: 'POST',
+    ADD_FRIEND: 'ADD_FRIEND'
+}
+
+export const scopePost = {
+    EVERYONE: 'Everyone',
+    ONLY_ME: 'Only_Me',
+    FRIENDS: 'Friends'
+}

@@ -20,8 +20,7 @@ import { environment } from '@app/environments/environment';
 import { path } from '@app/constants/path.constant';
 import { formatLargeNumber } from '@app/utils/common.util';
 import { CommentDialogComponent } from '@app/components/dialogs/comment-dialog/comment-dialog.component';
-import { SocketService } from '@app/services/socket.service';
-
+import { PostSocketService } from '@app/services/sockets/post-socket.service';
 
 interface UserStatus { avatar: string; userName: string; feeling?: { icon: string; value: string }; friends: string[]; location: string; };
 
@@ -35,8 +34,7 @@ interface UserStatus { avatar: string; userName: string; feeling?: { icon: strin
 })
 export class CardComponent implements OnDestroy, OnInit, OnChanges {
   item = input.required<PostResponseValue>();
-  @Output() refreshDataListEvent = new EventEmitter();
-  private socketService: SocketService = inject(SocketService);
+  private postSocketService: PostSocketService = inject(PostSocketService);
   private userService: UserService = inject(UserService);
   private postService: PostService = inject(PostService);
   private confirmationService: ConfirmationService = inject(ConfirmationService);
@@ -144,12 +142,12 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    this.socketService.onPostComment().subscribe(value=>{
+    this.postSocketService.onPostComment().subscribe(value=>{
       if(value === this.itemClone().id) {
         this.itemClone.update((value)=>({...value, countComment: value.countComment + 1}));
       }
     })
-    this.socketService.onPostLike().subscribe(value => {
+    this.postSocketService.onPostLike().subscribe(value => {
       if(value.id === this.itemClone().id) {
         this.itemClone.update(()=>value);
       }
@@ -232,8 +230,7 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
             this.messageService.add({ severity: 'error', summary: 'Thông báo xoá', detail: 'Bài viết chưa được xoá. Vui lòng thử lại.' })
             return;
           }
-          this.refreshDataListEvent.emit();
-          this.socketService.sendDeletePost(this.itemClone().id!);
+          this.postSocketService.sendDeletePost(this.itemClone().id!);
           this.messageService.add({ severity: 'success', summary: 'Xác nhận', detail: 'Xoá thành công.' });
         });
       },
@@ -261,7 +258,6 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
     if (isPlatformBrowser(this.platformId) && window.matchMedia('(max-width: 500px)').matches) {
       this.dialogService.getInstance(this.dynamicDialogRef).maximize();
     }
-    this.dynamicDialogRef.onClose.pipe(take(1)).subscribe(() => this.refreshDataListEvent.emit())
   }
 
   shareToSocial(type: string) {
@@ -309,7 +305,7 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
         return;
       }
       this.itemClone.set(response.data);
-      this.socketService.sendPostLike(this.itemClone());
+      this.postSocketService.sendPostLike(this.itemClone());
     });
   }
 

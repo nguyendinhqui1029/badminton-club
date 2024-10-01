@@ -9,7 +9,7 @@ import { PostResponseValue } from '@app/models/post.model';
 import { UserLoginResponse } from '@app/models/user.model';
 import { CommentService } from '@app/services/comment.service';
 import { PostService } from '@app/services/post.service';
-import { SocketService } from '@app/services/socket.service';
+import { PostSocketService } from '@app/services/sockets/post-socket.service';
 import { UserService } from '@app/services/user.service';
 import { formatLargeNumber } from '@app/utils/common.util';
 import { getTimeDifference } from '@app/utils/date.util';
@@ -35,7 +35,7 @@ interface UserStatus { avatar: string; userName: string; feeling?: { id: string;
 })
 export class CommentDialogComponent implements OnInit {
   private postService: PostService = inject(PostService);
-  private socketService: SocketService = inject(SocketService);
+  private postSocketService: PostSocketService = inject(PostSocketService);
   private userService: UserService = inject(UserService);
   private dialogConfig: DynamicDialogConfig = inject(DynamicDialogConfig);
   private dynamicDialogRef: DynamicDialogRef = inject(DynamicDialogRef);
@@ -174,11 +174,11 @@ export class CommentDialogComponent implements OnInit {
   }
 
   onCommentAdded() {
-    this.socketService.sendPostComment(this.idPost())
+    this.postSocketService.sendPostComment(this.idPost())
   }
 
   ngOnInit(): void {
-    this.socketService.onPostComment().subscribe((value: string)=>{
+    this.postSocketService.onPostComment().subscribe((value: string)=>{
       if(value === this.idPost()) {
         this.loadCommentList();
       }

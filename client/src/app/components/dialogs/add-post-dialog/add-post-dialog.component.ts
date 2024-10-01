@@ -4,7 +4,7 @@ import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dy
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { DropdownModule } from 'primeng/dropdown';
 import { CommonOption } from '@app/models/common-option.model';
-import { defaultAvatar, scopePost } from '@app/constants/common.constant';
+import { defaultAvatar, notificationType, scopePost } from '@app/constants/common.constant';
 import { ButtonModule } from 'primeng/button';
 import { UploadFileComponent } from '@app/components/upload-file/upload-file.component';
 import { FileModel } from '@app/models/file-upload.model';
@@ -17,13 +17,16 @@ import { ValidatorService } from '@app/services/validators.service';
 import { PostService } from '@app/services/post.service';
 import { PostRequestBody, PostResponseValue } from '@app/models/post.model';
 import { PickerColorComponent } from '@app/components/picker-color/picker-color.component';
-import { Subscription, take } from 'rxjs';
+import { forkJoin, Subscription, switchMap, take } from 'rxjs';
 import { UserService } from '@app/services/user.service';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { TagFeelingDialogComponent } from '@app/components/dialogs/tag-feeling-dialog/tag-feeling-dialog.component';
 import { DataSearchGroup } from '@app/models/search-group.model';
-import { SocketService } from '@app/services/socket.service';
+import { PostSocketService } from '@app/services/sockets/post-socket.service';
+import { NotificationSocketService } from '@app/services/sockets/notification-socket.service';
+import { NotificationService } from '@app/services/notification.service';
+import { path } from '@app/constants/path.constant';
 
 interface UserStatus { avatar: string; userName: string; feeling?: {id: string; icon: string; value: string}; friends: string[];location: string;};
 @Component({
@@ -55,11 +58,14 @@ export class AddPostDialogComponent implements OnInit, OnDestroy {
   private formBuilder: FormBuilder = inject(FormBuilder);
   private postService: PostService = inject(PostService);
   private userService: UserService = inject(UserService);
-  private socketService: SocketService = inject(SocketService);
+  private postSocketService: PostSocketService = inject(PostSocketService);
+  private notificationSocketService: NotificationSocketService = inject(NotificationSocketService);
   private messageService: MessageService = inject(MessageService);
+  private notificationService: NotificationService = inject(NotificationService);
 
   private userUnSubscription!: Subscription;
   currentUserId= signal<string>('');
+  friendOfCurrentUser= signal<string[]>([]);
   defaultAvatar = defaultAvatar;
 
   @ViewChild('fileUploadRef', {static: false}) fileUploadRef!: UploadFileComponent;
@@ -134,7 +140,7 @@ export class AddPostDialogComponent implements OnInit, OnDestroy {
       tagFriends: [(post?.tagFriends || []).map((item)=>item.id)],
       tagLocation: [post?.tagLocation || ''],
       feelingIcon: [post?.feelingIcon || ''],
-      scope: [post?.scope || 'Everyone']
+      scope: [post?.scope || scopePost.EVERYONE]
     });
     this.selectedBackgroundClass = this.postFormGroup.value.background.replace('==/==', ' ');
     const feelingAfterSplit = (post?.feelingIcon || '==/==').split('==/==');
@@ -176,7 +182,7 @@ export class AddPostDialogComponent implements OnInit, OnDestroy {
       })
       return;
     }
-    
+    this.userService.getUserById(this.currentUserId()).subscribe(response=>this.friendOfCurrentUser.set(response.data.idFriends || []));
   }
 
   onClickCloseDialog() {
@@ -207,7 +213,29 @@ export class AddPostDialogComponent implements OnInit, OnDestroy {
           return;
         }
         this.fileUploadRef.requestChangeStatusFile(()=>{
-          this.socketService.sendNotificationPostCreate();
+          if(response.data.scope === scopePost.ONLY_ME) {
+            this.postSocketService.sendPostChange(response.data,[this.currentUserId()]);
+          }
+          if(response.data.scope === scopePost.EVERYONE) {
+            this.postSocketService.sendPostChange(response.data,[]);
+          }
+          if(response.data.scope === scopePost.FRIENDS) {
+            this.postSocketService.sendPostChange(response.data,this.friendOfCurrentUser());
+          }
+          if(response.data.scope === scopePost.EVERYONE || response.data.scope === scopePost.FRIENDS) {
+            this.notificationService.createNotification({
+              read: [],
+              title: `${this.titleGroup().userName} vừa chia sẻ một bài viết mới.`,
+              content: response.data.content,
+              fromUser: this.currentUserId(),
+              navigateToDetailUrl: path.HOME.DETAIL.replace(':id', response.data.id!),
+              to:  response.data.scope === scopePost.FRIENDS ? this.friendOfCurrentUser() : null,
+              type: notificationType.POST
+            }).subscribe((response) =>{
+                this.notificationSocketService.sendNotification(response.data.to);
+              })
+          }
+         
           this.messageService.add({severity: 'success', summary: 'Thông báo', detail: 'Bài viết được tạo thành công!' });
           this.dynamicDialogRef.close();
         })

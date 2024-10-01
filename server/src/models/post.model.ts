@@ -10,8 +10,8 @@ export interface Post extends Document {
   countComment: number;
   shareLink: string[];
   hashTag: string[];
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
   createdBy: string;
   tagFriends: string[];
   tagLocation: string;
@@ -76,18 +76,20 @@ const postSchema = new mongoose.Schema({
     required: true
   },
   createdAt: {
-    type: Date,
-    default: getUTCDate(new Date())
+    type: Date
   },
   updatedAt: {
-    type: Date,
-    default: getUTCDate(new Date())
+    type: Date
   }
 });
 
 // Cập nhật thời gian cập nhật mỗi khi tài liệu được lưu
 postSchema.pre('save', function(next) {
   this.updatedAt = getUTCDate(new Date());
+  if(!this.createdAt) {
+    this.createdAt = this.updatedAt;
+  }
+  
   next();
 });
 

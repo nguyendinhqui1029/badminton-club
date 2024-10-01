@@ -10,7 +10,8 @@ export default class PostController {
 
   public getAll = async (req: Request, res: Response): Promise<void> => {
     try {
-      const postResult = await this.postService.getAll();
+      const idUser = req.params['id'];
+      const postResult = await this.postService.getAll(idUser);
       res.status(200).json({
         statusCode: 200,
         statusText: 'Get Post is successful.',

@@ -6,8 +6,8 @@ export interface Comment extends Document{
   content: string;
   status: string;
   idRootComment: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
   idUser: string;
   images: string[];
   idPost: string;

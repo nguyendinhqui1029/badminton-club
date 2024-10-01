@@ -1,4 +1,4 @@
-import { afterNextRender, Component, inject } from '@angular/core';
+import { afterNextRender, Component, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { ToastModule } from 'primeng/toast';
 import { UserService } from '@app/services/user.service';
@@ -16,7 +16,7 @@ import { PushNotificationService } from '@app/services/push-notification.service
   styleUrl: './app.component.scss',
   providers: [MessageService]
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   private userService: UserService = inject(UserService);
   private swUpdate: SwUpdate = inject(SwUpdate);
   private swPush: SwPush = inject(SwPush);
@@ -43,7 +43,10 @@ export class AppComponent {
       console.log('Push message', message);
     });
 
-    this.pushNotificationService.requestSubscription();
+    // this.pushNotificationService.requestSubscription();
     // New
+  }
+  ngOnInit(): void {
+    
   }
 }

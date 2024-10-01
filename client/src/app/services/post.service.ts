@@ -22,8 +22,8 @@ export class PostService {
         return this.http.get<ApiResponseValue<PostResponseValue>>(`${environment.apiUrl}/api/v1/post/${id}`);
     }
 
-    getAllPost(): Observable<ApiResponseValue<PostResponseValue[]>> {
-        return this.http.get<ApiResponseValue<PostResponseValue[]>>(`${environment.apiUrl}/api/v1/post`);
+    getAllPost(idUser:string): Observable<ApiResponseValue<PostResponseValue[]>> {
+        return this.http.get<ApiResponseValue<PostResponseValue[]>>(`${environment.apiUrl}/api/v1/post/all/${idUser}`);
     }
 
     deletePost(id: string): Observable<ApiResponseValue<PostResponseValue>> {
