@@ -13,7 +13,6 @@ export class SocketService {
 
   constructor(@Inject(PLATFORM_ID) platformId: Object, private userService: UserService) {
     this.isBrowser = isPlatformBrowser(platformId);
-    console.log(this.userService.currentUserLogin.getValue().id)
     if (this.isBrowser && !this.socket) {
       this.socket = io(environment.apiUrl, {
         transports: ['websocket'],

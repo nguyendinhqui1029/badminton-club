@@ -7,6 +7,7 @@ import { localStorageKey } from '@app/constants/common.constant';
 import { MessageService } from 'primeng/api';
 import { SwPush, SwUpdate } from '@angular/service-worker';
 import { PushNotificationService } from '@app/services/push-notification.service';
+import { LocationService } from '@app/services/location.service';
 
 @Component({
   selector: 'app-root',
@@ -21,7 +22,8 @@ export class AppComponent implements OnInit {
   private swUpdate: SwUpdate = inject(SwUpdate);
   private swPush: SwPush = inject(SwPush);
   private pushNotificationService: PushNotificationService = inject(PushNotificationService);
-  
+  private locationService: LocationService = inject(LocationService);
+
   title = 'client';
   breakpoints = { '410px': { width: '100%', right: '0', left: '0' } };
 
@@ -47,6 +49,6 @@ export class AppComponent implements OnInit {
     // New
   }
   ngOnInit(): void {
-    
+    this.locationService.saveUserLocationWhenOffLine()
   }
 }

@@ -37,7 +37,7 @@ export function formatLargeNumber(num: number) {
 export async function getUserLocation(callback: Function) {
   if ("geolocation" in navigator) {
     navigator.geolocation.getCurrentPosition(
-      (position) => {
+      (position: GeolocationPosition) => {
         callback(position);
       },
       (error) => {
