@@ -4,7 +4,7 @@ import express from 'express';
 const router = express.Router();
 const postController = new PostController();
 
-router.get('/all/:id', postController.getAll);
+router.get('/all', postController.getAll);
 router.get('/:id', postController.getById);
 router.post('/', postController.create);
 router.put('/:id', postController.update);

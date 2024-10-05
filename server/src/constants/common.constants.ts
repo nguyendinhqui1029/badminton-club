@@ -39,3 +39,9 @@ export const scopePost = {
     ONLY_ME: 'Only_Me',
     FRIENDS: 'Friends'
 }
+
+export const notificationStatus = {
+    DONE: 'DONE' ,
+     IN_PROCESS:'IN_PROCESS' ,
+     DENIED:'DENIED'
+} as const;

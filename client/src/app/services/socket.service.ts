@@ -1,8 +1,6 @@
 import { isPlatformBrowser } from '@angular/common';
 import { Inject, inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { environment } from '@app/environments/environment';
-import { PostResponseValue } from '@app/models/post.model';
-import { Observable } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
 import { UserService } from '@app/services/user.service';
 
@@ -15,6 +13,7 @@ export class SocketService {
 
   constructor(@Inject(PLATFORM_ID) platformId: Object, private userService: UserService) {
     this.isBrowser = isPlatformBrowser(platformId);
+    console.log(this.userService.currentUserLogin.getValue().id)
     if (this.isBrowser && !this.socket) {
       this.socket = io(environment.apiUrl, {
         transports: ['websocket'],

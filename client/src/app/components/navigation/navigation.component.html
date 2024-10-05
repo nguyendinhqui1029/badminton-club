@@ -1,7 +1,7 @@
 <div class="bg-white w-full rounded-xl border-b-2">
   <div class="flex max-w-screen-2xl justify-between px-4 py-2">
     <app-logo></app-logo>
-    <nav class="hidden flex justify-between px-4 py-2 items-center md:flex md:w-full max-w-xl">
+    <nav class="hidden flex justify-evenly px-4 py-2 items-center md:flex md:w-full max-w-xl">
       <span [routerLink]="link.HOME.ROOT" routerLinkActive="border-b-2 border-secondary-color"
         class="pi pi-home text-3xl cursor-pointer"></span>
       <a [routerLink]="link.ATTENDANCE.ROOT" routerLinkActive="border-b-2 border-secondary-color"
@@ -24,8 +24,9 @@
           class="pi pi-sign-in text-3xl cursor-pointer"></span>
         }
     </nav>
-    <div class="flex gap-4 items-center">
+    <div class="flex gap-4 justify-end items-center min-w-32">
       <span class="pi pi-search text-3xl cursor-pointer" (click)="handleOpenDialogSearch()"></span>
+      <!-- <span class="pi pi-comment text-3xl cursor-pointer" (click)="handleOpenDialogSearch()"></span> -->
       @if(currentUser().id) {
       <p-avatar class="cursor-pointer" [routerLink]="link.SETTINGS.ROOT" [image]="currentUser().avatar || defaultAvatar" shape="circle" />
       }

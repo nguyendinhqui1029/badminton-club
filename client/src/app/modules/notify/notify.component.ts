@@ -25,21 +25,12 @@ export class NotifyComponent implements OnInit {
   private route: Router = inject(Router);
   defaultAvatar = defaultAvatar;
   notifies: NotifyResponse[] = []
-  isLoading = signal<boolean>(true);
   notificationType= notificationType;
   notificationStatus = notificationStatus;
- 
-  getNotification() {
-    this.isLoading.update(()=>true);
-    const params = {
-      idUser: this.userService.currentUserLogin.getValue().id,
-      limit: 1000,
-      page: 1
-    }
-    this.notificationService.getAllNotificationToUser(params).subscribe(response => {
-      this.isLoading.update(()=>false);
-      if (response.statusCode !== 200) return;
-      this.notifies = response.data.filter(item=>item.status !== notificationStatus.DENIED).map(item => ({
+
+  ngOnInit(): void {
+    this.notificationService.getNewNotification.subscribe(newNotification => {
+      this.notifies = newNotification.filter(item=>item.status !== notificationStatus.DENIED).map(item => ({
         id: item.id!,
         isViewed: item.isRead,
         content: item.content,
@@ -55,16 +46,7 @@ export class NotifyComponent implements OnInit {
         type: item.type,
         status: item.status
       }));
-      this.notificationService.updateCountUnReadNotification(this.notifies.filter(item=>!item.isViewed).length);
-    })
-  }
-
-  ngOnInit(): void {
-    this.getNotification();
-    this.notificationSocketService.onNotification().subscribe(()=>{
-      this.getNotification();
     });
-
   }
   handleViewNotification(item: NotifyResponse) {
     if(item.type === notificationType.ADD_FRIEND) {
@@ -80,7 +62,7 @@ export class NotifyComponent implements OnInit {
     }
     this.notificationService.updateNotification(body).subscribe(response=>{
       if(response.statusCode !== 200) return;
-      this.notificationService.updateCountUnReadNotification(this.notificationService.getCountNewNotification.getValue() - 1);
+      this.notificationSocketService.sendNotification([this.userService.currentUserLogin.getValue().id])
       this.route.navigateByUrl(item.navigateToDetailUrl);
     });
   }
@@ -93,7 +75,6 @@ export class NotifyComponent implements OnInit {
     }
     forkJoin([this.userService.denyFriend({id: item.from.id, idFriend: this.userService.currentUserLogin.getValue().id}),this.notificationService.updateNotification(body)]).subscribe(()=>{
       this.notificationSocketService.sendNotification([item.from.id])
-      this.getNotification();
     });
   }
 
@@ -110,7 +91,6 @@ export class NotifyComponent implements OnInit {
         idFriend: item.from.id
       })]).subscribe(()=>{
       this.notificationSocketService.sendNotification([item.from.id])
-      this.getNotification();
     });
   }
 }

@@ -92,4 +92,47 @@ export class ValidatorService {
       return null;
     }
   }
+
+  static timeRangeRequired(message: string): ValidationErrors | null {
+    return (control: AbstractControl): {
+      [key: string]: {
+        invalid: boolean,
+        errorMessage: string
+      }
+    } | null => {
+      for(let index = 0 ; index < control.value.length; index++){
+        if ((control.value[index].startTime && !control.value[index].endTime) || (!control.value[index].startTime && control.value[index].endTime) ) {
+          return {
+            required: {
+              invalid: true,
+              errorMessage: message
+            }
+          };
+        }
+      };
+      return null;
+    }
+  }
+
+  static timeRangeInvalid(message: string): ValidationErrors | null {
+    return (control: AbstractControl): {
+      [key: string]: {
+        invalid: boolean,
+        errorMessage: string
+      }
+    } | null => {
+      for(let index = 0 ; index < control.value.length; index++){
+        if (control.value[index].startTime && control.value[index].endTime && new Date(control.value[index].startTime).getTime() > new Date(control.value[index].endTime).getTime()) {
+          return {
+            timeRangeInvalid: {
+              invalid: true,
+              errorMessage: message
+            }
+          };
+        }
+      };
+
+      return null;
+    }
+  }
 }

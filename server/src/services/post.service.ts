@@ -11,6 +11,10 @@ class PostService {
     this.userService = new UserService();
   }
   public async getAll(idUser: string): Promise<Post[]> {
+    if(!idUser) {
+      const result = await PostModel.find({ scope: scopePost.EVERYONE }).populate('createdBy','id name avatar').populate('idUserLike', 'id name avatar').populate('tagFriends', 'name id avatar');
+      return result.sort((firstPost: Post, secondPost: Post) => new Date(secondPost.createdAt).getTime() - new Date(firstPost.createdAt).getTime());
+    }
     const user = await this.userService.getUserById(idUser);
     const friendIds:string[] = user?.idFriends || [];
      const result = await PostModel.find({ $or: [

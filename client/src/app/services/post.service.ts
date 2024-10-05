@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '@app/environments/environment';
 import { ApiResponseValue } from '@app/models/api-response.model';
@@ -23,7 +23,8 @@ export class PostService {
     }
 
     getAllPost(idUser:string): Observable<ApiResponseValue<PostResponseValue[]>> {
-        return this.http.get<ApiResponseValue<PostResponseValue[]>>(`${environment.apiUrl}/api/v1/post/all/${idUser}`);
+        const params = new HttpParams().set('id', idUser);
+        return this.http.get<ApiResponseValue<PostResponseValue[]>>(`${environment.apiUrl}/api/v1/post/all`, {params});
     }
 
     deletePost(id: string): Observable<ApiResponseValue<PostResponseValue>> {

@@ -109,7 +109,7 @@ export class SettingsComponent implements OnInit {
         longitude: [this.setting?.checkInLocationLongitude || '', ValidatorService.fieldRequired('Kinh độ không được để trống.')],
         latitude: [this.setting?.checkInLocationLatitude || '', ValidatorService.fieldRequired('Vĩ độ không được để trống.')],
         radian: [this.setting?.checkInRadian || '', ValidatorService.fieldRequired('Bán kính không được để trống.')],
-        checkInDate: [checkInDate || [], ValidatorService.fieldRequired('Thời gian điểm danh không được để trống.')]
+        checkInDate: [checkInDate || [], [ValidatorService.timeRangeRequired('Thời gian điểm danh không được để trống.'), ValidatorService.timeRangeInvalid('Thời gian kết thúc phải lớn hơn thời gian bắt đầu.')]]
       });
       this.feeForm = this.formBuilder.group({
         earlyAttendanceReward: [this.setting?.earlyAttendanceReward || 0],
@@ -122,6 +122,7 @@ export class SettingsComponent implements OnInit {
   }
 
   handleSaveUserSetting() {
+    this.userSettingForm.markAllAsTouched();
     if (this.userSettingForm.valid) {
       this.userService.updateUser({ id: this.currentUserLogin.id, ...this.userSettingForm.getRawValue(), avatar: this.userSettingForm.getRawValue().avatar[0] }).subscribe(response => {
         if (response.statusCode !== 200) {
@@ -134,6 +135,8 @@ export class SettingsComponent implements OnInit {
   }
 
   handleSaveCheckInInfo() {
+    console.log(this.checkInInfoForm)
+    this.checkInInfoForm.markAllAsTouched();
     if (this.checkInInfoForm.valid) {
       const body: Partial<SettingsRequestBody> = {
         checkInLocationLongitude: this.checkInInfoForm.getRawValue().longitude,
@@ -155,6 +158,7 @@ export class SettingsComponent implements OnInit {
   }
 
   handleSaveFeeForm() {
+    this.feeForm.markAllAsTouched();
     if (this.feeForm.valid) {
       const body: Partial<SettingsRequestBody> = {
         earlyAttendanceReward: this.feeForm.getRawValue().earlyAttendanceReward,

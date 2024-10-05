@@ -9,35 +9,44 @@
     </ng-template>
     @if(!isShowLoadingUserSettingForm()) {
       <form class="flex flex-col gap-4" [formGroup]="userSettingForm">
-        <app-label-wrapper idLabel="point" label="Điểm" [isRequired]="true">
+        <app-label-wrapper [isTouched]="!!userSettingForm.get('point')?.touched"
+        [errorsControl]="userSettingForm.get('point')?.errors"  idLabel="point" label="Điểm" [isRequired]="true">
           <input class="w-full" formControlName="point" id="point" type="text" pInputText />
         </app-label-wrapper>
-        <app-label-wrapper idLabel="email" label="Email" [isRequired]="true">
+        <app-label-wrapper [isTouched]="!!userSettingForm.get('email')?.touched"
+        [errorsControl]="userSettingForm.get('email')?.errors" idLabel="email" label="Email" [isRequired]="true">
           <input class="w-full" formControlName="email" id="email" type="text" pInputText />
         </app-label-wrapper>
-        <app-label-wrapper idLabel="phone" label="Số điện thoại" [isRequired]="true">
+        <app-label-wrapper [isTouched]="!!userSettingForm.get('phone')?.touched"
+        [errorsControl]="userSettingForm.get('phone')?.errors" idLabel="phone" label="Số điện thoại" [isRequired]="true">
           <input class="w-full" formControlName="phone" id="phone" type="text" pInputText />
         </app-label-wrapper>
-        <app-label-wrapper idLabel="name" label="Họ tên" [isRequired]="true">
+        <app-label-wrapper [isTouched]="!!userSettingForm.get('name')?.touched"
+        [errorsControl]="userSettingForm.get('name')?.errors" idLabel="name" label="Họ tên" [isRequired]="true">
           <input class="w-full" formControlName="name" id="name" type="text" pInputText />
         </app-label-wrapper>
-        <app-label-wrapper idLabel="gender" label="Giới tính" [isRequired]="true">
+        <app-label-wrapper [isTouched]="!!userSettingForm.get('gender')?.touched"
+        [errorsControl]="userSettingForm.get('gender')?.errors" idLabel="gender" label="Giới tính" [isRequired]="true">
           <p-dropdown inputId="gender" formControlName="gender" [options]="genderOptions()" optionLabel="label"
             optionValue="value" placeholder="Chọn giới tính" />
         </app-label-wrapper>
-        <app-label-wrapper idLabel="accountType" label="Loại tài khoản" [isRequired]="true">
+        <app-label-wrapper [isTouched]="!!userSettingForm.get('accountType')?.touched"
+        [errorsControl]="userSettingForm.get('accountType')?.errors" idLabel="accountType" label="Loại tài khoản" [isRequired]="true">
           <p-dropdown inputId="accountType" formControlName="accountType" [options]="accountTypeOptions()"
             optionLabel="label" optionValue="value" placeholder="Chọn loại tài khoản" />
           <p-confirmDialog styleClass="w-11/12 md:w-fit" />
         </app-label-wrapper>
-        <app-label-wrapper idLabel="status" label="Trạng thái tài khoản" [isRequired]="true">
+        <app-label-wrapper [isTouched]="!!userSettingForm.get('status')?.touched"
+        [errorsControl]="userSettingForm.get('status')?.errors" idLabel="status" label="Trạng thái tài khoản" [isRequired]="true">
           <p-dropdown inputId="status" formControlName="status" [options]="statusOptions()" optionLabel="label"
             optionValue="value" placeholder="Chọn trạng thái tài khoản" />
         </app-label-wrapper>
-        <app-label-wrapper idLabel="birthday" label="Ngày sinh" [isRequired]="true">
+        <app-label-wrapper [isTouched]="!!userSettingForm.get('birthday')?.touched"
+        [errorsControl]="userSettingForm.get('birthday')?.errors" idLabel="birthday" label="Ngày sinh" [isRequired]="true">
           <p-calendar dateFormat="dd-mm-yy" formControlName="birthday" styleClass="w-full" inputId="birthday" />
         </app-label-wrapper>
-        <app-label-wrapper idLabel="files" label="Ảnh đại diện">
+        <app-label-wrapper [isTouched]="!!userSettingForm.get('files')?.touched"
+        [errorsControl]="userSettingForm.get('files')?.errors" idLabel="files" label="Ảnh đại diện">
           <app-upload-file #fileUploadRef formControlName="avatar" [maxLength]="1"></app-upload-file>
         </app-label-wrapper>
         <div class="flex justify-end"><p-button label="Lưu" styleClass="w-20" rounded (click)="handleSaveUserSetting()" />
@@ -52,22 +61,26 @@
     <ng-template pTemplate="header">
       <div class="flex items-center justify-between w-full">
         <span class="flex flex-col font-bold">
-          Cài đặt địa điểm checkin
+          Cài đặt cho điểm danh
         </span>
       </div>
     </ng-template>
     @if(!isShowLoadingCheckInInfoForm()) {
       <form class="flex flex-col gap-4" [formGroup]="checkInInfoForm">
-        <app-label-wrapper idLabel="longitude" label="Kinh độ" [isRequired]="true">
+        <app-label-wrapper [isTouched]="!!checkInInfoForm.get('longitude')?.touched"
+        [errorsControl]="checkInInfoForm.get('longitude')?.errors" idLabel="longitude" label="Kinh độ" [isRequired]="true">
           <input class="w-full" formControlName="longitude" id="longitude" type="text" pInputText />
         </app-label-wrapper>
-        <app-label-wrapper idLabel="latitude" label="Vĩ độ" [isRequired]="true">
+        <app-label-wrapper [isTouched]="!!checkInInfoForm.get('latitude')?.touched"
+        [errorsControl]="checkInInfoForm.get('latitude')?.errors" idLabel="latitude" label="Vĩ độ" [isRequired]="true">
           <input class="w-full" formControlName="latitude" id="latitude" type="text" pInputText />
         </app-label-wrapper>
-        <app-label-wrapper idLabel="radian" label="Bán kính" [isRequired]="true">
+        <app-label-wrapper [isTouched]="!!checkInInfoForm.get('radian')?.touched"
+        [errorsControl]="checkInInfoForm.get('radian')?.errors" idLabel="radian" label="Bán kính" [isRequired]="true">
           <input class="w-full" formControlName="radian"  id="radian" type="text" pInputText />
         </app-label-wrapper>
-        <app-label-wrapper idLabel="checkInDate" label="Thời gian điểm danh">
+        <app-label-wrapper [isTouched]="!!checkInInfoForm.get('checkInDate')?.touched"
+        [errorsControl]="checkInInfoForm.get('checkInDate')?.errors" idLabel="checkInDate" label="Thời gian điểm danh">
           <app-day-time-picker formControlName="checkInDate"></app-day-time-picker>
         </app-label-wrapper>
         <div class="flex justify-end"><p-button label="Lưu" styleClass="w-20" rounded (click)="handleSaveCheckInInfo()"/></div>
@@ -87,19 +100,24 @@
     </ng-template>
     @if(!isShowLoadingCheckInInfoForm()) {
       <form class="flex flex-col gap-4" [formGroup]="feeForm">
-        <app-label-wrapper idLabel="earlyAttendanceReward" label="Thưởng đi sớm">
+        <app-label-wrapper [isTouched]="!!feeForm.get('earlyAttendanceReward')?.touched"
+        [errorsControl]="feeForm.get('earlyAttendanceReward')?.errors" idLabel="earlyAttendanceReward" label="Thưởng đi sớm">
           <input class="w-full" formControlName="earlyAttendanceReward" id="earlyAttendanceReward" type="text" pInputText />
         </app-label-wrapper>
-        <app-label-wrapper idLabel="tenMinuteLateFee" label="Phạt đi trễ 10 phút">
+        <app-label-wrapper [isTouched]="!!feeForm.get('tenMinuteLateFee')?.touched"
+        [errorsControl]="feeForm.get('tenMinuteLateFee')?.errors" idLabel="tenMinuteLateFee" label="Phạt đi trễ 10 phút">
           <input class="w-full" formControlName="tenMinuteLateFee" id="tenMinuteLateFee" type="text" pInputText />
         </app-label-wrapper>
-        <app-label-wrapper idLabel="twentyMinuteLateFee" label="Phạt đi trễ 20 phút">
+        <app-label-wrapper [isTouched]="!!feeForm.get('twentyMinuteLateFee')?.touched"
+        [errorsControl]="feeForm.get('twentyMinuteLateFee')?.errors" idLabel="twentyMinuteLateFee" label="Phạt đi trễ 20 phút">
           <input class="w-full" formControlName="twentyMinuteLateFee" id="twentyMinuteLateFee" type="text" pInputText />
         </app-label-wrapper>
-        <app-label-wrapper idLabel="absenceFee" label="Phạt vắng mặt">
+        <app-label-wrapper [isTouched]="!!feeForm.get('absenceFee')?.touched"
+        [errorsControl]="feeForm.get('absenceFee')?.errors" idLabel="absenceFee" label="Phạt vắng mặt">
           <input class="w-full" formControlName="absenceFee" id="absenceFee" type="text" pInputText />
         </app-label-wrapper>
-        <app-label-wrapper idLabel="latePaymentFee" label="Phạt đóng tiền trễ">
+        <app-label-wrapper [isTouched]="!!feeForm.get('latePaymentFee')?.touched"
+        [errorsControl]="feeForm.get('latePaymentFee')?.errors" idLabel="latePaymentFee" label="Phạt đóng tiền trễ">
           <input class="w-full" formControlName="latePaymentFee" id="latePaymentFee" type="text" pInputText />
         </app-label-wrapper>
         <div class="flex justify-end"><p-button label="Lưu" styleClass="w-20" rounded (click)="handleSaveFeeForm()"/></div>

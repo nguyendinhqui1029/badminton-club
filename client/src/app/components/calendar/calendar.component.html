@@ -24,7 +24,7 @@
       <div class="col-span-full  rounded-t-xl p-2 flex items-center justify-between">
         <p-dropdown class="min-w-28 w-fit" [options]="yearOptions" [(ngModel)]="year" optionLabel="label"
           optionValue="value" placeholder="Năm" [ngModelOptions]="{standalone: true}" />
-        <div class="flex gap-5">
+        <div class="flex gap-5 items-center">
           <span class="pi pi-chevron-left cursor-pointer font-bold text-xl" (click)="onChangeMonth(-1)"></span>
           <span>{{selectedMonth + 1}}</span>
           <span class="pi pi-chevron-right cursor-pointer font-bold text-xl" (click)="onChangeMonth(1)"></span>

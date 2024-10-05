@@ -12,6 +12,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { SearchDialogComponent } from '@app/components/dialogs/search-dialog/search-dialog.component';
 import { LogoComponent } from '@app/components/logo/logo.component';
 import { NotificationService } from '@app/services/notification.service';
+import { NotificationSocketService } from '@app/services/sockets/notification-socket.service';
 
 @Component({
   selector: 'app-navigation',
@@ -29,6 +30,8 @@ export class NavigationComponent implements OnInit, OnDestroy {
   private userService: UserService = inject(UserService);
   private notificationService: NotificationService = inject(NotificationService);
   private dynamicSearchDialogRef: DynamicDialogRef = inject(DynamicDialogRef);
+  private notificationSocketService: NotificationSocketService = inject(NotificationSocketService);
+
   private dialogService: DialogService = inject(DialogService);
   private platformId: Object = inject(PLATFORM_ID);
 
@@ -36,12 +39,31 @@ export class NavigationComponent implements OnInit, OnDestroy {
   defaultAvatar = defaultAvatar;
   countNotifyUnread = signal<number>(0);
 
+  getAllNotification() {
+    const params = {
+      idUser: this.userService.currentUserLogin.getValue().id,
+      limit: 1000,
+      page: 1
+    }
+    this.notificationService.getAllNotificationToUser(params).subscribe(response=>{
+      if(response.statusCode !== 200) {
+        return;
+      }
+      this.notificationService.updateNewNotification(response.data || []);
+    })
+  }
   ngOnInit(): void {
-    this.countNotifyUnread.set(this.notificationService.getCountNewNotification.getValue());
+    this.getAllNotification();
+    this.notificationSocketService.onNotification().subscribe(()=>{
+      console.log(1)
+      this.getAllNotification();
+    });
+    this.notificationService.getNewNotification.subscribe(newNotification=>{
+      this.countNotifyUnread.set(newNotification.filter(item=>!item.isRead).length)
+    })
     this.userUnSubscription = this.userService.currentUserLogin.subscribe((value: UserLoginResponse) => {
       this.currentUser.set(value);
-    })
-    this.notificationService.getCountNewNotification.subscribe(value=>this.countNotifyUnread.set(value));
+    });
   }
 
   onLogoutClick() {

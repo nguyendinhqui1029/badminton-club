@@ -10,14 +10,14 @@ import { BehaviorSubject, Observable } from 'rxjs';
 })
 export class NotificationService {
   private http: HttpClient = inject(HttpClient);
-  private countNewNotification = new BehaviorSubject<number>(0);
+  private newNotification = new BehaviorSubject<NotificationResponseValue[]>([]);
 
-  get getCountNewNotification():BehaviorSubject<number> {
-    return this.countNewNotification;
+  get getNewNotification():BehaviorSubject<NotificationResponseValue[]> {
+    return this.newNotification;
   }
 
-  updateCountUnReadNotification(value: number) {
-    this.countNewNotification.next(value);
+  updateNewNotification(value: NotificationResponseValue[]) {
+    this.newNotification.next(value);
   }
 
   getAllNotificationFromUser(requestParams: NotificationRequestParams): Observable<ApiResponseValue<NotificationResponseValue[]>> {

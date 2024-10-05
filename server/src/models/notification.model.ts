@@ -75,11 +75,11 @@ const notificationSchema = new mongoose.Schema({
   },
   createdAt: {
     type: Date,
-    default: new Date(getUTCDate(new Date()))
+    default: Date.now
   },
   updatedAt: {
     type: Date,
-    default: new Date(getUTCDate(new Date()))
+    default: Date.now
   }
 });
 // Cập nhật thời gian cập nhật mỗi khi tài liệu được lưu

@@ -21,7 +21,6 @@ export default class SocketIoController {
   public socketIOConfig(): void {
     SocketIoController.io = SocketIoController.getSocketIo();
     SocketIoController.io.on('connection', (socket: Socket) => {
-      console.log('Has user connected', socket.handshake.auth);
       this.mappingSocketId[socket.handshake.auth.idUser] = socket.id;
       socket.on('login-success', (userId: string) => {
         this.mappingSocketId[userId] = socket.id;
@@ -64,7 +63,7 @@ export default class SocketIoController {
       socket.on('send-notify', (to: string[]) => {
         // Broadcast the message to all connected clients
         if(!to?.length) {
-          SocketIoController.io.emit('has-new-notification', to);
+          SocketIoController.io.emit('has-new-notification');
           return;
         }
         to.forEach((item: string)=>{

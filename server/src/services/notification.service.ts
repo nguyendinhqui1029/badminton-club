@@ -2,6 +2,7 @@
 import mongoose from 'mongoose';
 import NotificationModel, {Notification, FetchNotificationToUserRequestParams, NotificationToUserResponse } from '../models/notification.model';
 import { SearchUserResponse } from '../models/user.model';
+import { notificationStatus } from '../constants/common.constants';
 
 class NotificationService {
   public async getNotificationFromUser(params: FetchNotificationToUserRequestParams): Promise<NotificationToUserResponse[]> {
@@ -61,6 +62,9 @@ class NotificationService {
   }
 
   public async update(id: string, notification: Notification): Promise<Notification | null> {
+    if(notification?.read?.length === notification?.to?.length) {
+      notification.status = notificationStatus.DONE;
+    }
     return await NotificationModel.findByIdAndUpdate(id, {$set: notification}, { new: true });
   }
 }
