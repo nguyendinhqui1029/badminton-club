@@ -46,7 +46,7 @@ export class AppComponent implements OnInit {
       console.log('Push message', message);
     });
 
-    // this.pushNotificationService.requestSubscription();
+    this.pushNotificationService.requestSubscription();
     // New
   }
   ngOnInit(): void {
