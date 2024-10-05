@@ -31,6 +31,7 @@ export class AppComponent implements OnInit {
     afterNextRender(() => {
       const currentUserLogin = getUserInfoFromToken(localStorage.getItem(localStorageKey.ACCESS_TOKEN));
       this.userService.updateData(currentUserLogin);
+      this.locationService.saveUserLocationWhenOffLine();
     });
     if(!this.swUpdate.isEnabled) {
       console.log('Service worker is not enabled.');
@@ -49,6 +50,5 @@ export class AppComponent implements OnInit {
     // New
   }
   ngOnInit(): void {
-    this.locationService.saveUserLocationWhenOffLine()
   }
 }
