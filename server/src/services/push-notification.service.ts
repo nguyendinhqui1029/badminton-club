@@ -11,12 +11,13 @@ export default class PushNotificationService {
     };
     constructor() {
       webPush.setVapidDetails(
-        'mailto:example@yourdomain.org',
+        'mailto:nguyendinhqui1029@gmail.com',
         this.vapidKeys.publicKey,
         this.vapidKeys.privateKey
       );
     }
 
+    
     sendNotification = (subscription: webPush.PushSubscription)=>{
       const payload = JSON.stringify({
         title: 'Test Notification',
