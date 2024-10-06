@@ -19,7 +19,8 @@ import qrCodeRoutes from '../routes/qrCodeRoutes';
 import pushNotificationRoutes from '../routes/pushNotificationRoutes';
 import commonRoutes from '../routes/commonRoutes';
 import notificationRoutes from '../routes/notificationRoutes';
-
+import socketConnectInformationRoutes from '../routes/socketConnectInformationRoutes';
+import rewardsRoutes from '../routes/rewardsRoutes';
 
 import http from 'http'; // Import http
 import SocketIoController from '../controllers/socketio.controller';
@@ -70,6 +71,9 @@ import SocketIoController from '../controllers/socketio.controller';
     this.app.use(`${root}/${ROUTER_PATH.PUSH_NOTIFICATION}`, pushNotificationRoutes);
     this.app.use(`${root}/${ROUTER_PATH.COMMON}`, commonRoutes);
     this.app.use(`${root}/${ROUTER_PATH.NOTIFICATION}`, notificationRoutes);
+    this.app.use(`${root}/${ROUTER_PATH.SOCKET_CONNECT_INFORMATION}`, socketConnectInformationRoutes);
+    this.app.use(`${root}/${ROUTER_PATH.REWARDS}`, rewardsRoutes);
+
     // Add more routes as needed
   }
 

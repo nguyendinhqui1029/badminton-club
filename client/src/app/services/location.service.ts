@@ -76,6 +76,7 @@ export class LocationService {
       request.onerror = (event: Event) => reject((event.target as IDBRequest).error);
     });
   }
+  
   saveUserLocationWhenOffLine() {
     if (navigator.onLine) {
       console.log("Có mạng");

@@ -16,7 +16,9 @@ export const ROUTER_PATH = {
     QR_CODE: 'qr-code',
     PUSH_NOTIFICATION: 'push-notification',
     NOTIFICATION: 'notification',
-    COMMON: 'common'
+    COMMON: 'common',
+    SOCKET_CONNECT_INFORMATION: 'socket-connect-info',
+    REWARDS: 'rewards'
 }
 
 export const accountType  = {

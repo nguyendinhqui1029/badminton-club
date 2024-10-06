@@ -6,8 +6,8 @@ import { getUserInfoFromToken } from '@app/utils/auth.util';
 import { localStorageKey } from '@app/constants/common.constant';
 import { MessageService } from 'primeng/api';
 import { SwPush, SwUpdate } from '@angular/service-worker';
-import { PushNotificationService } from '@app/services/push-notification.service';
 import { LocationService } from '@app/services/location.service';
+import { ServiceWorkerService } from '@app//services/service-worker.service';
 
 @Component({
   selector: 'app-root',
@@ -17,11 +17,9 @@ import { LocationService } from '@app/services/location.service';
   styleUrl: './app.component.scss',
   providers: [MessageService]
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
   private userService: UserService = inject(UserService);
-  private swUpdate: SwUpdate = inject(SwUpdate);
-  private swPush: SwPush = inject(SwPush);
-  private pushNotificationService: PushNotificationService = inject(PushNotificationService);
+  private serviceWorkerService: ServiceWorkerService = inject(ServiceWorkerService);
   private locationService: LocationService = inject(LocationService);
 
   title = 'client';
@@ -31,24 +29,16 @@ export class AppComponent implements OnInit {
     afterNextRender(() => {
       const currentUserLogin = getUserInfoFromToken(localStorage.getItem(localStorageKey.ACCESS_TOKEN));
       this.userService.updateData(currentUserLogin);
+
+
+      // Init service worker
+      this.serviceWorkerService.requestNotificationPermission().subscribe(permission=>{
+        if (permission == 'granted') {
+          this.serviceWorkerService.checkNewVersionUpdate();
+        }
+      });
+       // End Init service worker
       this.locationService.saveUserLocationWhenOffLine();
     });
-    if(!this.swUpdate.isEnabled) {
-      console.log('Service worker is not enabled.');
-      return;
-    }
-
-    this.swPush.notificationClicks.subscribe(({action, notification})=>{
-      console.log('Notification click', action, notification);
-    });
-
-    this.swPush.messages.subscribe((message)=>{
-      console.log('Push message', message);
-    });
-
-    this.pushNotificationService.requestSubscription();
-    // New
-  }
-  ngOnInit(): void {
   }
 }

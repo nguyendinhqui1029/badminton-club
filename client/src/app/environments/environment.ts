@@ -1,7 +1,7 @@
 import { Environment } from "@app/models/environment.model";
 
 export const environment: Environment = {
-    production: false,
+    production: true,
     apiUrl:'http://localhost:3000',
     defaultLanguage:'vi',
     domain:'https://my-badminton-club.netlify.app',
