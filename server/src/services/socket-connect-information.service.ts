@@ -1,21 +1,27 @@
+import mongoose from 'mongoose';
 import { SocketConnectInformation, SocketConnectInformationModel } from './../models/socket-connect-information.model';
 
 
 export default class SocketConnectInformationService {
 
-  public async getBySocketId(id: string): Promise<SocketConnectInformation | null> {
-    return await SocketConnectInformationModel.findOne({socketId: id});
+  public async getByIdUser(id: string): Promise<SocketConnectInformation | null> {
+    return await SocketConnectInformationModel.findOne({idUser: new mongoose.Types.ObjectId(id)});
   }
 
-  public async create(socketConnectInformation: SocketConnectInformation): Promise<SocketConnectInformation> {
+  public async getByMultipleIdUser(ids: string[]): Promise<SocketConnectInformation[] > {
+    const objectIds = ids.map(id=>new mongoose.Types.ObjectId(id));
+    return await SocketConnectInformationModel.find({idUser: {$in: objectIds}});
+  }
+
+  public async create(socketConnectInformation: Partial<SocketConnectInformation>): Promise<SocketConnectInformation> {
     return await SocketConnectInformationModel.create(socketConnectInformation);
   }
 
-  public async update(id: string, socketConnectInformation: SocketConnectInformation): Promise<SocketConnectInformation | null> {
-    return await SocketConnectInformationModel.findOneAndUpdate({socketId: id}, socketConnectInformation, { new: true });
+  public async update(id: string, socketConnectInformation: Partial<SocketConnectInformation>): Promise<SocketConnectInformation | null> {
+    return await SocketConnectInformationModel.findOneAndUpdate({idUser: new mongoose.Types.ObjectId(id)}, {$set: socketConnectInformation}, { new: true });
   }
 
   public async delete(id: string): Promise<SocketConnectInformation | null> {
-    return await SocketConnectInformationModel.findOneAndDelete({socketId: id}, { new: true });
+    return await SocketConnectInformationModel.findOneAndDelete({idUser: new mongoose.Types.ObjectId(id)}, { new: true });
   }
 }

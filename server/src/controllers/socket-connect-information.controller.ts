@@ -9,7 +9,7 @@ export default class SocketConnectInformationController {
   }
   public getBySocketId = async (req: Request, res: Response): Promise<void> => {
     try {
-      const socketConnectInformationResult = await this.socketConnectInformationService.getBySocketId(req.params.id);
+      const socketConnectInformationResult = await this.socketConnectInformationService.getByIdUser(req.params.id);
       res.status(200).json({
         statusCode: 200,
         statusText: 'Get socketConnectInformationService is successful.',

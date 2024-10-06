@@ -19,10 +19,10 @@ export class SocketService {
         reconnection: true,
         reconnectionAttempts: 5,
         reconnectionDelay: 1000,
-        timeout: 5000,
-        auth: {
-          idUser: this.userService.currentUserLogin.getValue().id
-        }
+        timeout: 5000
+      });
+      this.userService.currentUserLogin.subscribe(userInfo=>{
+        this.socket.auth = { idUser: userInfo.id };
       });
     }
   }
