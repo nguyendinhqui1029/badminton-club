@@ -18,7 +18,7 @@ export default class SocketConnectInformationService {
   }
 
   public async create(socketConnectInformation: SocketConnectInformation): Promise<SocketConnectInformation | null> {
-    const existUser =await this.getByIdUser(socketConnectInformation.idUser);
+    const existUser = await this.getByIdUser(socketConnectInformation.idUser);
     if(!existUser) {
       return await SocketConnectInformationModel.create(socketConnectInformation);
     }

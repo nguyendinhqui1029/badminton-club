@@ -32,11 +32,12 @@ import SocketIoController from '../controllers/socketio.controller';
   constructor(port: number) {
     this.app = express();
     this.port = port;
-    this.server = http.createServer(this.app); // Initialize HTTP server
-    new SocketIoController(this.server).socketIOConfig();
     this.config();
     this.routes();
     this.connectToDatabase();
+    this.server = http.createServer(this.app); // Initialize HTTP server
+    new SocketIoController(this.server).socketIOConfig();
+    
   }
 
   
