@@ -8,7 +8,7 @@ import { localStorageKey } from '@app/constants/common.constant';
 import { MessageService } from 'primeng/api';
 import { SwPush, SwUpdate, VersionReadyEvent } from '@angular/service-worker';
 import { LocationService } from '@app/services/location.service';
-import { filter } from 'rxjs';
+import { combineLatest, filter, forkJoin } from 'rxjs';
 import { SocketService } from '@app/services/socket.service';
 import { ServiceWorkerService } from '@app/services/service-worker.service';
 
@@ -36,29 +36,27 @@ export class AppComponent implements OnInit {
       this.userService.updateData(currentUserLogin);
       this.locationService.saveUserLocationWhenOffLine();
     });
-     // Init service worker
-     if (this.swUpdate.isEnabled) {
+    // Init service worker
+    if (this.swUpdate.isEnabled) {
       this.swUpdate.versionUpdates
-      .pipe(filter((event): event is VersionReadyEvent=> event.type === 'VERSION_READY'))
-      .subscribe(()=>{
-        this.messageService.add({ severity: 'success', summary: 'Thông báo cập nhật', detail: 'Bản cập nhật mới đã sẵn sàng.' })
-        this.swUpdate.activateUpdate().then(()=>window.location.reload());
-      });
-      this.swPush.messages.subscribe((message)=>{
+        .pipe(filter((event): event is VersionReadyEvent => event.type === 'VERSION_READY'))
+        .subscribe(() => {
+          this.messageService.add({ severity: 'success', summary: 'Thông báo cập nhật', detail: 'Bản cập nhật mới đã sẵn sàng.' })
+          this.swUpdate.activateUpdate().then(() => window.location.reload());
+        });
+      this.swPush.messages.subscribe((message) => {
         console.log('Push message', message)
       });
     }
   }
   ngOnInit(): void {
-     // End Init service worker
-     this.userService.currentUserLogin.subscribe((user)=>{
-      this.swPush.requestSubscription({serverPublicKey: environment.pushNotificationPublishKey}).then((subscription)=>{
-        console.log('subscription',subscription)
-        const socketId = this.socketService.getSocket().id;
-        if(user.id && socketId && subscription) {
-          this.serviceWorkerService.requestSubscription({ socketId: socketId, idUser: user.id, subscription}).subscribe();
-        }
-      });
+    // End Init service worker
+    combineLatest([this.socketService.onSocketIdChange(), this.userService.currentUserLogin]).subscribe(([socketId, user]) => {
+      if (user.id && socketId) {
+        this.swPush.requestSubscription({ serverPublicKey: environment.pushNotificationPublishKey }).then((subscription) => {
+          this.serviceWorkerService.requestSubscription({ socketId: socketId, idUser: user.id, subscription }).subscribe();
+        });
+      }
     });
   }
 }

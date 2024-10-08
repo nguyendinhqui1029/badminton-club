@@ -3,6 +3,7 @@ import { Inject, inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { environment } from '@app/environments/environment';
 import { io, Socket } from 'socket.io-client';
 import { UserService } from '@app/services/user.service';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -29,5 +30,19 @@ export class SocketService {
 
   public getSocket() {
     return this.socket;
+  }
+
+  onSocketIdChange() {
+    return new Observable<string>(observer => {
+      if (this.isBrowser) {
+        this.socket.on('sendSocketIdToClient', (id: string) => {
+          observer.next(id);
+        });
+      }
+      
+      return () => {
+        this.socket.off('sendSocketIdToClient');
+      };
+    });
   }
 }

@@ -39,6 +39,7 @@ export default class SocketIoController {
     SocketIoController.io = SocketIoController.getSocketIo();
     SocketIoController.io.on('connection', (socket: Socket) => {
       console.log('connection',socket.id)
+      SocketIoController.io.to(socket.id).emit('sendSocketIdToClient', socket.id);
       this.getAllSocketConnect();
       // Handle custom events from clients
       socket.on('like', (data: Post) => {
