@@ -81,7 +81,7 @@ export class PostSocketService {
    sendPostChange(post: PostResponseValue, to: string[]): void {
     this.socket.emit('send-post-change', post, to);
     const body = { ids: to, body: { title: 'Thông báo', body: `${post.createdBy.name} vừa chia sẻ mội bài viết mới`, icon: '', url: `/home/${post.id}` } };
-    this.serviceWorkerService.sendNotification(body)
+    this.serviceWorkerService.sendNotification(body).subscribe();
   }
 
   // Method to listen for messages
