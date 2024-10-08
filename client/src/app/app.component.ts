@@ -8,8 +8,9 @@ import { localStorageKey } from '@app/constants/common.constant';
 import { MessageService } from 'primeng/api';
 import { SwPush, SwUpdate, VersionReadyEvent } from '@angular/service-worker';
 import { LocationService } from '@app/services/location.service';
-import { ServiceWorkerService } from '@app//services/service-worker.service';
 import { filter } from 'rxjs';
+import { SocketService } from '@app/services/socket.service';
+import { ServiceWorkerService } from '@app/services/service-worker.service';
 
 @Component({
   selector: 'app-root',
@@ -23,15 +24,25 @@ export class AppComponent {
   private userService: UserService = inject(UserService);
   private locationService: LocationService = inject(LocationService);
   private messageService: MessageService = inject(MessageService);
+  private socketService: SocketService = inject(SocketService);
+  private serviceWorkerService: ServiceWorkerService = inject(ServiceWorkerService);
 
   title = 'Smilegate Badminton Club';
   breakpoints = { '410px': { width: '100%', right: '0', left: '0' } };
 
-  constructor( private swPush: SwPush, private swUpdate: SwUpdate) {
+  constructor(private swPush: SwPush, private swUpdate: SwUpdate) {
     afterNextRender(() => {
       const currentUserLogin = getUserInfoFromToken(localStorage.getItem(localStorageKey.ACCESS_TOKEN));
       this.userService.updateData(currentUserLogin);
        // End Init service worker
+       this.userService.currentUserLogin.subscribe((user)=>{
+        this.swPush.requestSubscription({serverPublicKey: environment.pushNotificationPublishKey}).then((subscription)=>{
+          const socketId = this.socketService.getSocket().id;
+          if(user.id && socketId && subscription) {
+            this.serviceWorkerService.requestSubscription({ socketId: socketId, idUser: user.id, subscription});
+          }
+        });
+      })
       this.locationService.saveUserLocationWhenOffLine();
     });
      // Init service worker
@@ -44,9 +55,6 @@ export class AppComponent {
       });
       this.swPush.messages.subscribe((message)=>{
         console.log('Push message', message)
-      });
-      this.swPush.requestSubscription({serverPublicKey: environment.pushNotificationPublishKey}).then((subscription)=>{
-        console.log('subscription 2', subscription)
       });
     }
   }

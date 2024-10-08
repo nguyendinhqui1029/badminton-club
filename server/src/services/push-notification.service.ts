@@ -2,6 +2,7 @@ import { PushNotificationPayload } from '../models/push-notification.model';
 import env from '../config/env';
 import webPush, { SendResult } from 'web-push';
 import SocketConnectInformationService from './socket-connect-information.service';
+import { SocketConnectInformation } from '../models/socket-connect-information.model';
 export default class PushNotificationService {
   private vapidKeys: {
     publicKey: string,
@@ -21,16 +22,8 @@ export default class PushNotificationService {
     this.socketConnectInfo = new SocketConnectInformationService();
   }
 
-  async saveSubscription(idUser: string, subscription: webPush.PushSubscription) {
-   const socketConnect = await this.socketConnectInfo.getByIdUser(idUser);
-   if(socketConnect) {
-    return this.socketConnectInfo.update(idUser, {subscription: subscription});
-   }
-   return this.socketConnectInfo.create({
-    socketId: '',
-    idUser: idUser,
-    ipAddress: '',
-    subscription: subscription});
+  async saveSubscription(body: SocketConnectInformation) {
+   return this.socketConnectInfo.create(body);
   }
 
   sendNotification = async (ids: string[], body: PushNotificationPayload) => {

@@ -3,8 +3,6 @@ import http from 'http'; // Import http
 import { Post } from '../models/post.model';
 import { SocketConnectInformation } from '../models/socket-connect-information.model';
 import SocketConnectInformationService from '../services/socket-connect-information.service';
-import NotificationService from '../services/notification.service';
-
 
 export default class SocketIoController {
   private static io: SocketIOServer; // Add io property
@@ -23,45 +21,25 @@ export default class SocketIoController {
     return new SocketIOServer(this.server);
   }
 
-  private async updateConnectInfo(idUser: string, data: Partial<SocketConnectInformation>) {
-    const socketConnect = await this.socketConnectInfo.getByIdUser(idUser);
-    if(socketConnect) {
-      return this.socketConnectInfo.update(idUser, data);
+  private async getAllSocketConnect() {
+    const response = await this.socketConnectInfo.getAll();
+    if(!response.length) {
+      return;
     }
-    return this.socketConnectInfo.create(data);
+    response.forEach(item=>{
+      this.mappingSocketId[item.idUser] = {
+        _id: item._id,
+        socketId: item.socketId,
+        idUser: item.idUser,
+        subscription: item.subscription
+      };
+    })
   }
-
-  private resendNotification(idUser: string) {
-    console.log('this.mappingSocketId[idUser].socketId',this.mappingSocketId[idUser].socketId)
-    SocketIoController.io.to(this.mappingSocketId[idUser].socketId).emit('has-new-notification');;
-  }
-
   public socketIOConfig(): void {
     SocketIoController.io = SocketIoController.getSocketIo();
     SocketIoController.io.on('connection', (socket: Socket) => {
-      console.log('socket.handshake?.auth?.idUser',socket.handshake?.auth?.idUser)
-      if(socket.handshake?.auth?.idUser) {
-        this.mappingSocketId[socket.handshake?.auth?.idUser] = {
-          socketId: socket.id,
-          idUser: socket.handshake?.auth?.idUser,
-          ipAddress: socket.handshake.address,
-          subscription: null
-        };
-        this.updateConnectInfo(socket.handshake?.auth?.idUser, this.mappingSocketId[socket.handshake?.auth?.idUser]);
-        this.resendNotification(socket.handshake?.auth?.idUser);
-      }
-      socket.on('login-success', (userId: string) => {
-        console.log('login-success',socket.handshake?.auth?.idUser)
-
-        this.updateConnectInfo(userId, {
-          socketId: socket.id,
-          idUser: socket.handshake?.auth?.idUser,
-          ipAddress: socket.handshake.address,
-          subscription: null
-        });
-        this.resendNotification(socket.handshake?.auth?.idUser);
-      });
-
+      console.log('connection',socket.id)
+      this.getAllSocketConnect();
       // Handle custom events from clients
       socket.on('like', (data: Post) => {
         // Broadcast the message to all connected clients
@@ -89,6 +67,9 @@ export default class SocketIoController {
         }
         to.forEach((item: string)=>{
           const socketInfo = this.mappingSocketId[item];
+          if(!socketInfo) {
+            return;
+          }
           SocketIoController.io.to(socketInfo.socketId).emit('update-post-list', idPost);
         })
       });
@@ -103,19 +84,19 @@ export default class SocketIoController {
         }
         to.forEach((item: string)=>{
           const socketInfo = this.mappingSocketId[item];
+          if(!socketInfo) {
+            return;
+          }
           SocketIoController.io.to(socketInfo.socketId).emit('has-new-notification');
         })
       });
 
       // Handle disconnection
-      socket.on('disconnect', () => {
-        this.mappingSocketId[socket.handshake?.auth?.idUser] = {
-          socketId: '',
-          idUser: socket.handshake?.auth?.idUser,
-          ipAddress: '',
-          subscription: this.mappingSocketId[socket.handshake?.auth?.idUser].subscription
-        };
-        this.updateConnectInfo(socket.handshake?.auth?.idUser, this.mappingSocketId[socket.handshake?.auth?.idUser]);
+      socket.on('disconnect', async () => {
+        const deleteResult = await this.socketConnectInfo.delete(socket.handshake?.auth?.idUser);
+        if(!deleteResult) {
+          delete this.mappingSocketId[socket.handshake?.auth?.idUser];
+        }
       });
     });
   }

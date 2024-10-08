@@ -10,13 +10,8 @@ import { Observable } from 'rxjs';
 })
 export class ServiceWorkerService {
   private http: HttpClient = inject(HttpClient);
-  private swPush: SwPush = inject(SwPush);
   private updates: SwUpdate = inject(SwUpdate);
-  private isBrowser: boolean;
 
-  constructor(@Inject(PLATFORM_ID) platformId: Object) {
-    this.isBrowser = isPlatformBrowser(platformId);
-  }
 
   checkNewVersionUpdate() {
     if (this.updates.isEnabled) {
@@ -37,13 +32,11 @@ export class ServiceWorkerService {
     });
   }
 
-  requestSubscription() {
-    return this.swPush.requestSubscription({ serverPublicKey: environment.pushNotificationPublishKey }).then((subscription) => {
-      this.http.post(`${environment.apiUrl}/api/v1/notification/subscription`, subscription)
-    });
+  requestSubscription(body: { socketId: string, idUser: string, subscription: PushSubscription }) {
+    this.http.post(`${environment.apiUrl}/api/v1/notification/subscription`, body)
   }
 
-  sendNotification() {
-    return this.http.post(`${environment.apiUrl}/api/v1/notification/send-notification`, {});
+  sendNotification(body: { ids: string[], body: { title: string, body: string, icon: string, url: string } }) {
+    return this.http.post(`${environment.apiUrl}/api/v1/notification/send-notification`, body);
   }
 }

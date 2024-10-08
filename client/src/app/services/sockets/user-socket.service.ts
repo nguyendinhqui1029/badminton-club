@@ -11,13 +11,7 @@ import { NotificationResponseValue } from '@app/models/notify.model';
 })
 export class UserSocketService {
   private socket!: Socket;
-  private isBrowser: boolean;
   constructor(private socketService: SocketService, @Inject(PLATFORM_ID) platformId: Object) {
-    this.isBrowser = isPlatformBrowser(platformId);
     this.socket = this.socketService.getSocket();
-  }
-
-  sendLoginSuccess(userId: string) {
-    this.socket.emit('login-success', userId);
   }
 }

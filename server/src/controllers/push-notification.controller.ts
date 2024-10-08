@@ -32,8 +32,11 @@ export default class PushNotificationController {
   }
 
   subscription = async (req: Request, res: Response): Promise<void> => {
-    const idUser = req.body['idUser'];
-    const subscription = req.body['subscription']
-    this.pushNotificationService.saveSubscription(idUser,subscription);
+    const body = {
+      socketId: req.body['socketId'],
+      idUser: req.body['idUser'],
+      subscription: req.body['subscription']
+    };
+    this.pushNotificationService.saveSubscription(body);
   }
 }

@@ -4,6 +4,10 @@ import { SocketConnectInformation, SocketConnectInformationModel } from './../mo
 
 export default class SocketConnectInformationService {
 
+  public async getAll(): Promise<SocketConnectInformation[] > {
+    return await SocketConnectInformationModel.find();
+  }
+
   public async getByIdUser(id: string): Promise<SocketConnectInformation | null> {
     return await SocketConnectInformationModel.findOne({idUser: new mongoose.Types.ObjectId(id)});
   }
@@ -13,7 +17,7 @@ export default class SocketConnectInformationService {
     return await SocketConnectInformationModel.find({idUser: {$in: objectIds}});
   }
 
-  public async create(socketConnectInformation: Partial<SocketConnectInformation>): Promise<SocketConnectInformation> {
+  public async create(socketConnectInformation: SocketConnectInformation): Promise<SocketConnectInformation> {
     return await SocketConnectInformationModel.create(socketConnectInformation);
   }
 

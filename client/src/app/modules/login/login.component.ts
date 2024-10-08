@@ -11,7 +11,7 @@ import { localStorageKey } from '@app/constants/common.constant';
 import { getUserInfoFromToken } from '@app/utils/auth.util';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { UserSocketService } from '@app/services/sockets/user-socket.service';
+import { SocketService } from '@app/services/socket.service';
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -23,7 +23,6 @@ import { UserSocketService } from '@app/services/sockets/user-socket.service';
 export class LoginComponent implements OnInit {
   private formBuilder: FormBuilder = inject(FormBuilder);
   private userService: UserService = inject(UserService);
-  private userSocketService: UserSocketService = inject(UserSocketService);
   private router: Router = inject(Router);
   private activatedRoute: ActivatedRoute = inject(ActivatedRoute);
   private changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
@@ -97,8 +96,7 @@ export class LoginComponent implements OnInit {
       localStorage.setItem(localStorageKey.REFRESH_TOKEN, response.data.refreshToken);
       const currentUserLogin = getUserInfoFromToken(response.data.accessToken);
       this.userService.updateData(currentUserLogin);
-      this.userSocketService.sendLoginSuccess(currentUserLogin.id);
-      
+
       if (this.loginForm.value.isRememberMe) {
         localStorage.setItem(localStorageKey.PHONE, this.loginForm.value.phone);
         localStorage.setItem(localStorageKey.PASSWORD, this.loginForm.value.password);
