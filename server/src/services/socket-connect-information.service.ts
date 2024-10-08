@@ -18,11 +18,11 @@ export default class SocketConnectInformationService {
   }
 
   public async create(socketConnectInformation: SocketConnectInformation): Promise<SocketConnectInformation | null> {
-    try {
+    const existUser =await this.getByIdUser(socketConnectInformation.idUser);
+    if(!existUser) {
       return await SocketConnectInformationModel.create(socketConnectInformation);
-    } catch {
-      return this.update(socketConnectInformation.idUser, socketConnectInformation);
     }
+    return await this.update(socketConnectInformation.idUser, socketConnectInformation);
   }
 
   public async update(id: string, socketConnectInformation: Partial<SocketConnectInformation>): Promise<SocketConnectInformation | null> {

@@ -27,6 +27,7 @@ import { PostSocketService } from '@app/services/sockets/post-socket.service';
 import { NotificationSocketService } from '@app/services/sockets/notification-socket.service';
 import { NotificationService } from '@app/services/notification.service';
 import { path } from '@app/constants/path.constant';
+import { ServiceWorkerService } from '@app/services/service-worker.service';
 
 interface UserStatus { avatar: string; userName: string; feeling?: {id: string; icon: string; value: string}; friends: string[];location: string;};
 @Component({
@@ -62,6 +63,7 @@ export class AddPostDialogComponent implements OnInit, OnDestroy {
   private notificationSocketService: NotificationSocketService = inject(NotificationSocketService);
   private messageService: MessageService = inject(MessageService);
   private notificationService: NotificationService = inject(NotificationService);
+  private serviceWorkerService: ServiceWorkerService = inject(ServiceWorkerService);
 
   private userUnSubscription!: Subscription;
   currentUserId= signal<string>('');
@@ -233,6 +235,8 @@ export class AddPostDialogComponent implements OnInit, OnDestroy {
               type: notificationType.POST
             }).subscribe((response) =>{
                 this.notificationSocketService.sendNotification(response.data.to);
+                const body = { ids: response.data.to, body: { title: 'Thông báo', body: `${response.data.fromUser} vừa chia sẻ mội bài viết mới`, icon: '', url: `/home/${response.data.id}` } };
+                this.serviceWorkerService.sendNotification(body).subscribe();
               })
           }
          

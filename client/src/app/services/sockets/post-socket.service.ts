@@ -1,17 +1,15 @@
 import { isPlatformBrowser } from '@angular/common';
-import { Inject, inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { PostResponseValue } from '@app/models/post.model';
 import { Observable } from 'rxjs';
 import { Socket } from 'socket.io-client';
 import { SocketService } from '../socket.service';
-import { ServiceWorkerService } from '../service-worker.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PostSocketService {
   private socket!: Socket;
-  private serviceWorkerService: ServiceWorkerService = inject(ServiceWorkerService);
 
   private isBrowser: boolean;
   constructor(private socketService: SocketService, @Inject(PLATFORM_ID) platformId: Object) {
@@ -80,8 +78,6 @@ export class PostSocketService {
    // Method to send messages
    sendPostChange(post: PostResponseValue, to: string[]): void {
     this.socket.emit('send-post-change', post, to);
-    const body = { ids: to, body: { title: 'Thông báo', body: `${post.createdBy.name} vừa chia sẻ mội bài viết mới`, icon: '', url: `/home/${post.id}` } };
-    this.serviceWorkerService.sendNotification(body).subscribe();
   }
 
   // Method to listen for messages
