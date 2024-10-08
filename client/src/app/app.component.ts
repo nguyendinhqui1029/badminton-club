@@ -20,7 +20,7 @@ import { ServiceWorkerService } from '@app/services/service-worker.service';
   styleUrl: './app.component.scss',
   providers: [MessageService]
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   private userService: UserService = inject(UserService);
   private locationService: LocationService = inject(LocationService);
   private messageService: MessageService = inject(MessageService);
@@ -34,15 +34,6 @@ export class AppComponent {
     afterNextRender(() => {
       const currentUserLogin = getUserInfoFromToken(localStorage.getItem(localStorageKey.ACCESS_TOKEN));
       this.userService.updateData(currentUserLogin);
-       // End Init service worker
-       this.userService.currentUserLogin.subscribe((user)=>{
-        this.swPush.requestSubscription({serverPublicKey: environment.pushNotificationPublishKey}).then((subscription)=>{
-          const socketId = this.socketService.getSocket().id;
-          if(user.id && socketId && subscription) {
-            this.serviceWorkerService.requestSubscription({ socketId: socketId, idUser: user.id, subscription});
-          }
-        });
-      })
       this.locationService.saveUserLocationWhenOffLine();
     });
      // Init service worker
@@ -57,5 +48,16 @@ export class AppComponent {
         console.log('Push message', message)
       });
     }
+  }
+  ngOnInit(): void {
+     // End Init service worker
+     this.userService.currentUserLogin.subscribe((user)=>{
+      this.swPush.requestSubscription({serverPublicKey: environment.pushNotificationPublishKey}).then((subscription)=>{
+        const socketId = this.socketService.getSocket().id;
+        if(user.id && socketId && subscription) {
+          this.serviceWorkerService.requestSubscription({ socketId: socketId, idUser: user.id, subscription});
+        }
+      });
+    });
   }
 }
