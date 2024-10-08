@@ -33,7 +33,7 @@ export class ServiceWorkerService {
   }
 
   requestSubscription(body: { socketId: string, idUser: string, subscription: PushSubscription }) {
-    this.http.post(`${environment.apiUrl}/api/v1/push-notification/subscription`, body)
+   return this.http.post(`${environment.apiUrl}/api/v1/push-notification/subscription`, body)
   }
 
   sendNotification(body: { ids: string[], body: { title: string, body: string, icon: string, url: string } }) {

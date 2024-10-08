@@ -53,9 +53,10 @@ export class AppComponent implements OnInit {
      // End Init service worker
      this.userService.currentUserLogin.subscribe((user)=>{
       this.swPush.requestSubscription({serverPublicKey: environment.pushNotificationPublishKey}).then((subscription)=>{
+        console.log('subscription',subscription)
         const socketId = this.socketService.getSocket().id;
         if(user.id && socketId && subscription) {
-          this.serviceWorkerService.requestSubscription({ socketId: socketId, idUser: user.id, subscription});
+          this.serviceWorkerService.requestSubscription({ socketId: socketId, idUser: user.id, subscription}).subscribe();
         }
       });
     });
