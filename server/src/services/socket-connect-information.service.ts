@@ -17,8 +17,12 @@ export default class SocketConnectInformationService {
     return await SocketConnectInformationModel.find({idUser: {$in: objectIds}});
   }
 
-  public async create(socketConnectInformation: SocketConnectInformation): Promise<SocketConnectInformation> {
-    return await SocketConnectInformationModel.create(socketConnectInformation);
+  public async create(socketConnectInformation: SocketConnectInformation): Promise<SocketConnectInformation | null> {
+    try {
+      return await SocketConnectInformationModel.create(socketConnectInformation);
+    } catch {
+      return this.update(socketConnectInformation.idUser, socketConnectInformation);
+    }
   }
 
   public async update(id: string, socketConnectInformation: Partial<SocketConnectInformation>): Promise<SocketConnectInformation | null> {

@@ -26,7 +26,7 @@ const subscriptionsSchema = new Schema<Subscriptions>({
 const socketConnectInformationSchema = new Schema<SocketConnectInformation>({
     _id: { type: mongoose.Types.ObjectId, default: () => new mongoose.Types.ObjectId() },
     socketId: { type: String, required: true  },
-    idUser: { type: String, required: true },
+    idUser: { type: String, required: true, unique: true },
     subscription: { type: subscriptionsSchema, required: true  },
 });
 
