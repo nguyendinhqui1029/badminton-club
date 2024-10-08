@@ -30,9 +30,10 @@ export class HomeComponent implements OnInit {
   posts = signal<PostResponseValue[]>([]);
   currentUserLogin = signal<UserLoginResponse>(CURRENT_USER_INIT);
   loginPage = `/${path.LOGIN.ROOT}`;
-  isLoading = signal<boolean>(true);
+  isLoading = signal<boolean>(false);
 
   getDataList() {
+    this.isLoading.set(true);
     this.postService.getAllPost(this.currentUserLogin().id).subscribe((response)=>{
       if(response.statusCode !== 200) {
         return;
