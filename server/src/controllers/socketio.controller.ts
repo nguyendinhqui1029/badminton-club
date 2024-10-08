@@ -93,6 +93,9 @@ export default class SocketIoController {
 
       // Handle disconnection
       socket.on('disconnect', async () => {
+        if(!socket.handshake?.auth?.idUser){
+          return;
+        }
         const deleteResult = await this.socketConnectInfo.delete(socket.handshake?.auth?.idUser);
         if(!deleteResult) {
           delete this.mappingSocketId[socket.handshake?.auth?.idUser];
