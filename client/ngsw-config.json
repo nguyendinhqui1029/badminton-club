@@ -30,7 +30,7 @@
   "dataGroups": [
   {
     "name": "api",
-    "urls": [],
+    "urls": ["http://localhost:3000/api/v1/**"],
     "cacheConfig": {
       "maxSize": 100,
       "maxAge": "1d",

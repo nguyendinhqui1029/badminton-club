@@ -21,6 +21,7 @@ export default class PushNotificationController {
         data: result 
       });
     }).catch((error)=>{
+
       res.status(200).json({
         statusCode: 500,
         statusText: 'Send notification error',
@@ -32,11 +33,30 @@ export default class PushNotificationController {
   }
 
   subscription = async (req: Request, res: Response): Promise<void> => {
-    const body = {
-      socketId: req.body['socketId'],
-      idUser: req.body['idUser'],
-      subscription: req.body['subscription']
-    };
-    this.pushNotificationService.saveSubscription(body);
+    try {
+      const body = {
+        socketId: req.body['socketId'],
+        idUser: req.body['idUser'],
+        subscription: req.body['subscription']
+      };
+      const saveSubscriptionResult = this.pushNotificationService.saveSubscription(body);
+  
+      res.status(200).json({
+        statusCode: 200,
+        statusText: 'Get saveSubscriptionResult is successful.',
+        totalCount: 0,
+        page: 0,
+        data: saveSubscriptionResult 
+      });
+    } catch (error: any) {
+      res.status(200).json({
+        statusCode: 500,
+        statusText: 'Get saveSubscriptionResult is fail.',
+        totalCount: 0,
+        page: 0,
+        data: error.message
+      });
+    }
+   
   }
 }

@@ -8,7 +8,7 @@ import { localStorageKey } from '@app/constants/common.constant';
 import { MessageService } from 'primeng/api';
 import { SwPush, SwUpdate, VersionReadyEvent } from '@angular/service-worker';
 import { LocationService } from '@app/services/location.service';
-import { combineLatest, filter, forkJoin } from 'rxjs';
+import { combineLatest, filter } from 'rxjs';
 import { SocketService } from '@app/services/socket.service';
 import { ServiceWorkerService } from '@app/services/service-worker.service';
 
@@ -50,12 +50,23 @@ export class AppComponent implements OnInit {
     }
   }
   ngOnInit(): void {
+    this.requestNotificationPermission();
     // End Init service worker
     combineLatest([this.socketService.onSocketIdChange(), this.userService.currentUserLogin]).subscribe(([socketId, user]) => {
       if (user.id && socketId) {
         this.swPush.requestSubscription({ serverPublicKey: environment.pushNotificationPublishKey }).then((subscription) => {
           this.serviceWorkerService.requestSubscription({ socketId: socketId, idUser: user.id, subscription }).subscribe();
         });
+      }
+    });
+  }
+  requestNotificationPermission() {
+    Notification.requestPermission().then(permission => {
+      if (permission === 'granted') {
+        console.log('Notification permission granted.');
+        // You can now subscribe the user to push notifications
+      } else {
+        console.error('Notification permission denied.');
       }
     });
   }
