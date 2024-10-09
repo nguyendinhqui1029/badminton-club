@@ -55,7 +55,6 @@ export class NavigationComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.getAllNotification();
     this.notificationSocketService.onNotification().subscribe(()=>{
-      console.log(1)
       this.getAllNotification();
     });
     this.notificationService.getNewNotification.subscribe(newNotification=>{

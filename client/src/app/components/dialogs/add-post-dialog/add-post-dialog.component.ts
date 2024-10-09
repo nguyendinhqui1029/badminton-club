@@ -285,7 +285,7 @@ export class AddPostDialogComponent implements OnInit, OnDestroy {
                       }
                   }
               }
-                const body = { ids: response.data.to, body: { title: 'Thông báo', body:  notificationContent}};
+                const body = { ids: response.data.to, body: notificationContent};
                 this.serviceWorkerService.sendNotification(body).subscribe();
               })
           }
