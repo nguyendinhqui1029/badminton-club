@@ -235,7 +235,57 @@ export class AddPostDialogComponent implements OnInit, OnDestroy {
               type: notificationType.POST
             }).subscribe((response) =>{
                 this.notificationSocketService.sendNotification(response.data.to);
-                const body = { ids: response.data.to, body: { title: 'Thông báo', body: `${response.data.fromUser} vừa chia sẻ mội bài viết mới`, icon: '', url: `/home/${response.data.id}` } };
+                const notificationContent = {
+                  "notification": {
+                      "title": "New Notification!",
+                      "actions": [
+                          {
+                              "action": "foo",
+                              "title": "Open new tab"
+                          },
+                          {
+                              "action": "bar",
+                              "title": "Focus last"
+                          },
+                          {
+                              "action": "baz",
+                              "title": "Navigate last"
+                          },
+                          {
+                              "action": "qux",
+                              "title": "Send request in the background"
+                          },
+                          {
+                              "action": "other",
+                              "title": "Just notify existing clients"
+                          }
+                      ],
+                      "data": {
+                          "onActionClick": {
+                              "default": {
+                                  "operation": "openWindow"
+                              },
+                              "foo": {
+                                  "operation": "openWindow",
+                                  "url": "/absolute/path"
+                              },
+                              "bar": {
+                                  "operation": "focusLastFocusedOrOpen",
+                                  "url": "relative/path"
+                              },
+                              "baz": {
+                                  "operation": "navigateLastFocusedOrOpen",
+                                  "url": "https://other.domain.com/"
+                              },
+                              "qux": {
+                                  "operation": "sendRequest",
+                                  "url": "https://yet.another.domain.com/"
+                              }
+                          }
+                      }
+                  }
+              }
+                const body = { ids: response.data.to, body: { title: 'Thông báo', body:  notificationContent}};
                 this.serviceWorkerService.sendNotification(body).subscribe();
               })
           }

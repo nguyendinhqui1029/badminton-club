@@ -36,7 +36,7 @@ export class ServiceWorkerService {
    return this.http.post(`${environment.apiUrl}/api/v1/push-notification/subscription`, body)
   }
 
-  sendNotification(body: { ids: string[], body: { title: string, body: string, icon: string, url: string } }) {
+  sendNotification(body: { ids: string[], body: any }) {
     return this.http.post(`${environment.apiUrl}/api/v1/push-notification/send-notification`, body);
   }
 }
