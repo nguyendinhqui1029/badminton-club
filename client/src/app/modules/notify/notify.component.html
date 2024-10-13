@@ -15,9 +15,15 @@
                 <p-button (click)="handleAgreeClick(item)" styleClass="min-h-9 h-9" label="Chấp nhận" rounded ></p-button>
               </div>
             }
+            @if(item.type === notificationType.UN_FRIEND && item.status === notificationStatus.IN_PROCESS) {
+              <div class="flex items-center gap-2">
+                <p-button (click)="handleIgnoreClick(item)" styleClass="min-h-9 h-9" label="Bỏ qua" rounded outlined></p-button>
+                <p-button (click)="handleAddFriendClick(item)" styleClass="min-h-9 h-9" label="Kết bạn" rounded ></p-button>
+              </div>
+            }
           </div>
         </div>
-        @if(!item.isViewed && item.type !== notificationType.ADD_FRIEND) {
+        @if(!item.isViewed && ![notificationType.ADD_FRIEND, notificationType.UN_FRIEND].includes(item.type)) {
           <div class="bg-blue-500 w-5 aspect-square rounded-full"></div>
         }
         

@@ -1,8 +1,8 @@
 <section class="flex flex-col">
   @for(comment of comments(); track comment.id) {
-  <app-comment-content [comment]="comment" (eventReply)="handleEventReply($event)"></app-comment-content>
+  <app-comment-content [post]="post()" [comment]="comment"></app-comment-content>
     @if(comment.children && comment.children.length) {
-      <app-comments class="ml-10" [comments]="comment.children" (eventReply)="handleEventReply($event)"></app-comments>
+      <app-comments [post]="post()" class="ml-5" [comments]="comment.children"></app-comments>
     }
   }
 </section>

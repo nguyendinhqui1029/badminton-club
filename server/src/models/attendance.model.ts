@@ -5,7 +5,7 @@ import { getUTCDate } from '../utils/date.util';
 export interface Attendance {
   _id?: mongoose.Types.ObjectId,
   amount: number;
-  idUser: mongoose.Schema.Types.ObjectId;
+  idUser: mongoose.Types.ObjectId;
   checkIn: Date | null;
   checkout: Date | null;
   participationDate: Date | null;

@@ -23,11 +23,12 @@ import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { TagFeelingDialogComponent } from '@app/components/dialogs/tag-feeling-dialog/tag-feeling-dialog.component';
 import { DataSearchGroup } from '@app/models/search-group.model';
-import { PostSocketService } from '@app/services/sockets/post-socket.service';
-import { NotificationSocketService } from '@app/services/sockets/notification-socket.service';
 import { NotificationService } from '@app/services/notification.service';
 import { path } from '@app/constants/path.constant';
 import { ServiceWorkerService } from '@app/services/service-worker.service';
+import { PostSocket } from '@app/sockets/post.socket';
+import { NotificationSocket } from '@app/sockets/notification.socket';
+import { NotificationSocketParams } from '@app/models/notify.model';
 
 interface UserStatus { avatar: string; userName: string; feeling?: {id: string; icon: string; value: string}; friends: string[];location: string;};
 @Component({
@@ -59,11 +60,10 @@ export class AddPostDialogComponent implements OnInit, OnDestroy {
   private formBuilder: FormBuilder = inject(FormBuilder);
   private postService: PostService = inject(PostService);
   private userService: UserService = inject(UserService);
-  private postSocketService: PostSocketService = inject(PostSocketService);
-  private notificationSocketService: NotificationSocketService = inject(NotificationSocketService);
+  private postSocket: PostSocket = inject(PostSocket);
   private messageService: MessageService = inject(MessageService);
   private notificationService: NotificationService = inject(NotificationService);
-  private serviceWorkerService: ServiceWorkerService = inject(ServiceWorkerService);
+  private notificationSocket: NotificationSocket = inject(NotificationSocket);
 
   private userUnSubscription!: Subscription;
   currentUserId= signal<string>('');
@@ -201,7 +201,7 @@ export class AddPostDialogComponent implements OnInit, OnDestroy {
       tagFriends: this.postFormGroup.value.tagFriends || [],
       tagLocation: this.postFormGroup.value.tagLocation || '',
       feelingIcon: this.postFormGroup.value.feelingIcon || '',
-      scope: this.postFormGroup.value.scope || 'Everyone',
+      scope: this.postFormGroup.value.scope || scopePost.EVERYONE,
       createdBy: this.postFormGroup.value.createdBy || '',
   };
   return body;
@@ -215,81 +215,29 @@ export class AddPostDialogComponent implements OnInit, OnDestroy {
           return;
         }
         this.fileUploadRef.requestChangeStatusFile(()=>{
-          if(response.data.scope === scopePost.ONLY_ME) {
-            this.postSocketService.sendPostChange(response.data,[this.currentUserId()]);
+          // Send Event Add Post To Service
+          this.postSocket.sendAddPostEvent(response.data);
+          const toUser = {
+            [scopePost.FRIENDS]: this.friendOfCurrentUser(),
+            [scopePost.ONLY_ME]: [response.data.createdBy.id],
+            [scopePost.EVERYONE]: []
           }
-          if(response.data.scope === scopePost.EVERYONE) {
-            this.postSocketService.sendPostChange(response.data,[]);
-          }
-          if(response.data.scope === scopePost.FRIENDS) {
-            this.postSocketService.sendPostChange(response.data,this.friendOfCurrentUser());
-          }
-          if(response.data.scope === scopePost.EVERYONE || response.data.scope === scopePost.FRIENDS) {
-            this.notificationService.createNotification({
-              read: [],
-              title: `${this.titleGroup().userName} vừa chia sẻ một bài viết mới.`,
-              content: response.data.content,
-              fromUser: this.currentUserId(),
-              navigateToDetailUrl: path.HOME.DETAIL.replace(':id', response.data.id!),
-              to:  response.data.scope === scopePost.FRIENDS ? this.friendOfCurrentUser() : null,
-              type: notificationType.POST
-            }).subscribe((response) =>{
-                this.notificationSocketService.sendNotification(response.data.to);
-                const notificationContent = {
-                  "notification": {
-                      "title": "New Notification!",
-                      "actions": [
-                          {
-                              "action": "foo",
-                              "title": "Open new tab"
-                          },
-                          {
-                              "action": "bar",
-                              "title": "Focus last"
-                          },
-                          {
-                              "action": "baz",
-                              "title": "Navigate last"
-                          },
-                          {
-                              "action": "qux",
-                              "title": "Send request in the background"
-                          },
-                          {
-                              "action": "other",
-                              "title": "Just notify existing clients"
-                          }
-                      ],
-                      "data": {
-                          "onActionClick": {
-                              "default": {
-                                  "operation": "openWindow"
-                              },
-                              "foo": {
-                                  "operation": "openWindow",
-                                  "url": "/absolute/path"
-                              },
-                              "bar": {
-                                  "operation": "focusLastFocusedOrOpen",
-                                  "url": "relative/path"
-                              },
-                              "baz": {
-                                  "operation": "navigateLastFocusedOrOpen",
-                                  "url": "https://other.domain.com/"
-                              },
-                              "qux": {
-                                  "operation": "sendRequest",
-                                  "url": "https://yet.another.domain.com/"
-                              }
-                          }
-                      }
-                  }
+          this.notificationService.createNotification({
+            read: [],
+            title: `${this.titleGroup().userName} vừa chia sẻ một bài viết mới.`,
+            content: response.data.content,
+            fromUser: this.currentUserId(),
+            navigateToDetailUrl: path.HOME.DETAIL.replace(':id', response.data.id!),
+            to: toUser[response.data.scope] || [],
+            type: notificationType.POST
+          }).subscribe((response) =>{
+              const params: NotificationSocketParams = {
+                to: response.data.to || [],
+                type: notificationType.POST,
+                notifyInfo: response.data
               }
-                const body = { ids: response.data.to, body: notificationContent};
-                this.serviceWorkerService.sendNotification(body).subscribe();
-              })
-          }
-         
+              this.notificationSocket.sendNotificationEvent(params);
+            })
           this.messageService.add({severity: 'success', summary: 'Thông báo', detail: 'Bài viết được tạo thành công!' });
           this.dynamicDialogRef.close();
         })
@@ -380,6 +328,7 @@ export class AddPostDialogComponent implements OnInit, OnDestroy {
     })
     
   }
+  
   ngOnDestroy() {
     if (this.dynamicDialogRef) {
         this.dynamicDialogRef.close();

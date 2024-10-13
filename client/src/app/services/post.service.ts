@@ -1,15 +1,27 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { Inject, inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { environment } from '@app/environments/environment';
 import { ApiResponseValue } from '@app/models/api-response.model';
 import { PostRequestBody, PostResponseValue } from '@app/models/post.model';
 import { Observable } from 'rxjs';
+import { SocketService } from './socket.service';
+import { Socket } from 'socket.io-client';
+import { isPlatformBrowser } from '@angular/common';
 
 @Injectable({
     providedIn: 'root'
 })
 export class PostService {
     private http: HttpClient = inject(HttpClient);
+    private socket!: Socket;
+
+    private isBrowser: boolean;
+
+    constructor(private socketService: SocketService, @Inject(PLATFORM_ID) platformId: Object) {
+        this.isBrowser = isPlatformBrowser(platformId);
+        this.socket = this.socketService.getSocket();
+    }
+    
     createPost(body: PostRequestBody): Observable<ApiResponseValue<PostResponseValue>> {
         return this.http.post<ApiResponseValue<PostResponseValue>>(`${environment.apiUrl}/api/v1/post`, body);
     }

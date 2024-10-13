@@ -32,6 +32,10 @@ export class SocketService {
     return this.socket;
   }
 
+  sendRequestGetNewSocketConnect(): void {
+    this.socket.emit('requestGetNewSocketConnect');
+  }
+
   onSocketIdChange() {
     return new Observable<string>(observer => {
       if (this.isBrowser) {

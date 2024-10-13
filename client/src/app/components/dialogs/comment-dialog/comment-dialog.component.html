@@ -5,43 +5,43 @@
   </div>
 </header>
 <div class="h-16"></div>
-<section class="flex flex-col gap-4 bg-white w-full rounded-xl p-4">
-  <div class="flex gap-2 w-full items-start">
-    <p-avatar styleClass="w-10 h-10" size="large" [image]="titleGroup().avatar || defaultAvatar" shape="circle" />
-    <div class="flex gap-2 justify-between items-start w-full">
-      <div class="flex flex-col gap-1">
-        <div class="flex flex-wrap items-center" [innerHTML]="userStatusDisplay()">
-        </div>
-        <div class="flex gap-3">
-          <small>{{createdTime()}}</small>
-          <span [class]="scopeIcon()" class="text-sm"></span>
+<div class="flex flex-col">
+  <div class="flex flex-col">
+    <section class="flex flex-col gap-4 bg-white w-full rounded-xl p-4">
+      <div class="flex gap-2 w-full items-start">
+        <p-avatar styleClass="w-10 h-10" size="large" [image]="titleGroup().avatar || defaultAvatar" shape="circle" />
+        <div class="flex gap-2 justify-between items-start w-full">
+          <div class="flex flex-col gap-1">
+            <div class="flex flex-wrap items-center" [innerHTML]="userStatusDisplay()">
+            </div>
+            <div class="flex gap-3">
+              <small>{{createdTime()}}</small>
+              <span [class]="scopeIcon()" class="text-sm"></span>
+            </div>
+          </div>
         </div>
       </div>
+      <div
+        class="rounded-md bg-cover bg-no-repeat bg-center  w-full h-44 p-2 {{backgroundClass()}}">
+        <p class="line-clamp-5 text-xl font-medium">{{itemClone().content}}
+        </p>
+      </div>
+      @if(itemClone().images.length) {
+      <app-images-grid [images]="itemClone().images"></app-images-grid>
+      }
+    </section>
+    <hr>
+    <div class="flex border-b-2 justify-between items-center p-4">
+      <h3 class="font-bold">Bình luận</h3>
+      <p> {{countComment()}} bình luận</p>
     </div>
+    <app-enter-comment 
+      placeholder="Bình luận bài viết"
+      [idPost]="idPost()"
+      [idUser]="currentUserId()"
+      (eventSubmitSuccess)="onCommentAdded($event)"></app-enter-comment>
   </div>
-  <div
-    class="rounded-md bg-cover bg-no-repeat bg-center  w-full h-44 p-2 {{backgroundClass()}}">
-    <p class="line-clamp-5 text-xl font-medium">{{itemClone().content}}
-    </p>
-  </div>
-  @if(itemClone().images.length) {
-  <app-images-grid [images]="itemClone().images"></app-images-grid>
-  }
-</section>
-<hr>
-<div class="flex border-b-2 justify-between items-center p-4">
-  <h3 class="font-bold">Bình luận</h3>
-  <p> {{countComment()}} bình luận</p>
+  <app-comments [comments]="comments()" [post]="itemClone()"></app-comments>
 </div>
-<div class="max-h-80 overflow-y-auto">
-  <app-comments [comments]="comments()" (eventReply)="handleReplyComment($event)"></app-comments>
-</div>
-<section>
-  <app-enter-comment 
-    [placeholder]="placeholder()"
-    [idPost]="idPost()"
-    [idUser]="currentUserId()"
-    [idComment]="replyForCommentId()"
-    (eventSubmitSuccess)="onCommentAdded()"
-      ></app-enter-comment>
-</section>
+
+

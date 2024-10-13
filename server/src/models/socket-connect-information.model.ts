@@ -27,11 +27,11 @@ const socketConnectInformationSchema = new Schema<SocketConnectInformation>({
     _id: { type: mongoose.Types.ObjectId, default: () => new mongoose.Types.ObjectId() },
     socketId: { type: String, required: true  },
     idUser: { type: String, required: true, unique: true },
-    subscription: { type: subscriptionsSchema, required: true  },
+    subscription: { type: subscriptionsSchema, default: null  },
 });
 
 // Create and export the model
 export const SocketConnectInformationModel = mongoose.model<SocketConnectInformation>(
-    'SocketConnectInformation',
+    'socket-connect-information',
     socketConnectInformationSchema
 );

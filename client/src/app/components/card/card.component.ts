@@ -20,7 +20,7 @@ import { environment } from '@app/environments/environment';
 import { path } from '@app/constants/path.constant';
 import { formatLargeNumber } from '@app/utils/common.util';
 import { CommentDialogComponent } from '@app/components/dialogs/comment-dialog/comment-dialog.component';
-import { PostSocketService } from '@app/services/sockets/post-socket.service';
+import { PostSocket } from '@app/sockets/post.socket';
 
 interface UserStatus { avatar: string; userName: string; feeling?: { icon: string; value: string }; friends: string[]; location: string; };
 
@@ -34,7 +34,7 @@ interface UserStatus { avatar: string; userName: string; feeling?: { icon: strin
 })
 export class CardComponent implements OnDestroy, OnInit, OnChanges {
   item = input.required<PostResponseValue>();
-  private postSocketService: PostSocketService = inject(PostSocketService);
+  private postSocket: PostSocket = inject(PostSocket);
   private userService: UserService = inject(UserService);
   private postService: PostService = inject(PostService);
   private confirmationService: ConfirmationService = inject(ConfirmationService);
@@ -142,14 +142,14 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    this.postSocketService.onPostComment().subscribe(value=>{
-      if(value === this.itemClone().id) {
-        this.itemClone.update((value)=>({...value, countComment: value.countComment + 1}));
+    this.postSocket.listenCommentPostEvent().subscribe(post=>{
+      if(post.id === this.itemClone().id) {
+        this.itemClone.update(()=>post);
       }
     })
-    this.postSocketService.onPostLike().subscribe(value => {
-      if(value.id === this.itemClone().id) {
-        this.itemClone.update(()=>value);
+    this.postSocket.listenLikePostEvent().subscribe(post => {
+      if(post.id === this.itemClone().id) {
+        this.itemClone.update(()=>post);
       }
     });
     this.userUnSubscription = this.userService.currentUserLogin.subscribe((value: UserLoginResponse) => {
@@ -230,7 +230,7 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
             this.messageService.add({ severity: 'error', summary: 'Thông báo xoá', detail: 'Bài viết chưa được xoá. Vui lòng thử lại.' })
             return;
           }
-          this.postSocketService.sendDeletePost(this.itemClone().id!);
+          this.postSocket.sendDeletePostEvent(this.itemClone());
           this.messageService.add({ severity: 'success', summary: 'Xác nhận', detail: 'Xoá thành công.' });
         });
       },
@@ -305,7 +305,7 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
         return;
       }
       this.itemClone.set(response.data);
-      this.postSocketService.sendPostLike(this.itemClone());
+      this.postSocket.sendLikePostEvent(this.itemClone());
     });
   }
 
@@ -328,9 +328,6 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
     if (isPlatformBrowser(this.platformId) && window.matchMedia('(max-width: 500px)').matches) {
       this.dialogService.getInstance(this.dynamicCommentDialogRef).maximize();
     }
-    this.dynamicCommentDialogRef.onClose.pipe(take(1)).subscribe((countComment: number) => {
-      this.itemClone.update(value => ({ ...value, countComment }));
-    })
   }
   ngOnDestroy() {
     if (this.dynamicDialogRef) {

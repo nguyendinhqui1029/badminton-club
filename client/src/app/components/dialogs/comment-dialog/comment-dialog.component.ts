@@ -9,8 +9,8 @@ import { PostResponseValue } from '@app/models/post.model';
 import { UserLoginResponse } from '@app/models/user.model';
 import { CommentService } from '@app/services/comment.service';
 import { PostService } from '@app/services/post.service';
-import { PostSocketService } from '@app/services/sockets/post-socket.service';
 import { UserService } from '@app/services/user.service';
+import { PostSocket } from '@app/sockets/post.socket';
 import { formatLargeNumber } from '@app/utils/common.util';
 import { getTimeDifference } from '@app/utils/date.util';
 import { AvatarModule } from 'primeng/avatar';
@@ -35,7 +35,7 @@ interface UserStatus { avatar: string; userName: string; feeling?: { id: string;
 })
 export class CommentDialogComponent implements OnInit {
   private postService: PostService = inject(PostService);
-  private postSocketService: PostSocketService = inject(PostSocketService);
+  private postSocket: PostSocket = inject(PostSocket);
   private userService: UserService = inject(UserService);
   private dialogConfig: DynamicDialogConfig = inject(DynamicDialogConfig);
   private dynamicDialogRef: DynamicDialogRef = inject(DynamicDialogRef);
@@ -58,12 +58,9 @@ export class CommentDialogComponent implements OnInit {
   backgroundClass = signal<string>('');
   itemClone = signal<PostResponseValue>(INIT_POST_VALUE);
   currentUser = signal<UserLoginResponse>(CURRENT_USER_INIT);
-  replyForComment = signal<CommentItem | null>(null);
   createdTime = computed(() => getTimeDifference(new Date(this.itemClone().createdAt)));
-  placeholder = computed(() => this.replyForComment() ? `Trả lời bình luận của ${this.replyForComment()?.user.name}` : 'Nhập bình luận');
   currentUserId = computed(() => this.currentUser().id);
   idPost = computed(() => this.itemClone().id || '');
-  replyForCommentId = computed(() => this.replyForComment()?.id || '');
   userStatusDisplay = computed(() => {
     return this.generateUserStatus();
   });
@@ -77,6 +74,7 @@ export class CommentDialogComponent implements OnInit {
     }
     return scopeIcon[this.itemClone().scope] || 'pi pi-users';
   });
+  
   generateUserStatus() {
     let status = '';
     if (this.titleGroup()?.userName) {
@@ -108,11 +106,9 @@ export class CommentDialogComponent implements OnInit {
     }
     return status;
   }
+
   onClickCloseDialog() {
-    this.dynamicDialogRef.close(this.countComment());
-  }
-  handleReplyComment(comment: CommentItem) {
-    this.replyForComment.set(comment);
+    this.dynamicDialogRef.close();
   }
   
   getChildrenByParentId(id: string, flatComments: CommentResponseValue[]) {
@@ -173,13 +169,13 @@ export class CommentDialogComponent implements OnInit {
     this.getAllCommentByIdPost(this.idPost());
   }
 
-  onCommentAdded() {
-    this.postSocketService.sendPostComment(this.idPost())
+  onCommentAdded(totalComment: number) {
+      this.postSocket.sendCommentPostEvent({...this.itemClone(), countComment: totalComment});
   }
 
   ngOnInit(): void {
-    this.postSocketService.onPostComment().subscribe((value: string)=>{
-      if(value === this.idPost()) {
+    this.postSocket.listenCommentPostEvent().subscribe((post)=>{
+      if(post.id === this.idPost()) {
         this.loadCommentList();
       }
     })

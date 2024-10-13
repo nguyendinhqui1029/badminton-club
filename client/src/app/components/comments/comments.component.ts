@@ -1,6 +1,7 @@
-import { Component, EventEmitter, input, Output } from '@angular/core';
+import { Component, computed, EventEmitter, input, Output } from '@angular/core';
 import { CommentItem } from '@app/models/comment.model';
 import { CommentContentComponent } from '@app/components/comment-content/comment-content.component';
+import { PostResponseValue } from '@app/models/post.model';
 
 @Component({
   selector: 'app-comments',
@@ -10,10 +11,6 @@ import { CommentContentComponent } from '@app/components/comment-content/comment
   styleUrl: './comments.component.scss'
 })
 export class CommentsComponent {
+  post = input.required<PostResponseValue>();
   comments = input.required<CommentItem[]>();
-  @Output() eventReply = new EventEmitter<CommentItem>();
-
-  handleEventReply(value: CommentItem) {
-    this.eventReply.emit(value);
-  }
 }

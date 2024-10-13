@@ -116,11 +116,19 @@ export const dayOfWeek = ['CN','T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
 
 export const notificationType = {
     POST: 'POST',
-    ADD_FRIEND: 'ADD_FRIEND'
+    ADD_FRIEND: 'ADD_FRIEND',
+    UN_FRIEND: 'UN_FRIEND',
+    COMMENT: 'COMMENT',
+    LIKE: 'LIKE',
+    PLAY_BADMINTON: 'PLAY_BADMINTON',
+    REMIND: 'REMIND',
+    EVENT: 'EVENT',
+    RELOAD_DATA: 'RELOAD_DATA'
 }
+
 
 export const notificationStatus = {
     DONE: 'DONE' ,
-     IN_PROCESS: 'IN_PROCESS' ,
-     DENIED: 'DENIED'
+    IN_PROCESS: 'IN_PROCESS' ,
+    DENIED: 'DENIED'
 }

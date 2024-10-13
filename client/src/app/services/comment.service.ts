@@ -18,4 +18,8 @@ export class CommentService {
   createComment(body: CommentRequestBody) {
     return this.http.post<ApiResponseValue<CommentResponseValue>>(`${environment.apiUrl}/api/v1/comment`, body);
   }
+
+  deleteComment(id: string) {
+    return this.http.delete<ApiResponseValue<CommentResponseValue>>(`${environment.apiUrl}/api/v1/comment/${id}`);
+  }
 }

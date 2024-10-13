@@ -8,5 +8,6 @@ router.get('/from', notificationController.getAllNotificationFromUser);
 router.get('/to', notificationController.getAllNotificationToUser);
 router.post('/', notificationController.create);
 router.put('/', notificationController.update);
+router.post('/register-subscription', notificationController.registerSubscription);
 
 export default router;

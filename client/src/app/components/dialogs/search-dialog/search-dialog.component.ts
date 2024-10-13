@@ -4,13 +4,13 @@ import { SearchContainerGroupComponent } from '@app/components/search-container-
 import { CURRENT_USER_INIT, defaultAvatar, notificationStatus, notificationType } from '@app/constants/common.constant';
 import { path } from '@app/constants/path.constant';
 import { SearchByKeywordResponseValue } from '@app/models/common.model';
-import { NotificationResponseValue } from '@app/models/notify.model';
+import { NotificationResponseValue, NotificationSocketParams } from '@app/models/notify.model';
 import { DataSearchGroup } from '@app/models/search-group.model';
 import { UserLoginResponse } from '@app/models/user.model';
 import { CommonService } from '@app/services/common.service';
 import { NotificationService } from '@app/services/notification.service';
-import { NotificationSocketService } from '@app/services/sockets/notification-socket.service';
 import { UserService } from '@app/services/user.service';
+import { NotificationSocket } from '@app/sockets/notification.socket';
 import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
@@ -35,7 +35,7 @@ export class SearchDialogComponent implements OnInit {
   private commonService: CommonService = inject(CommonService);
   private dynamicDialogRef: DynamicDialogRef = inject(DynamicDialogRef);
   private userService: UserService = inject(UserService);
-  private notificationSocketService: NotificationSocketService = inject(NotificationSocketService);
+  private notificationSocket: NotificationSocket = inject(NotificationSocket);
   private notificationService: NotificationService = inject(NotificationService);
   private route: Router = inject(Router);
 
@@ -75,18 +75,33 @@ export class SearchDialogComponent implements OnInit {
       this.currentUser.set(userInfo);
     });
     this.getFriendsOfUser();
-    this.notificationSocketService.onNotification().subscribe(()=>{
-      this.getFriendsOfUser();
+    this.notificationSocket.listenNotificationEvent().subscribe((type: string)=>{
+      if(type === notificationType.ADD_FRIEND) {
+        this.getFriendsOfUser();
+      }
     });  
   }
   onUnFriendClick(id: string) {
-    this.userService.unFriend({
+    forkJoin([this.notificationService.createNotification({
+      read: [],
+      title: `${this.currentUser().name} đã huỷ kết bạn với bạn.`,
+      content: '',
+      fromUser: this.currentUser().id,
+      navigateToDetailUrl: '',
+      to: [id],
+      type: notificationType.UN_FRIEND,
+    }), this.userService.unFriend({
       id: this.currentUser().id,
       idFriend: id
-    }).subscribe(()=>{
+    })]).subscribe(([notifyResponse, _])=>{
+      const params: NotificationSocketParams = {
+        to: [id],
+        type: notificationType.UN_FRIEND,
+        notifyInfo: notifyResponse.data
+      };
+      this.notificationSocket.sendNotificationEvent(params);
       this.getFriendsOfUser();
-      this.notificationSocketService.sendNotification([id]);
-    })
+    });
   }
 
   onAddFriendClick(id: string) {
@@ -101,8 +116,13 @@ export class SearchDialogComponent implements OnInit {
     }), this.userService.addFriend({
       id: this.currentUser().id,
       idFriendWaiting: id
-    })]).subscribe(()=>{
-      this.notificationSocketService.sendNotification([id]);
+    })]).subscribe(([notifyResponse, _])=>{
+      const params: NotificationSocketParams = {
+        to: [id],
+        type: notificationType.ADD_FRIEND,
+        notifyInfo: notifyResponse.data
+      };
+      this.notificationSocket.sendNotificationEvent(params);
       this.getFriendsOfUser();
     });
   }

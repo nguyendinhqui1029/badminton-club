@@ -32,11 +32,7 @@ export class ServiceWorkerService {
     });
   }
 
-  requestSubscription(body: { socketId: string, idUser: string, subscription: PushSubscription }) {
-   return this.http.post(`${environment.apiUrl}/api/v1/push-notification/subscription`, body)
-  }
-
-  sendNotification(body: { ids: string[], body: any }) {
-    return this.http.post(`${environment.apiUrl}/api/v1/push-notification/send-notification`, body);
+  requestSubscription(body: { socketId: string, idUser: string, subscription?: PushSubscription }) {
+   return this.http.post(`${environment.apiUrl}/api/v1/notification/register-subscription`, body)
   }
 }

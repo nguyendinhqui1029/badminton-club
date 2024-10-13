@@ -53,13 +53,13 @@ export default class CommentController {
 
   public create = async (req: Request, res: Response): Promise<void> => {
     try {
-      const comment = await this.commentService.create(req.body);
+      const result = await this.commentService.create(req.body);
       res.status(200).json({
         statusCode: 200,
         statusText: 'create Comment is successful.',
-        totalCount: 0,
+        totalCount: result?.total || 0,
         page: 0,
-        data: comment 
+        data: result?.comment || null
       });
     } catch (error: any) {
       res.status(200).json({

@@ -2,13 +2,13 @@ import mongoose, { Schema, Document } from 'mongoose';
 import { getUTCDate } from '../utils/date.util';
 
 export interface SearchUserResponse {
-  _id: mongoose.Schema.Types.ObjectId;
+  _id: mongoose.Types.ObjectId;
   name: string;
   avatar: string;
 }
 // Define interface for TypeScript type-checking
 export interface User {
-  _id?: mongoose.Schema.Types.ObjectId;
+  _id?: mongoose.Types.ObjectId;
   point: number;
   email: string;
   phone: string;

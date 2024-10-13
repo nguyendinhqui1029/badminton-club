@@ -31,14 +31,25 @@ export interface NotifyResponse {
    status: string;
    to: string[];
  }
- export interface NotificationRequestBody {
+export interface NotificationRequestBody {
     id?: string;
     read: string[];
     title: string;
     content: string;
     fromUser: string | null,
     navigateToDetailUrl: string;
-    to: string[] | null;
+    to: string[];
     status?: string;
     type: string;
-  }
+}
+
+export interface NotificationSocketParams {
+  to: string[];
+  type: string;
+  notifyInfo: NotificationResponseValue | null;
+}
+
+export interface NotificationSocketResponseValue {
+  total: number;
+  notifyContent: NotificationResponseValue;
+}

@@ -4,13 +4,16 @@ import { RouterOutlet } from '@angular/router';
 import { ToastModule } from 'primeng/toast';
 import { UserService } from '@app/services/user.service';
 import { getUserInfoFromToken } from '@app/utils/auth.util';
-import { localStorageKey } from '@app/constants/common.constant';
+import { localStorageKey, notificationStatus, notificationType } from '@app/constants/common.constant';
 import { MessageService } from 'primeng/api';
 import { SwPush, SwUpdate, VersionReadyEvent } from '@angular/service-worker';
 import { LocationService } from '@app/services/location.service';
 import { combineLatest, filter } from 'rxjs';
 import { SocketService } from '@app/services/socket.service';
 import { ServiceWorkerService } from '@app/services/service-worker.service';
+import { NotificationSocketParams } from '@app/models/notify.model';
+import { NotificationSocket } from '@app/sockets/notification.socket';
+import { NotificationService } from '@app/services/notification.service';
 
 @Component({
   selector: 'app-root',
@@ -26,6 +29,8 @@ export class AppComponent implements OnInit {
   private messageService: MessageService = inject(MessageService);
   private socketService: SocketService = inject(SocketService);
   private serviceWorkerService: ServiceWorkerService = inject(ServiceWorkerService);
+  private notificationSocket: NotificationSocket = inject(NotificationSocket);
+  private notificationService: NotificationService = inject(NotificationService);
 
   title = 'Smilegate Badminton Club';
   breakpoints = { '410px': { width: '100%', right: '0', left: '0' } };
@@ -36,7 +41,9 @@ export class AppComponent implements OnInit {
       this.userService.updateData(currentUserLogin);
       this.locationService.saveUserLocationWhenOffLine();
     });
-    // Init service worker
+  }
+  ngOnInit(): void {
+    this.requestNotificationPermission();
     if (this.swUpdate.isEnabled) {
       this.swUpdate.versionUpdates
         .pipe(filter((event): event is VersionReadyEvent => event.type === 'VERSION_READY'))
@@ -47,27 +54,66 @@ export class AppComponent implements OnInit {
       this.swPush.messages.subscribe((message) => {
         console.log('Push message', message)
       });
+      this.swPush.notificationClicks.subscribe((messageInfo) => {
+        if(messageInfo.notification.data.type === notificationType.POST) {
+          const currentUserId = this.userService.currentUserLogin.getValue().id;
+          this.notificationService.updateNotification({
+            id: messageInfo.notification.data.notificationId,
+            read: [currentUserId],
+            status: notificationStatus.DONE
+          }).subscribe((response)=>{
+            const params: NotificationSocketParams = {
+              to: [currentUserId],
+              type: notificationType.RELOAD_DATA,
+              notifyInfo: response.data
+            }
+            this.notificationSocket.sendNotificationEvent(params);
+          })
+        }
+      });
     }
-  }
-  ngOnInit(): void {
-    this.requestNotificationPermission();
     // End Init service worker
     combineLatest([this.socketService.onSocketIdChange(), this.userService.currentUserLogin]).subscribe(([socketId, user]) => {
       if (user.id && socketId) {
-        this.swPush.requestSubscription({ serverPublicKey: environment.pushNotificationPublishKey }).then((subscription) => {
-          this.serviceWorkerService.requestSubscription({ socketId: socketId, idUser: user.id, subscription }).subscribe();
+        if(this.checkPushSupport()) {
+          this.swPush.requestSubscription({ serverPublicKey: environment.pushNotificationPublishKey }).then((subscription) => {
+            this.serviceWorkerService.requestSubscription({ socketId: socketId, idUser: user.id, subscription }).subscribe(()=>{
+              this.socketService.sendRequestGetNewSocketConnect();
+            });
+          });
+          return;
+        }
+         
+        this.serviceWorkerService.requestSubscription({ socketId: socketId, idUser: user.id }).subscribe(()=>{
+            this.socketService.sendRequestGetNewSocketConnect();
         });
       }
     });
+  } 
+  checkPushSupport() {
+    // Kiểm tra xem trình duyệt hỗ trợ Service Workers
+    if (!('serviceWorker' in navigator)) {
+      return false;
+    }
+    // Kiểm tra khả năng hỗ trợ thông báo
+    if (!('Notification' in window)) {
+      return false;
+    }
+    // Kiểm tra trạng thái cho phép thông báo
+    if (Notification.permission === 'denied') {
+      return this.requestNotificationPermission();
+    }
+
+    return true;
   }
+
   requestNotificationPermission() {
-    Notification.requestPermission().then(permission => {
-      if (permission === 'granted') {
-        console.log('Notification permission granted.');
-        // You can now subscribe the user to push notifications
-      } else {
-        console.error('Notification permission denied.');
-      }
-    });
+      Notification.requestPermission().then(permission => {
+        if (permission === 'granted') {
+          console.log('Notification permission granted.');
+          return true;
+        }
+        return false;
+      });   
   }
 }

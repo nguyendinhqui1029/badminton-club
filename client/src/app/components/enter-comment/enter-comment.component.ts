@@ -65,7 +65,7 @@ export class EnterCommentComponent implements OnInit{
           return;
         }
         this.formGroup.reset();
-        this.eventSubmitSuccess.emit();
+        this.eventSubmitSuccess.emit(commentRepose.totalCount);
       });
   }
 }

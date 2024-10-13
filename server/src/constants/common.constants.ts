@@ -14,7 +14,6 @@ export const ROUTER_PATH = {
     EMAIL: 'email',
     LOCATION: 'location',
     QR_CODE: 'qr-code',
-    PUSH_NOTIFICATION: 'push-notification',
     NOTIFICATION: 'notification',
     COMMON: 'common',
     SOCKET_CONNECT_INFORMATION: 'socket-connect-info',
@@ -31,11 +30,6 @@ export const userStatus = {
     OFF: 'OFF'
 }
 
-export const notificationType = {
-    POST: 'POST',
-    ADD_FRIEND: 'ADD_FRIEND'
-}
-
 export const scopePost = {
     EVERYONE: 'Everyone',
     ONLY_ME: 'Only_Me',
@@ -47,3 +41,14 @@ export const notificationStatus = {
      IN_PROCESS:'IN_PROCESS' ,
      DENIED:'DENIED'
 } as const;
+
+export const notificationType = {
+    POST: 'POST',
+    ADD_FRIEND: 'ADD_FRIEND',
+    COMMENT: 'COMMENT',
+    LIKE: 'LIKE',
+    PLAY_BADMINTON: 'PLAY_BADMINTON',
+    REMIND: 'REMIND',
+    EVENT: 'EVENT',
+    RELOAD_DATA: 'RELOAD_DATA'
+}

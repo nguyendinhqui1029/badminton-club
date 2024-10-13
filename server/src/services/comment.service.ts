@@ -11,17 +11,19 @@ class CommentService {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new Error('Invalid post ID format');
     }
-    return await CommentModel.find({idPost: new mongoose.Types.ObjectId(id), status: 'APPROVED'}).populate('idUser', 'id avatar name').populate('idRootComment', 'id').exec();
+    const result =  await CommentModel.find({idPost: new mongoose.Types.ObjectId(id), status: 'APPROVED'}).populate('idUser', 'id avatar name').populate('idRootComment', 'id').exec();
+    return (result || []).sort((firstComment: Comment, secondComment: Comment) => new Date(secondComment.createdAt).getTime() - new Date(firstComment.createdAt).getTime())
   }
 
-  public async create(comment: Comment): Promise<Comment | void> {
+  public async create(comment: Comment): Promise<{comment: Comment, total: number} | void> {
     try {
       const addCommentResult = await CommentModel.create(comment);
+      let count = 0;
       if(addCommentResult) {
-        const count = await CommentModel.countDocuments({ idPost: new mongoose.Types.ObjectId(comment.idPost) });
+        count = await CommentModel.countDocuments({ idPost: new mongoose.Types.ObjectId(comment.idPost) });
         await PostModel.findByIdAndUpdate(new mongoose.Types.ObjectId(comment.idPost), {$set: {countComment: count}});
       }
-      return addCommentResult;
+      return { comment: addCommentResult, total: count };
     } catch (err) {
       console.error('Error counting comments', err);
       return ;

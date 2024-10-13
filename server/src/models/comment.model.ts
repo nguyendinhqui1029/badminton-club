@@ -46,20 +46,21 @@ const commentSchema = new mongoose.Schema({
   }],
   createdAt: {
     type: Date,
-    default: getUTCDate(new Date())
   },
   updatedAt: {
     type: Date,
-    default: getUTCDate(new Date())
   }
 });
 
 // Cập nhật thời gian cập nhật mỗi khi tài liệu được lưu
 commentSchema.pre('save', function(next) {
   this.updatedAt = getUTCDate(new Date());
+  if(!this.createdAt) {
+    this.createdAt = this.updatedAt;
+  }
+  
   next();
 });
-
 // Tạo model Comment
 const CommentModel = mongoose.model<Comment>('Comment', commentSchema);
 

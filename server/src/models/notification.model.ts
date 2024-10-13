@@ -3,6 +3,24 @@ import mongoose, { Schema, Document } from 'mongoose';
 import { getUTCDate } from '../utils/date.util';
 import { SearchUserResponse } from './user.model';
 
+export interface NotificationClientPayload {
+  id: mongoose.Types.ObjectId;
+  title: string;
+  content: string;
+  fromUser: SearchUserResponse | null,
+  navigateToDetailUrl: string;
+  read: mongoose.Types.ObjectId[];
+  isRead: boolean;
+  createdAt: Date;
+  type: string;
+  status: string;
+  to: mongoose.Types.ObjectId[];
+}
+export interface NotificationSocketParams {
+  to: string[];
+  type: string;
+  notifyInfo: NotificationClientPayload;
+}
 // Define interface for TypeScript type-checking
 export interface Notification {
   _id?: mongoose.Types.ObjectId;
@@ -27,6 +45,7 @@ export interface NotificationToUserResponse {
   isRead: boolean;
   createdAt: Date;
   type: string;
+  status: string;
   to: mongoose.Types.ObjectId[];
 }
 

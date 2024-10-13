@@ -12,7 +12,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { SearchDialogComponent } from '@app/components/dialogs/search-dialog/search-dialog.component';
 import { LogoComponent } from '@app/components/logo/logo.component';
 import { NotificationService } from '@app/services/notification.service';
-import { NotificationSocketService } from '@app/services/sockets/notification-socket.service';
+import { NotificationSocket } from '@app/sockets/notification.socket';
 
 @Component({
   selector: 'app-navigation',
@@ -30,7 +30,7 @@ export class NavigationComponent implements OnInit, OnDestroy {
   private userService: UserService = inject(UserService);
   private notificationService: NotificationService = inject(NotificationService);
   private dynamicSearchDialogRef: DynamicDialogRef = inject(DynamicDialogRef);
-  private notificationSocketService: NotificationSocketService = inject(NotificationSocketService);
+  private notificationSocket: NotificationSocket = inject(NotificationSocket);
 
   private dialogService: DialogService = inject(DialogService);
   private platformId: Object = inject(PLATFORM_ID);
@@ -54,7 +54,7 @@ export class NavigationComponent implements OnInit, OnDestroy {
   }
   ngOnInit(): void {
     this.getAllNotification();
-    this.notificationSocketService.onNotification().subscribe(()=>{
+    this.notificationSocket.listenNotificationEvent().subscribe(()=>{
       this.getAllNotification();
     });
     this.notificationService.getNewNotification.subscribe(newNotification=>{

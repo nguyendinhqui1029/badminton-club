@@ -1,12 +1,22 @@
 <div class="flex flex-col gap-1 px-4 py-2">
   <div class="flex gap-2 items-center rounded-3xl w-fit bg-sky-200 p-2">
-    <p-avatar styleClass="w-8 h-8" 
-    [image]="comment().user.avatar || defaultAvatar" shape="circle" />
+    <p-avatar styleClass="w-8 h-8" [image]="comment().user.avatar || defaultAvatar" shape="circle" />
     <span class="font-bold">{{comment().user.name}}</span>
   </div>
-  <div>{{comment().content}}</div>
-  <div class="flex gap-4">
-    <span class="font-medium">{{createdTime()}}</span>
-    <span (click)="onClickReply()" class="font-medium cursor-pointer">Phản hồi</span>
+  <div class="ml-2">{{comment().content}}</div>
+
+
+  <div #enterComment>
+    <div class="ml-2 flex gap-4">
+      <span class="font-medium">{{createdTime()}}</span>
+      <span (click)="onClickReply()" class="font-medium cursor-pointer">Phản hồi</span>
+    </div>
+    @if(isShowEnterText()) {
+    <app-enter-comment placeholder="Trả lời bình luận của {{comment().user.name}}" [idPost]="post().id!"
+      [idUser]="comment().user.id" [idComment]="comment().id"
+      (eventSubmitSuccess)="onCommentAdded($event)"></app-enter-comment>
+    }
   </div>
+
+
 </div>

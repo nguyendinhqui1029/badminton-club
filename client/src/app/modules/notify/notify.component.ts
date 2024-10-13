@@ -3,10 +3,10 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { LoadingComponent } from '@app/components/loading/loading.component';
 import { defaultAvatar, notificationStatus, notificationType } from '@app/constants/common.constant';
-import { NotificationRequestBody, NotifyResponse } from '@app/models/notify.model';
+import { NotificationRequestBody, NotificationSocketParams, NotifyResponse } from '@app/models/notify.model';
 import { NotificationService } from '@app/services/notification.service';
-import { NotificationSocketService } from '@app/services/sockets/notification-socket.service';
 import { UserService } from '@app/services/user.service';
+import { NotificationSocket } from '@app/sockets/notification.socket';
 import { ButtonModule } from 'primeng/button';
 import { forkJoin } from 'rxjs';
 
@@ -21,7 +21,7 @@ export class NotifyComponent implements OnInit {
 
   private notificationService: NotificationService = inject(NotificationService);
   private userService: UserService = inject(UserService);
-  private notificationSocketService: NotificationSocketService = inject(NotificationSocketService);
+  private notificationSocket: NotificationSocket = inject(NotificationSocket);
   private route: Router = inject(Router);
   defaultAvatar = defaultAvatar;
   notifies: NotifyResponse[] = []
@@ -49,7 +49,7 @@ export class NotifyComponent implements OnInit {
     });
   }
   handleViewNotification(item: NotifyResponse) {
-    if(item.type === notificationType.ADD_FRIEND) {
+    if([notificationType.ADD_FRIEND, notificationType.UN_FRIEND].includes(item.type)) {
       return;
     }
     if(item.isViewed) {
@@ -62,7 +62,12 @@ export class NotifyComponent implements OnInit {
     }
     this.notificationService.updateNotification(body).subscribe(response=>{
       if(response.statusCode !== 200) return;
-      this.notificationSocketService.sendNotification([this.userService.currentUserLogin.getValue().id])
+      const params: NotificationSocketParams = {
+        to: [this.userService.currentUserLogin.getValue().id],
+        type: notificationType.RELOAD_DATA,
+        notifyInfo: null
+      }
+      this.notificationSocket.sendNotificationEvent(params);
       this.route.navigateByUrl(item.navigateToDetailUrl);
     });
   }
@@ -73,14 +78,22 @@ export class NotifyComponent implements OnInit {
       status: notificationStatus.DENIED,
       read: [this.userService.currentUserLogin.getValue().id]
     }
-    forkJoin([this.userService.denyFriend({id: item.from.id, idFriend: this.userService.currentUserLogin.getValue().id}),this.notificationService.updateNotification(body)]).subscribe(()=>{
-      this.notificationSocketService.sendNotification([item.from.id])
+    forkJoin([
+      this.userService.denyFriend({id: item.from.id, idFriend: this.userService.currentUserLogin.getValue().id}),
+      this.notificationService.updateNotification(body)]).subscribe(()=>{
+      const params: NotificationSocketParams = {
+        to: [item.from.id, this.userService.currentUserLogin.getValue().id],
+        type: notificationType.RELOAD_DATA,
+        notifyInfo: null
+      }
+      this.notificationSocket.sendNotificationEvent(params);
     });
   }
 
   handleAgreeClick(item:NotifyResponse) {
     const body: Partial<NotificationRequestBody> = {
       id: item.id,
+      title: `Bạn và ${item.from.name} đã trở thành bạn bè.`,
       status: notificationStatus.DONE,
       read: [this.userService.currentUserLogin.getValue().id]
     }
@@ -89,8 +102,72 @@ export class NotifyComponent implements OnInit {
       this.userService.addFriend({
         id: this.userService.currentUserLogin.getValue().id,
         idFriend: item.from.id
-      })]).subscribe(()=>{
-      this.notificationSocketService.sendNotification([item.from.id])
+      })]).subscribe(([notificationResponse,_])=>{
+      const params: NotificationSocketParams = {
+        to: [item.from.id],
+        type: notificationType.ADD_FRIEND,
+        notifyInfo: notificationResponse.data
+      }
+      this.notificationSocket.sendNotificationEvent(params);
+
+      // Update notification list
+      const paramsReloadNewData: NotificationSocketParams = {
+        to: [this.userService.currentUserLogin.getValue().id],
+        type: notificationType.RELOAD_DATA,
+        notifyInfo: null
+      }
+      this.notificationSocket.sendNotificationEvent(paramsReloadNewData);
+    });
+  }
+
+  handleAddFriendClick(item:NotifyResponse) {
+    const userInfo = this.userService.currentUserLogin.getValue();
+    forkJoin([this.notificationService.updateNotification({
+      id: item.id,
+      read: [],
+      title: `${userInfo.name} đã gửi lời mời kết bạn đến bạn.`,
+      content: '',
+      fromUser: userInfo.id,
+      navigateToDetailUrl: '',
+      to: [item.from.id],
+      type: notificationType.ADD_FRIEND,
+      status: notificationStatus.IN_PROCESS
+    }), this.userService.addFriend({
+      id: userInfo.id,
+      idFriendWaiting: item.from.id
+    })]).subscribe(([notifyResponse, _])=>{
+      const params: NotificationSocketParams = {
+        to: [item.from.id],
+        type: notificationType.ADD_FRIEND,
+        notifyInfo: notifyResponse.data
+      };
+      this.notificationSocket.sendNotificationEvent(params);
+
+      // Update notification list
+      const paramsReloadNewData: NotificationSocketParams = {
+        to: [this.userService.currentUserLogin.getValue().id],
+        type: notificationType.RELOAD_DATA,
+        notifyInfo: null
+      }
+      this.notificationSocket.sendNotificationEvent(paramsReloadNewData);
+    });
+  }
+
+  handleIgnoreClick(item:NotifyResponse) {
+    const body: Partial<NotificationRequestBody> = {
+      id: item.id,
+      title: `Bạn và ${item.from.name} đã huỷ kết bạn nhau.`,
+      read: [...item.read,this.userService.currentUserLogin.getValue().id],
+      status: notificationStatus.DONE
+    }
+    this.notificationService.updateNotification(body).subscribe(response=>{
+      if(response.statusCode !== 200) return;
+      const params: NotificationSocketParams = {
+        to: [this.userService.currentUserLogin.getValue().id],
+        type: notificationType.RELOAD_DATA,
+        notifyInfo: null
+      }
+      this.notificationSocket.sendNotificationEvent(params);
     });
   }
 }
