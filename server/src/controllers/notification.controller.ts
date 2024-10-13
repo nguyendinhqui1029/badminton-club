@@ -96,9 +96,8 @@ export default class NotificationController {
 
   public create = async (req: Request, res: Response): Promise<void> => {
     try {
-      let isAllUser = !req.body['to']?.length;
       let to = req.body['to'] || [];
-      if(isAllUser) {
+      if(!to?.length) {
         const users = await this.userService.getAllUsers();
         users.forEach(item=>{
           const userId = item._id || '';

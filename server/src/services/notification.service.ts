@@ -52,7 +52,8 @@ class NotificationService {
             }
           },
           notificationId: notification.id,
-          type: notification.type
+          type: notification.type,
+          read: notification.read
         }
       }
     });
@@ -119,11 +120,6 @@ class NotificationService {
   }
 
   public async create(notification: Notification): Promise<Notification> {
-    notification.to.forEach(item=>{
-      if(item._id && item._id.toString() !== notification.fromUser?.toString()) {
-        notification.to.push(item._id);
-      }
-    });
     return await NotificationModel.create(notification);
   }
 

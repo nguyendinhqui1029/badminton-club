@@ -45,7 +45,8 @@ export default class SocketIoController {
       console.log('connection',socket.id)
       SocketIoController.io.to(socket.id).emit('sendSocketIdToClient', socket.id);
       socket.on('requestGetNewSocketConnect',()=>{
-        setTimeout(()=>this.getAllSocketConnect(),100)
+        setTimeout(()=>this.getAllSocketConnect(),100);
+        SocketIoController.io.to(socket.id).emit('serverNotificationEvent','');;
       });
       
       // Listen Post Event 

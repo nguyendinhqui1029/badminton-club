@@ -59,8 +59,7 @@ export class AppComponent implements OnInit {
           const currentUserId = this.userService.currentUserLogin.getValue().id;
           this.notificationService.updateNotification({
             id: messageInfo.notification.data.notificationId,
-            read: [currentUserId],
-            status: notificationStatus.DONE
+            read: [...messageInfo.notification.data.read,currentUserId]
           }).subscribe((response)=>{
             const params: NotificationSocketParams = {
               to: [currentUserId],

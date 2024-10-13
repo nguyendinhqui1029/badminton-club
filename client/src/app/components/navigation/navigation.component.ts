@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit, PLATFORM_ID, signal } from '@angular/core';
+import { afterNextRender, Component, inject, OnDestroy, OnInit, PLATFORM_ID, signal } from '@angular/core';
 import { AvatarModule } from 'primeng/avatar';
 import { Router, RouterModule } from '@angular/router';
 import { path } from '@app/constants/path.constant';
@@ -39,6 +39,13 @@ export class NavigationComponent implements OnInit, OnDestroy {
   defaultAvatar = defaultAvatar;
   countNotifyUnread = signal<number>(0);
 
+
+  constructor() {
+    afterNextRender(() => {
+      this.getAllNotification();
+    });
+  }
+
   getAllNotification() {
     const params = {
       idUser: this.userService.currentUserLogin.getValue().id,
@@ -53,7 +60,6 @@ export class NavigationComponent implements OnInit, OnDestroy {
     })
   }
   ngOnInit(): void {
-    this.getAllNotification();
     this.notificationSocket.listenNotificationEvent().subscribe(()=>{
       this.getAllNotification();
     });

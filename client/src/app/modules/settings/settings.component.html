@@ -127,6 +127,81 @@
     }
     
   </p-panel>
+
+  <p-panel [toggleable]="true" [collapsed]="true">
+    <ng-template pTemplate="header">
+      <div class="flex items-center justify-between w-full">
+        <span class="flex flex-col font-bold">
+          Quản lí sự kiện
+        </span>
+      </div>
+    </ng-template>
+    @if(!isShowLoadingCheckInInfoForm()) {
+      <form class="flex flex-col gap-4" [formGroup]="feeForm">
+        <app-label-wrapper [isTouched]="!!feeForm.get('earlyAttendanceReward')?.touched"
+        [errorsControl]="feeForm.get('earlyAttendanceReward')?.errors" idLabel="earlyAttendanceReward" label="Thưởng đi sớm">
+          <input class="w-full" formControlName="earlyAttendanceReward" id="earlyAttendanceReward" type="text" pInputText />
+        </app-label-wrapper>
+        <app-label-wrapper [isTouched]="!!feeForm.get('tenMinuteLateFee')?.touched"
+        [errorsControl]="feeForm.get('tenMinuteLateFee')?.errors" idLabel="tenMinuteLateFee" label="Phạt đi trễ 10 phút">
+          <input class="w-full" formControlName="tenMinuteLateFee" id="tenMinuteLateFee" type="text" pInputText />
+        </app-label-wrapper>
+        <app-label-wrapper [isTouched]="!!feeForm.get('twentyMinuteLateFee')?.touched"
+        [errorsControl]="feeForm.get('twentyMinuteLateFee')?.errors" idLabel="twentyMinuteLateFee" label="Phạt đi trễ 20 phút">
+          <input class="w-full" formControlName="twentyMinuteLateFee" id="twentyMinuteLateFee" type="text" pInputText />
+        </app-label-wrapper>
+        <app-label-wrapper [isTouched]="!!feeForm.get('absenceFee')?.touched"
+        [errorsControl]="feeForm.get('absenceFee')?.errors" idLabel="absenceFee" label="Phạt vắng mặt">
+          <input class="w-full" formControlName="absenceFee" id="absenceFee" type="text" pInputText />
+        </app-label-wrapper>
+        <app-label-wrapper [isTouched]="!!feeForm.get('latePaymentFee')?.touched"
+        [errorsControl]="feeForm.get('latePaymentFee')?.errors" idLabel="latePaymentFee" label="Phạt đóng tiền trễ">
+          <input class="w-full" formControlName="latePaymentFee" id="latePaymentFee" type="text" pInputText />
+        </app-label-wrapper>
+        <div class="flex justify-end"><p-button label="Lưu" styleClass="w-20" rounded (click)="handleSaveFeeForm()"/></div>
+      </form>
+    } @else {
+      <app-loading/>
+    }
+    
+  </p-panel>
+
+  <p-panel [toggleable]="true" [collapsed]="true">
+    <ng-template pTemplate="header">
+      <div class="flex items-center justify-between w-full">
+        <span class="flex flex-col font-bold">
+          Quản lí phần thưởng
+        </span>
+      </div>
+    </ng-template>
+    @if(!isShowLoadingCheckInInfoForm()) {
+      <form class="flex flex-col gap-4" [formGroup]="feeForm">
+        <app-label-wrapper [isTouched]="!!feeForm.get('earlyAttendanceReward')?.touched"
+        [errorsControl]="feeForm.get('earlyAttendanceReward')?.errors" idLabel="earlyAttendanceReward" label="Thưởng đi sớm">
+          <input class="w-full" formControlName="earlyAttendanceReward" id="earlyAttendanceReward" type="text" pInputText />
+        </app-label-wrapper>
+        <app-label-wrapper [isTouched]="!!feeForm.get('tenMinuteLateFee')?.touched"
+        [errorsControl]="feeForm.get('tenMinuteLateFee')?.errors" idLabel="tenMinuteLateFee" label="Phạt đi trễ 10 phút">
+          <input class="w-full" formControlName="tenMinuteLateFee" id="tenMinuteLateFee" type="text" pInputText />
+        </app-label-wrapper>
+        <app-label-wrapper [isTouched]="!!feeForm.get('twentyMinuteLateFee')?.touched"
+        [errorsControl]="feeForm.get('twentyMinuteLateFee')?.errors" idLabel="twentyMinuteLateFee" label="Phạt đi trễ 20 phút">
+          <input class="w-full" formControlName="twentyMinuteLateFee" id="twentyMinuteLateFee" type="text" pInputText />
+        </app-label-wrapper>
+        <app-label-wrapper [isTouched]="!!feeForm.get('absenceFee')?.touched"
+        [errorsControl]="feeForm.get('absenceFee')?.errors" idLabel="absenceFee" label="Phạt vắng mặt">
+          <input class="w-full" formControlName="absenceFee" id="absenceFee" type="text" pInputText />
+        </app-label-wrapper>
+        <app-label-wrapper [isTouched]="!!feeForm.get('latePaymentFee')?.touched"
+        [errorsControl]="feeForm.get('latePaymentFee')?.errors" idLabel="latePaymentFee" label="Phạt đóng tiền trễ">
+          <input class="w-full" formControlName="latePaymentFee" id="latePaymentFee" type="text" pInputText />
+        </app-label-wrapper>
+        <div class="flex justify-end"><p-button label="Lưu" styleClass="w-20" rounded (click)="handleSaveFeeForm()"/></div>
+      </form>
+    } @else {
+      <app-loading/>
+    }
+  </p-panel>
   }
   @if(isSuperAdmin()) {
   <p-panel [toggleable]="true" [collapsed]="true">
