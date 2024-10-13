@@ -99,8 +99,8 @@ export class CardComponent implements OnDestroy, OnInit, OnChanges {
         avatar: post?.createdBy?.avatar || '',
         userName: post?.createdBy?.name || '',
         feeling: {
-          value: feelingAfterSplit[0] || '',
-          icon: feelingAfterSplit[1] || ''
+          value: feelingAfterSplit[1] || '',
+          icon: feelingAfterSplit[2] || ''
         },
         friends: (post?.tagFriends || []).map((tagFriends: UserInfoSearch) => tagFriends.name),
         location: post?.tagLocation || ''
