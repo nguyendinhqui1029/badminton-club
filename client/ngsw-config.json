@@ -28,15 +28,17 @@
     }
   ],
   "dataGroups": [
-  {
-    "name": "api",
-    "urls": ["https://badminton-club-fqk6.onrender.com/api/v1"],
-    "cacheConfig": {
-      "maxSize": 100,
-      "maxAge": "1d",
-      "timeout": "5s",
-      "strategy": "freshness"
-    }
-  }
-]
+    {
+      "name": "api",
+      "urls": ["https://badminton-club-fqk6.onrender.com/api/v1"],
+      "cacheConfig": {
+        "maxSize": 100,
+        "maxAge": "1d",
+        "timeout": "5s",
+        "strategy": "freshness"
+      }
+    }],
+  "navigationUrls": [
+    "https://my-badminton-club.netlify.app/home"
+  ]
 }
