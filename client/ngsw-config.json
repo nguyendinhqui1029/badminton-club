@@ -1,4 +1,3 @@
-
 {
   "$schema": "./node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
@@ -30,15 +29,19 @@
   "dataGroups": [
     {
       "name": "api",
-      "urls": ["https://badminton-club-fqk6.onrender.com/api/v1"],
+      "urls": [
+        "https://badminton-club-fqk6.onrender.com/api/v1",
+        "https://my-badminton-club.netlify.app/home/"
+      ],
       "cacheConfig": {
         "maxSize": 100,
         "maxAge": "1d",
         "timeout": "5s",
         "strategy": "freshness"
       }
-    }],
+    }
+  ],
   "navigationUrls": [
-    "https://my-badminton-club.netlify.app/home/"
+    "/**"
   ]
 }
