@@ -38,7 +38,7 @@ export default class NotificationController {
     }
    
   }
-  
+
   public getAllNotificationFromUser = async (req: Request, res: Response): Promise<void> => {
     try {
       const params = {
@@ -96,7 +96,7 @@ export default class NotificationController {
 
   public create = async (req: Request, res: Response): Promise<void> => {
     try {
-      let isAllUser = !req.body['to'];
+      let isAllUser = !req.body['to']?.length;
       let to = req.body['to'] || [];
       if(isAllUser) {
         const users = await this.userService.getAllUsers();

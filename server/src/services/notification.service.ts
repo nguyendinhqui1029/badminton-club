@@ -11,8 +11,6 @@ import UserService from './user.service';
 
 class NotificationService {
   private socketConnectInfo: SocketConnectInformationService;
-  private userService: UserService;
-
   private vapidKeys: {
     publicKey: string,
     privateKey: string
@@ -29,7 +27,6 @@ class NotificationService {
       this.vapidKeys.privateKey
     );
     this.socketConnectInfo = new SocketConnectInformationService();
-    this.userService = new UserService();
   }
 
   async saveSubscription(body: SocketConnectInformation) {
@@ -122,14 +119,11 @@ class NotificationService {
   }
 
   public async create(notification: Notification): Promise<Notification> {
-    if(!notification.to.length) {
-      const userResult = await this.userService.getAllUsers();
-      userResult.forEach(item=>{
-        if(item._id && item._id.toString() !== notification.fromUser?.toString()) {
-          notification.to.push(item._id);
-        }
-      });
-    }
+    notification.to.forEach(item=>{
+      if(item._id && item._id.toString() !== notification.fromUser?.toString()) {
+        notification.to.push(item._id);
+      }
+    });
     return await NotificationModel.create(notification);
   }
 
