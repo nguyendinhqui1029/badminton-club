@@ -13,14 +13,6 @@ import { isPlatformBrowser } from '@angular/common';
 })
 export class PostService {
     private http: HttpClient = inject(HttpClient);
-    private socket!: Socket;
-
-    private isBrowser: boolean;
-
-    constructor(private socketService: SocketService, @Inject(PLATFORM_ID) platformId: Object) {
-        this.isBrowser = isPlatformBrowser(platformId);
-        this.socket = this.socketService.getSocket();
-    }
     
     createPost(body: PostRequestBody): Observable<ApiResponseValue<PostResponseValue>> {
         return this.http.post<ApiResponseValue<PostResponseValue>>(`${environment.apiUrl}/api/v1/post`, body);

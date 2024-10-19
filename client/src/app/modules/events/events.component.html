@@ -6,27 +6,28 @@
     </div>
   </div>
   <div class="p-4 bg-white rounded-xl">
-    <h3 class="font-bold text-xl">Sự kiện</h3>
+    <h3 class="font-bold text-xl mb-4">Sự kiện</h3>
   
     @if(isEventLoading()) {
       <app-loading/>
     } @else {
       <p-carousel 
-      [value]="events" 
+      [value]="events()" 
       [numVisible]="2" 
       [numScroll]="1" 
       [circular]="false" 
       autoplayInterval="3000"
-      [responsiveOptions]="responsiveOptions">
+      [responsiveOptions]="responsiveOptions"
+      [showIndicators]="false">
           <ng-template let-event pTemplate="item">
-              <div class="flex flex-col justify-between border-1 p-3" (click)="onClickViewDetail(event)">
+              <div class="mb-4 flex flex-col justify-between border-2 p-3 rounded-xl mx-0.5">
                   <div class="aspect-video w-full rounded-xl overflow-clip mb-2">
                     <img 
                     [src]="event.thumbnail" 
                     [alt]="event.name" 
                     class="h-full w-full" />
                   </div>
-                  <div class="font-xs font-bold text-center line-clamp-1">
+                  <div class="font-xs font-bold text-center line-clamp-1 cursor-pointer" (click)="onClickViewDetail(event)">
                       {{ event.name }}
                   </div>
               </div>

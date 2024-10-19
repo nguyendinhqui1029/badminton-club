@@ -52,3 +52,15 @@ export const notificationType = {
     EVENT: 'EVENT',
     RELOAD_DATA: 'RELOAD_DATA'
 }
+
+export const transactionType = {
+    RECHARGE: 'RECHARGE', 
+    WITHDRAW: 'WITHDRAW'
+}
+
+export const transactionStatus = {
+    OPEN: 'OPEN', 
+    PENDING: 'PENDING', 
+    DONE: 'DONE', 
+    LATE: 'LATE'
+} as const;

@@ -22,4 +22,12 @@ export class PaymentService {
     const params = new HttpParams().set('keyword', keyword).set('status',status);
     return this.http.get<ApiResponseValue<PaymentResponseValue[]>>(`${environment.apiUrl}/api/v1/transaction`, {params});
   }
+
+  getSumAmountByMonth(payload: {startMonth: number; endMonth: number; year: number}): Observable<ApiResponseValue<Record<string,{recharge: number; withdraw: number}>>> {
+    const params = new HttpParams()
+    .set('startMonth', payload.startMonth)
+    .set('endMonth', payload.endMonth)
+    .set('year', payload.year);
+    return this.http.get<ApiResponseValue<Record<string,{recharge: number; withdraw: number}>>>(`${environment.apiUrl}/api/v1/transaction/sum-amount/months`, {params});
+  }
 }

@@ -8,7 +8,8 @@ export interface Event extends Document {
   startDate: string;       
   endDate: string;         // Ngày kết thúc sự kiện (định dạng chuỗi, ví dụ: "2024-08-16")
   description: string;     // Mô tả sự kiện
-  thumbnail: string;       // Hình thu nhỏ hoặc URL của hình thu nhỏ sự kiện
+  thumbnail: string; 
+  toUser: string[];
   status: 'ON' | 'EXPIRED' | 'WAITING' | 'OFF'; // Trạng thái của sự kiện
 }
 
@@ -47,6 +48,11 @@ const eventSchema = new Schema({
     type: String,
     required: true,
   },
+  toUser: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User', // Tham chiếu đến model User
+    default: []
+  }],
   status: {
     type: String,
     enum: ['ON', 'EXPIRED', 'WAITING', 'OFF'], // Các giá trị hợp lệ cho status

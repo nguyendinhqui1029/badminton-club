@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import TransactionModel, { Transaction } from "../models/transaction.model";
+import { transactionStatus, transactionType } from "../constants/common.constants";
 
 
 class TransactionService {
@@ -15,46 +16,24 @@ class TransactionService {
           }
         },
         {
-          $lookup: {
-            from: 'users',
-            localField: 'createdBy',
-            foreignField: '_id',
-            as: 'createdBy'
-          }
-        },
-        {
-          $match: {
-            // Only include title filter if keyword is provided
-            ...(query.keyword ? {
-              title: {
-                $regex: new RegExp(query.keyword, 'i') // Case-insensitive regex for title
-              }
-            } : {}),
-            // Only include status filter if status is provided
-            ...(query.status ? {
-              status: query.status // Filter by status
-            } : {})
-          }
-        },
-        {
           $addFields: {
             user: {
-              $cond: {
-                if: query.keyword ? {
+              $filter: {
+                input: '$user',
+                as: 'user',
+                cond: {
                   $regexMatch: {
-                    input: { $toLower: '$user.name' },
-                    regex: new RegExp(query.keyword.toLowerCase(), 'i')
+                    input: { $toLower: '$$user.name' },
+                    regex: new RegExp(query.keyword, 'i')
                   }
-                } : true, // Always true if keyword is not provided
-                then: '$user',
-                else: null
+                }
               }
             }
           }
         },
         {
           $match: {
-            user: { $ne: null } // Remove documents where user does not match
+            user: { $ne: [] } // Remove documents where user does not match
           }
         },
         {
@@ -66,15 +45,11 @@ class TransactionService {
             content: 1,
             files: 1,
             createdAt: 1,
+            createdBy: 1,
             user: {
               _id: 1,
               name: 1,
               avatar: 1
-            },
-            createdBy: {
-              _id: 1,
-              name: 1,
-              email: 1 // Include additional fields if needed
             }
           }
         }
@@ -85,6 +60,55 @@ class TransactionService {
     }
   }
 
+  public async getAmountByMonths(date: {year: number, month: number}[]) {
+    const objectAmountByMonth: Record<string, {recharge: number, withdraw: number}> = {};
+    for(let index=0; index<date.length; index++) {
+      const startDate = new Date(date[index].year, date[index].month - 1, 1); // Ngày đầu tháng
+      const endDate = new Date(date[index].year, date[index].month, 0, 23, 59, 59, 999); // Ngày cuối tháng
+
+      const rechargeResult = await TransactionModel.aggregate<{totalAmount: number}>([
+          {
+              $match: {
+                  createdAt: {
+                      $gte: startDate,
+                      $lte: endDate
+                  },
+                  type: transactionType.RECHARGE,
+                  status: transactionStatus.DONE
+              }
+          },
+          {
+              $group: {
+                  _id: '$type', // Nhóm theo trường status
+                  totalAmount: { $sum: '$amount' } // Tính tổng trường amount
+              }
+          }
+      ]);
+
+      const withdrawResult = await TransactionModel.aggregate<{totalAmount: number}>([
+        {
+            $match: {
+                createdAt: {
+                    $gte: startDate,
+                    $lte: endDate
+                },
+                type: transactionType.WITHDRAW,
+                status: transactionStatus.DONE
+            }
+        },
+        {
+            $group: {
+                _id: '$type', // Nhóm theo trường status
+                totalAmount: { $sum: '$amount' } // Tính tổng trường amount
+            }
+        }
+      ]);
+
+      objectAmountByMonth[`${date[index].year}_${date[index].month}`] = { recharge: rechargeResult.length > 0 ? rechargeResult[0].totalAmount : 0, withdraw: withdrawResult.length > 0 ? withdrawResult[0].totalAmount : 0};
+    }
+    
+    return objectAmountByMonth;
+  }
   public async getById(id: string): Promise<Transaction | null> {
     return await TransactionModel.findById(id).populate('idUser');
   }

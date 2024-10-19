@@ -1,5 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { UserService } from '@app/services/user.service';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-events',

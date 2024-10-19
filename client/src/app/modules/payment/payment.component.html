@@ -41,16 +41,20 @@
   <p-tabView>
     <p-tabPanel header="Thông tin quỹ nhóm">
       <ul class="flex flex-col">
-        <li class="flex justify-between bg-secondary-color p-2 text-white"><h3 class="font-bold">Tổng ({{currentDate() | date: 'dd-MM-YYYY'}})</h3> {{100000 | currency: 'VND'}}</li>
-        <li class="flex justify-between p-2"><h3 class="font-bold">Tháng 9</h3> {{70000 | currency: 'VND'}}</li>
-        <li class="flex justify-between p-2"><h3 class="font-bold">Tháng 8</h3> {{70000 | currency: 'VND'}}</li>
-        <li class="flex justify-between p-2"><h3 class="font-bold">Tháng 7</h3> {{70000 | currency: 'VND'}}</li>
-        <li class="flex justify-between p-2"><h3 class="font-bold">Tháng 6</h3> {{70000 | currency: 'VND'}}</li>
-        <li class="flex justify-between p-2"><h3 class="font-bold">Tháng 5</h3> {{70000 | currency: 'VND'}}</li>
+        @for(item of sumAmountByMonth(); track item) {
+          @if(item.isCurrentDate) {
+            <li class="flex justify-between bg-secondary-color p-2 text-white">
+              <h3 class="font-bold">Tổng ({{currentDate() | date: 'dd-MM-YYYY'}})</h3> 
+              {{item.amount | currency: 'VND'}}
+            </li>
+          } @else {
+            <li class="flex justify-between p-2"><h3 class="font-bold">Tháng {{item.month}}</h3> {{item.amount | currency: 'VND'}}</li>
+          }
+        }
       </ul>
     </p-tabPanel>
     @if(isAdmin() || isSupperAdmin()) {
-      <p-tabPanel header="Tạo phiếu">
+      <p-tabPanel  header="Tạo phiếu">
         <form [formGroup]="formPaymentGroup" class="flex flex-col gap-3">
           <app-label-wrapper 
           [isTouched]="!!formPaymentGroup.get('receivers')?.touched"
@@ -59,11 +63,23 @@
             <p-multiSelect formControlName="receivers" [options]="userList()" optionLabel="label" optionValue="value" placeholder="Gửi đến người dùng" />
           </app-label-wrapper>
           <app-label-wrapper 
+         
+          [isTouched]="!!formPaymentGroup.get('createdAt')?.touched"
+          [errorsControl]="formPaymentGroup.get('createdAt')?.errors" 
+           idLabel="createdAt" label="Ngày tạo">
+           <p-calendar 
+           [maxDate]="maxDate"
+           styleClass="w-full"
+           formControlName="createdAt"
+           />         
+          </app-label-wrapper>
+          <app-label-wrapper 
           [isTouched]="!!formPaymentGroup.get('type')?.touched"
           [errorsControl]="formPaymentGroup.get('type')?.errors" 
            idLabel="type" label="Loại">
             <p-dropdown formControlName="type" [options]="typeOptions"
-            optionLabel="label" optionValue="value" />          </app-label-wrapper>
+            optionLabel="label" optionValue="value" />          
+          </app-label-wrapper>
           <app-label-wrapper 
           [isTouched]="!!formPaymentGroup.get('title')?.touched"
           [errorsControl]="formPaymentGroup.get('title')?.errors" 

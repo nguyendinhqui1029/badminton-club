@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import EventModel, { Event } from "../models/event.model";
 
 
@@ -13,6 +14,10 @@ class EventService {
 
   public async getById(id: string): Promise<Event | null> {
     return await EventModel.findById(id);
+  }
+
+  public async getAllEventByIdUser(idUser: string): Promise<Event[] | null> {
+    return await EventModel.find({ toUser: new mongoose.Types.ObjectId(idUser) });
   }
 
   public async create(event: Event): Promise<Event> {

@@ -9,6 +9,33 @@ export default class TransactionController {
     this.transactionService = new TransactionService();
   }
 
+  public getAmountByMonths = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const startMonth = +(req.query['startMonth']?.toString() || 1);
+      const endMonth = +(req.query['endMonth']?.toString() || 12);
+      const year = +(req.query['year']?.toString() || new Date().getFullYear());
+      const params = [];
+      for(let index=startMonth; index <= endMonth; index++) {
+        params.push({year: +year, month: index})
+      }
+      const transactionResult = await this.transactionService.getAmountByMonths(params);
+      res.status(200).json({
+        statusCode: 200,
+        statusText: 'getAmountByMonths transaction is successful.',
+        totalCount: 0,
+        page: 0,
+        data: transactionResult
+      });
+    } catch (error: any) {
+      res.status(200).json({
+        statusCode: 500,
+        statusText: 'getAmountByMonths transaction is fail.',
+        totalCount: 0,
+        page: 0,
+        data: error.message
+      });
+    }
+  };
   public getAll = async (req: Request, res: Response): Promise<void> => {
     try {
       const keyword = req.query['keyword']?.toString() || '';

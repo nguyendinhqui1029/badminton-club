@@ -23,6 +23,7 @@ import { PaymentService } from '@app/services/payment.service';
 import { ValidatorService } from '@app/services/validators.service';
 import { MessageService } from 'primeng/api';
 import { debounceTime, Subject } from 'rxjs';
+import { CalendarModule } from 'primeng/calendar';
 
 @Component({
   selector: 'app-payment',
@@ -38,7 +39,8 @@ import { debounceTime, Subject } from 'rxjs';
     InputTextareaModule,
     MultiSelectModule,
     FormsModule,
-    ReactiveFormsModule,],
+    ReactiveFormsModule,
+    CalendarModule],
   templateUrl: './payment.component.html',
   styleUrl: './payment.component.scss'
 })
@@ -104,6 +106,8 @@ export class PaymentComponent implements OnInit {
       amount: 10000
     }]
   };
+  sumAmountByMonth = signal<{isCurrentDate: boolean; month: number; amount: number}[]>([]);
+  maxDate = new Date();
   ngOnInit(): void {
     this.handleSearch(this.keyword(), this.status);
     this.subject.pipe(debounceTime(300)).subscribe((value: string) => {
@@ -114,6 +118,7 @@ export class PaymentComponent implements OnInit {
     });
     this.formPaymentGroup = this.formBuilder.group({
       receivers: [[], ValidatorService.fieldRequired('Người nhận không được để trống.')],
+      createdAt: [new Date()],
       title: ['', ValidatorService.fieldRequired('Tiêu đề không được để trống.')],
       description: ['', ValidatorService.fieldRequired('Mô tả không được để trống.')],
       amount: [0, ValidatorService.fieldRequired('Số tiền không được để trống.')],
@@ -124,12 +129,27 @@ export class PaymentComponent implements OnInit {
       this.isAdmin.set(userInfo.role.includes(userRole.ADMIN));
       this.isSupperAdmin.set(userInfo.role.includes(userRole.SUPPER_ADMIN));
     });
-
     this.userService.getAllUser().subscribe((response) => {
       if (response.statusCode !== 200) {
         return;
       }
       this.userList.set(response.data.map((item) => ({ label: item.name, value: item.id })));
+    });
+    this.paymentService.getSumAmountByMonth({year: new Date().getFullYear(), startMonth: 1, endMonth: new Date().getMonth() + 1}).subscribe((response)=>{
+      if(response.statusCode !==200){
+        return;
+      }
+      this.sumAmountByMonth.set(Object.entries(response.data).map(([key, value])=>{
+        const month = key.split('_').length ? +key.split('_')[1] : new Date().getMonth()+1;
+        if(month === new Date().getMonth()+1) {
+          let sum = 0;
+          Object.values(response.data).forEach(item=>{
+            sum += (item.recharge - item.withdraw);
+          });
+          return {isCurrentDate: true, month: month, amount: sum};
+        }
+        return {isCurrentDate: false, month: month, amount: value.recharge - value.withdraw};
+      }).reverse());
     });
   }
 
@@ -169,6 +189,7 @@ export class PaymentComponent implements OnInit {
       const body = {
         idUser: this.formPaymentGroup.value['receivers'] || [],
         amount: this.formPaymentGroup.value['amount'] || 0,
+        createdAt: this.formPaymentGroup.value['createdAt'] || new Date(),
         title: this.formPaymentGroup.value['title'] || '',
         content: this.formPaymentGroup.value['description'] || '',
         files: this.formPaymentGroup.value['files'] || [],
@@ -186,6 +207,7 @@ export class PaymentComponent implements OnInit {
           this.formPaymentGroup.reset({
             receivers: '',
             title: '',
+            createdAt: new Date(),
             description: '',
             amount: 0,
             files: 0,
