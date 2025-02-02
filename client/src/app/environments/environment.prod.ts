@@ -2,8 +2,8 @@ import { Environment } from "@app/models/environment.model";
 
 export const environment: Environment = {
     production: true,
-    apiUrl:'http://localhost:3000',
-    // apiUrl: 'https://badminton-club-fqk6.onrender.com',
+    // apiUrl:'http://localhost:3000',
+    apiUrl: 'https://badminton-club-fqk6.onrender.com',
     defaultLanguage: 'vi',
     domain: 'https://my-badminton-club.netlify.app',
     pushNotificationPublishKey:'BIPtOftZ5XqSzadYq1aG-ITzZ0xZ_ECvUdqPppko1zqcRX4_JuN8tmIGKYXw-VaGQemw8LPkje_PCiW4zI6BbNk'
